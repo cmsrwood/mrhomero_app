@@ -1,0 +1,8 @@
+{
+  "name": "mrhomero-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "edb877a4"
+}
