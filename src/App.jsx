@@ -55,9 +55,6 @@ const App = () => (
           <Route exact path="/">
             <Index />
           </Route>
-          <Route exact path="/admin">
-            <IndexAdmin />
-          </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/">
