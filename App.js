@@ -1,32 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import IndexAdmin from './screens/admin/IndexAdmin';
+import DetailsScreen from './screens/admin/Details';
 
-const Stack = createStackNavigator();
-
-const HomeScreen = ({ navigation }) => (
-  <View style={styles.container}>
-    <Text>Hello Muñoz</Text>
-    <Button title="Ir a Detalles" onPress={() => navigation.navigate('Details')} />
-    <StatusBar style="auto" />
-  </View>
-);
-
-const DetailsScreen = ({ navigation }) => (
-  <View style={styles.container}>
-    <Text>bye Muñoz</Text>
-    <Button title="Volver" onPress={() => navigation.goBack()} />
-  </View>
-);
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Inicio' }} />
-        <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Detalles' }} />
-      </Stack.Navigator>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === 'Home') {
+              iconName = focused ? 'home' : 'home-outline';
+            } else if (route.name === 'Details') {
+              iconName = focused ? 'information-circle' : 'information-circle-outline';
+            }
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Home" component={IndexAdmin} />
+        <Tab.Screen name="Details" component={DetailsScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
