@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import DetailsScreen from '../screens/admin/Details';
 const Tab = createBottomTabNavigator();
 
 export default function Nabvar() {
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
