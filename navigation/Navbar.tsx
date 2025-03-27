@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import IndexAdmin from '../admin/IndexAdmin';
-import DetailsScreen from '../admin/Details';
+import IndexAdmin from '../screens/admin/IndexAdmin';
+import DetailsScreen from '../screens/admin/Details';
 
 const Tab = createBottomTabNavigator();
 
