@@ -11,18 +11,35 @@ export default function Nabvar() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
+                headerStyle: {
+                    backgroundColor: '#000',
+                },
+                headerTintColor: '#FFD700',
+                headerTitleStyle: {
+                    display: 'flex',
+                    alignContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    fontWeight: 'bold',
+                },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName: any;
-                    if (route.name === 'Home') {
+                    if (route.name === 'Mr.Homero') {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === 'Details') {
-                        iconName = focused ? 'checkmark-done-outline' : 'checkmark-outline'  ;
+                        iconName = focused ? 'checkmark-done-outline' : 'checkmark-outline';
                     }
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
+                tabBarActiveTintColor: '#FFD700',
+                tabBarInactiveTintColor: '#FFFFFF',
+                tabBarStyle: {
+                    backgroundColor: '#000',
+                    borderTopWidth: 0,
+                    height: 60,
+                }
             })}
         >
-            <Tab.Screen name="Home" component={IndexAdmin} />
+            <Tab.Screen name="Mr.Homero" component={IndexAdmin} />
             <Tab.Screen name="Details" component={DetailsScreen} />
         </Tab.Navigator>
     )
@@ -31,7 +48,7 @@ export default function Nabvar() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#181C14',
         alignItems: 'center',
         justifyContent: 'center',
     },
