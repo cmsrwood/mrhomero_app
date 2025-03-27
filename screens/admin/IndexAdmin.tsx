@@ -1,4 +1,5 @@
 import React from 'react'
+import Const from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
