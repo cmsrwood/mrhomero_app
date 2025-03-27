@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './screens/navbar/Navbar';
+import Navbar from './navigation/Navbar';
 import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
