@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuth, AuthContext } from "./context/AuthProvider";
+import { useAuth, AuthProvider } from "./context/AuthProvider";
 import { View, Text, ActivityIndicator } from "react-native";
 
 const PublicScreen = () => <View><Text>Pantalla Pública</Text></View>;
