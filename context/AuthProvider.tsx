@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
+import axios from 'axios';
+import { View } from "react-native";
 
 const AuthContext = createContext(null);
 
@@ -18,16 +21,11 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch("http://localhost:4400/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await axios.post("http://localhost:4400/api/auth/ingresar", { email, password });
 
-            const data = await response.json();
-            if (data.token) {
-                await AsyncStorage.setItem("authToken", data.token);
-                setToken(data.token);
+            if (response.data.token) {
+                await AsyncStorage.setItem("authToken", response.data.token);
+                setToken(response.data.token);
             }
         } catch (error) {
             console.error("Error en login", error);
@@ -41,7 +39,9 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ token, login, logout, loading }}>
-            {children}
+            <View style={{ flex: 1, marginTop: Constants.statusBarHeight,  }}>
+                {children}
+            </View>
         </AuthContext.Provider>
     );
 };
