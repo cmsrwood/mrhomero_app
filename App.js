@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthProvider } from "./contexts/AuthProvider";
+import { AuthContext } from "./contexts/AuthContext";
 import useAuth from "./hooks/useAuth";
 import PrivateNavigator from "./navigation/PrivateNavigator";
 import PublicNavigator from "./navigation/PublicNavigator";
@@ -8,11 +8,11 @@ import Loader from "./components/Loader";
 
 export default function App() {
   return (
-    <AuthProvider>
+    <AuthContext>
       <NavigationContainer>
         <MainNavigator />
       </NavigationContainer>
-    </AuthProvider>
+    </AuthContext>
   );
 }
 
