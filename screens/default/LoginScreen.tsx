@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpaci
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from '../../context/AuthProvider';
+import { useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import homeroImg from '../../assets/favicon.png';
 
@@ -15,6 +16,7 @@ const loginSchema = Yup.object().shape({
 export default function LoginScreen() {
     const [isFocused, setIsFocused] = useState(null);
     const { login } = useAuth();
+    const navigation = useNavigation();
     const { control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
     });
@@ -68,7 +70,7 @@ export default function LoginScreen() {
 
                 {// Este boton es para recuperar la contraseña
                 }
-                <TouchableOpacity onPress={() => Alert.alert("Recuperar contraseña", "Función no implementada")}>
+                <TouchableOpacity onPress={() => navigation.navigate("RecoverPassword")}>
                     <Text> ¿Olvidaste tu contraseña? </Text>
                 </TouchableOpacity >
 
