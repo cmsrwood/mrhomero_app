@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity } from 'react-native';
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from '../../context/AuthProvider';
+import Constants from 'expo-constants';
+import homeroImg from '../../assets/favicon.png';
 
 const loginSchema = Yup.object().shape({
     email: Yup.string().email("Correo inválido").required("El correo es obligatorio"),
@@ -11,6 +13,7 @@ const loginSchema = Yup.object().shape({
 });
 
 export default function LoginScreen() {
+    const [isFocused, setIsFocused] = useState(null);
     const { login } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
@@ -23,26 +26,24 @@ export default function LoginScreen() {
             Alert.alert("Error", error.message);
         }
     };
-    const alerta = () => {
-        Alert.alert(
-            "Hola"
-        )
-    }
-    alerta();
+
     return (
-        <View>
-            <View style={styles.container}>
+        <View style={styles.container}>
+            <Image source={homeroImg} style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center', width: 200, height: 200 }}></Image>
+            <View style={styles.form}>
                 <Controller
                     control={control}
                     name="email"
                     render={({ field: { onChange, value } }) => (
                         <TextInput
-                            style={styles.input}
+                            style={[styles.inputEmail, isFocused == 'inputEmail' && styles.inputEmailFocused]}
                             placeholder="Email"
                             value={value}
                             onChangeText={onChange}
                             keyboardType="email-address"
                             autoCapitalize='none'
+                            onFocus={() => setIsFocused('inputEmail')}
+                            onBlur={() => setIsFocused(null)}
                         />
                     )}
                 />
@@ -52,34 +53,69 @@ export default function LoginScreen() {
                     name="password"
                     render={({ field: { onChange, value } }) => (
                         <TextInput
-                            style={styles.input}
+                            style={[styles.inputPassword, isFocused == 'inputPassword' && styles.inputPasswordFocused]}
                             placeholder="Contraseña"
                             value={value}
                             onChangeText={onChange}
                             secureTextEntry
+                            onFocus={() => setIsFocused('inputPassword')}
+                            onBlur={() => setIsFocused(null)}
                         />
                     )}
                 />
                 {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-                <Button title="Ingresar" onPress={handleSubmit(onSubmit)}  />
+
+
+                {// Este boton es para recuperar la contraseña
+                }
+                <TouchableOpacity onPress={() => Alert.alert("Recuperar contraseña", "Función no implementada")}>
+                    <Text> ¿Olvidaste tu contraseña? </Text>
+                </TouchableOpacity >
+
+                {//Este boton sirve para ingresar al sistema 
+                }
+                <TouchableOpacity style={styles.ingresar} onPress={handleSubmit(onSubmit)}>
+                    <Text style={styles.buttonText}>Ingresar</Text>
+                </TouchableOpacity >
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        marginTop: Constants.statusBarHeight
     },
-    input: {
+    form: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 40
+    },
+    inputEmail: {
         height: 40,
+        width: '90%',
         margin: 12,
         borderWidth: 1,
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 15,
+    },
+
+    inputEmailFocused: {
+        borderColor: '#FFC107',
+    },
+    inputPassword: {
+        height: 40,
+        width: '90%',
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 15,
+    },
+
+    inputPasswordFocused: {
+        borderColor: '#FFC107',
     },
     error: {
         color: 'red',
@@ -88,5 +124,12 @@ const styles = StyleSheet.create({
     ingresar: {
         marginTop: 20,
         backgroundColor: '#FFC107',
+        borderRadius: 15,
+        height: 40,
+        width: '25%',
+        alignItems: 'center',
     },
+    buttonText: {
+        padding: 10
+    }
 })
