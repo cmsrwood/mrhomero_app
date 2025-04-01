@@ -13,8 +13,7 @@ export default function LoginScreen() {
             alert("Ingrese correo y contraseña");
             return;
         }
-        const response = await login(email, password);
-        
+        await login(email, password);
     };
 
     return (
