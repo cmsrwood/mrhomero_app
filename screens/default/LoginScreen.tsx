@@ -49,7 +49,7 @@ export default function LoginScreen() {
                         <Text style={styles.forgot}>Olvidaste tu contraseña?</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center" }]}>
+                <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center", marginTop: 20 }]}>
                     <Text style={globalStyles.buttonText}>Iniciar Sesión</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("RegistrarScreen")}>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 20,
         marginVertical: 20,
-        paddingTop: 20
+        paddingTop: 50
     },
     forgot: {
         fontSize: 12,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     registrate: {
         fontSize: 12,
         textAlign: "center",
-        marginTop: 20,
+        marginTop: 25,
         color: "#ccc",
     },
     button: {

@@ -4,9 +4,11 @@ import AuthService from "../../services/AuthService";
 import mrhomeroImg from "../../assets/favicon.png";
 import globalStyles from "../../styles/globalStyles";
 import { FlatList, } from "react-native-gesture-handler";
-import DefaultLayout from "../../components/DefaultLayout";
+import DefaultLayout from "../../components/DefaultLayout"
+import { useNavigation } from "@react-navigation/native";
 
-export default function RegistrarScreen({ navigation }) {
+export default function RegistrarScreen() {
+    const navigation = useNavigation();
     const { registrar } = AuthService;
 
     const [user, setUser] = useState({
@@ -37,13 +39,13 @@ export default function RegistrarScreen({ navigation }) {
         <DefaultLayout>
             <View >
                 <View style={{ paddingVertical: 50 }}>
-                    <Text style={[globalStyles.title, {color: "#FFF"}]}>Registro</Text>
+                    <Text style={[globalStyles.title, { color: "#FFF" }]}>Registro</Text>
                 </View>
 
                 <View style={styles.form}>
                     <TextInput style={[styles.input, isFocused === "nombres" && styles.focusedInput]}
                         placeholder="Nombres"
-                                                 placeholderTextColor="#ccc"
+                        placeholderTextColor="#ccc"
 
                         onChangeText={handleChange()}
                         value={user.nombres}
@@ -51,7 +53,7 @@ export default function RegistrarScreen({ navigation }) {
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "apellidos" && styles.focusedInput]}
                         placeholder="Apellidos"
-                                                 placeholderTextColor="#ccc"
+                        placeholderTextColor="#ccc"
 
                         onChangeText={handleChange()}
                         value={user.apellidos}
@@ -59,7 +61,7 @@ export default function RegistrarScreen({ navigation }) {
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "email" && styles.focusedInput]}
                         placeholder="Correo"
-                                                 placeholderTextColor="#ccc"
+                        placeholderTextColor="#ccc"
 
                         onChangeText={handleChange()}
                         value={user.email}
@@ -67,7 +69,7 @@ export default function RegistrarScreen({ navigation }) {
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "password" && styles.focusedInput]}
                         placeholder="Contraseña"
-                                                 placeholderTextColor="#ccc"
+                        placeholderTextColor="#ccc"
 
                         onChangeText={handleChange()}
                         value={user.password}
@@ -75,14 +77,14 @@ export default function RegistrarScreen({ navigation }) {
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "confirmarPassword" && styles.focusedInput]}
                         placeholder="Confirmar Contraseña"
-                                                 placeholderTextColor="#ccc"
+                        placeholderTextColor="#ccc"
 
                         onChangeText={handleChange()}
                         value={user.confirmarPassword}
                         onFocus={() => setIsFocused("confirmarPassword")}
                         onBlur={() => setIsFocused(null)} />
                 </View>
-                <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center" }]}>
+                <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center", marginTop: 15 }]}>
                     <Text style={globalStyles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
