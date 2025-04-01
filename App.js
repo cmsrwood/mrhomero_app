@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth, AuthProvider } from "./context/AuthProvider";
 import { View, Text, ActivityIndicator } from "react-native";
 import LoginScreen from "./screens/default/LoginScreen";
+import Recuperar from './screens/default/RecuperarScreen';
+
 
 const PublicScreen = () => <View><Text>Pantalla Pública</Text></View>;
 const PrivateScreen = () => <View><Text>Pantalla Privada</Text></View>;
@@ -13,6 +15,7 @@ const Stack = createNativeStackNavigator();
 const PublicStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Mr.Homero" component={LoginScreen} />
+    <Stack.Screen name="RecoverPassword" component={Recuperar}></Stack.Screen>
   </Stack.Navigator>
 );
 
