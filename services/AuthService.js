@@ -42,7 +42,17 @@ const AuthService = {
             console.error("Error al obtener el token:", error.message);
             return null;
         }
-    }
+    },
+
+    registrar: async (user) => {
+        try {
+            const response = await AuthRepository.registrar(user);
+            return response;
+        } catch (error) {
+            console.error("Error al registrar el usuario:", error.message);
+            throw error;
+        }
+    },
 };
 
 export default AuthService;

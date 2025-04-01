@@ -27,7 +27,7 @@ function MainNavigator() {
 
   switch (user.rol) {
     case 1:
-      return <AdminNavigator />;
+      return <AdminNavigator />
     case 2:
       return <EmpleadoNavigator />;
     case 3:

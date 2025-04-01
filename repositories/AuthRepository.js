@@ -10,6 +10,11 @@ const AuthRepository = {
     const response = await API.get("/api/auth/validarToken");
     return response.data;
   },
+
+  registrar: async (user) => {
+    const response = await API.post("/api/auth/registrar", user);
+    return response.data;
+  },
 };
 
 export default AuthRepository;
