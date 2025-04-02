@@ -8,6 +8,8 @@ import IndexDefault from "../screens/default/IndexDefault";
 import LoginScreen from "../screens/default/LoginScreen";
 import RegistrarScreen from "../screens/default/RegistrarScreen";
 import MenuDefault from '../screens/default/MenuDefaultScreen';
+import CategoriaScreen from '../screens/default/CategoriaScreen';
+import ProductoScreen from '../screens/default/ProductoScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -21,6 +23,15 @@ const LoginStack = () => {
     );
 };
 
+const MenuStack = () => {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Menu" component={MenuDefault} options={{ headerShown: false }} />
+            <Stack.Screen name="CategoriaScreen" component={CategoriaScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="ProductoScreen" component={ProductoScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+    );
+};
 export default function PublicNavigator() {
     return (
         <Tab.Navigator screenOptions={({ route }) => ({
