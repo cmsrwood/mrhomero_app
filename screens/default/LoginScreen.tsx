@@ -23,7 +23,7 @@ export default function LoginScreen() {
 
     return (
         <DefaultLayout>
-            <View>
+            <View style={globalStyles.container}>
                 <View style={{ paddingVertical: 50 }}>
                     <Text style={[globalStyles.title, { color: "#fff" }]}>Iniciar Sesión</Text>
                 </View>

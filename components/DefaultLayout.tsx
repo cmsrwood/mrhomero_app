@@ -8,7 +8,7 @@ export default function DefaultLayout({ children }) {
     const navigation = useNavigation();
 
     return (
-        <View style={globalStyles.container}>
+        <View style={globalStyles.containerfluid}>
             {/* Header */}
             <View style={[styles.header, globalStyles.flex]}>
                 <Image source={mrhomeroImg} style={{ width: 40, height: 40 }} />
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flexGrow: 1,
-        padding: 20,
+        paddingVertical: 20,
         paddingBottom: 70,
     },
     footer: {

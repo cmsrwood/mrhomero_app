@@ -2,12 +2,15 @@ import { StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
 const globalStyles = StyleSheet.create({
-    container: {
+    containerfluid: {
         flex: 1,
         paddingTop: Constants.statusBarHeight,
         backgroundColor: "#2B3035",
         color: "#ffffff",
         alignContent: "center",
+    },
+    container: {
+        padding: 30,
     },
 
     flex: {
