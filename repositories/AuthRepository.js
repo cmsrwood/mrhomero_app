@@ -19,6 +19,11 @@ const AuthRepository = {
     const response = await API.post("/auth/recuperar", { email });
     return response.data;
   },
+
+  resetPassword: async (email, password) => {
+    const response = await API.post("/auth/resetPassword", { email, password });
+    return response.data;
+  },
 };
 
 export default AuthRepository;

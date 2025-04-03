@@ -18,7 +18,20 @@ export default function RecuperarEmailScreen() {
             setError("Ingrese correo");
             return;
         }
-        await AuthService.recuperar(email);
+        try {
+            const response = await AuthService.recuperar(email);
+            console.log(response);
+            if (response.success) {
+                alert("Codigo enviado");
+                navigation.navigate("RecuperarScreen", { email });
+                setError('');
+            } else {
+                alert(response.message);
+                setError(response.message);
+            }
+        } catch (error) {
+            console.error("Error al enviar codigo:", error.message);
+        }
     };
 
     return (
@@ -87,5 +100,4 @@ const styles = StyleSheet.create({
         fontSize: 100,
         color: "#ccc",
     }
-
 });

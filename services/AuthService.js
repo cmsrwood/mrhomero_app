@@ -50,9 +50,19 @@ const AuthService = {
     recuperar: async (email) => {
         try {
             const response = await AuthRepository.recuperar(email);
+            console.log(`Respuesta de servicio: ${JSON.stringify(response)}`);
             return response;
         } catch (error) {
             console.error("Error al enviar codigo:", error.message);
+            throw error;
+        }
+    },
+    resetPassword: async (email, password) => {
+        try {
+            const response = await AuthRepository.resetPassword(email, password);
+            return response;
+        } catch (error) {
+            console.error("Error al cambiar contrasena:", error.message);
             throw error;
         }
     },
