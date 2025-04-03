@@ -31,7 +31,7 @@ export default function MenuDefaultScreen() {
                 <ScrollView>
                     <View>
                         {categorias.map((categoria) => (
-                            <TouchableOpacity onPress={() => navigation.navigate('CategoriaDefaultScreen', { cat_id: categoria.cat_id })} key={categoria.cat_id}>
+                            <TouchableOpacity key={categoria.id_categoria} onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria })}>
                                 <Card style={styles.card}>
                                     <Image style={styles.img} source={{ uri: categoria.cat_foto }} />
                                     <Card.Content style={styles.cardContent}>
