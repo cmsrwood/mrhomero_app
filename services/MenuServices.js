@@ -1,6 +1,6 @@
 import MenuRepository from "../repositories/MenuRepository";
 
-const MenuService = {
+const MenuServices = {
     mostrar: async () => {
         try {
             const response = await MenuRepository.mostrar();
@@ -12,4 +12,4 @@ const MenuService = {
     },
 };
 
-export default MenuService;
+export default MenuServices;
