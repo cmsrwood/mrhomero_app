@@ -10,12 +10,13 @@ import Loader from "./components/Loader";
 import { useFonts } from 'expo-font';
 
 export default function App() {
+
   const [fontsLoaded] = useFonts({
-    "Homer-Simpson": require("./assets/font/Homer_Simpson.ttf"),
+    "Homer-Simpson": require("./assets/font/Homer_Simpson.otf"),
   });
 
   if (!fontsLoaded) {
-    return null; 
+    return null;
   }
 
   return (
