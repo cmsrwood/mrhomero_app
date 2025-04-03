@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import DefaultLayout from '../../components/DefaultLayout'
 
 export default function CategoriaScreen() {
   return (
-    <View>
+    <DefaultLayout>
       <Text>CategoriaScreen</Text>
-    </View>
+    </DefaultLayout>
   )
 }

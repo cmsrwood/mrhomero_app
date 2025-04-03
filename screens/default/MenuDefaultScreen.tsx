@@ -12,7 +12,7 @@ export default function MenuDefaultScreen() {
 
         <DefaultLayout>
             <View style={styles.container}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('CategoriaDefaultScreen') }>
                     <Card style={styles.card}>
                         <Card.Title title="" />
                         <Image source={img} style={styles.img} />

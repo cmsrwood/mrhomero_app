@@ -2,11 +2,11 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import DefaultLayout from '../../components/DefaultLayout'
 
-export default function RecuperarScreen() {
+export default function RecuperarEmailScreen() {
     return (
         <DefaultLayout>
             <View>
-                <Text>Recuperar Contraseña</Text>
+                <Text>RecuperarEmailScreen</Text>
             </View>
         </DefaultLayout>
     )

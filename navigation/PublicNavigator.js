@@ -7,9 +7,11 @@ import { Ionicons } from '@expo/vector-icons';
 import IndexDefault from "../screens/default/IndexDefault";
 import LoginScreen from "../screens/default/LoginScreen";
 import RegistrarScreen from "../screens/default/RegistrarScreen";
-import MenuDefault from '../screens/default/MenuDefaultScreen';
+import MenuDefaultScreen from '../screens/default/MenuDefaultScreen';
 import CategoriaScreen from '../screens/default/CategoriaScreen';
 import ProductoScreen from '../screens/default/ProductoScreen';
+import RecuperarScreen from '../screens/default/RecuperarScreen';
+import RecuperarEmailScreen from '../screens/default/RecuperarEmailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -19,6 +21,8 @@ const LoginStack = () => {
         <Stack.Navigator>
             <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="RegistrarScreen" component={RegistrarScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="RecuperarEmailScreen" component={RecuperarEmailScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="RecuperarScreen" component={RecuperarScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
     );
 };
@@ -26,9 +30,9 @@ const LoginStack = () => {
 const MenuStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Menu" component={MenuDefault} options={{ headerShown: false }} />
-            <Stack.Screen name="CategoriaScreen" component={CategoriaScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="ProductoScreen" component={ProductoScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="MenuDefaultScreen" component={MenuDefaultScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="CategoriaDefaultScreen" component={CategoriaScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="ProductoDefaultScreen" component={ProductoScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
     );
 };
@@ -57,7 +61,7 @@ export default function PublicNavigator() {
         })}>
 
             <Tab.Screen name="IndexDefault" component={IndexDefault} />
-            <Tab.Screen name="Menu" component={MenuDefault} />
+            <Tab.Screen name="Menu" component={MenuStack} />
             <Tab.Screen name="Iniciar Sesion" component={LoginStack} />
         </Tab.Navigator>
     );

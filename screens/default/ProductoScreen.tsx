@@ -1,10 +1,11 @@
 import React from 'react'
-import	{ View, Text } from 'react-native'
+import { View, Text } from 'react-native'
+import DefaultLayout from '../../components/DefaultLayout'
 
 export default function ProductoScreen() {
   return (
-    <View>
+    <DefaultLayout>
       <Text>ProductoScreen</Text>
-    </View>
+    </DefaultLayout>
   )
 }
