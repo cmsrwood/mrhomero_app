@@ -12,7 +12,6 @@ export default function Footer() {
             await Linking.openURL(url);
         } else {
             Alert.alert("No se pudo abrir el enlace", url);
-            console.log("No se pudo abrir el enlace", url);
         }
     }
 
