@@ -3,18 +3,18 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView }
 import { Card } from 'react-native-paper';
 import DefaultLayout from '../../components/DefaultLayout';
 import { useNavigation } from '@react-navigation/native';
-import MenuServices from '../../services/MenuServices';
+import MenuService from '../../services/MenuServices';
 import globalStyles from '../../styles/globalStyles';
+import useCategorias from "../../hooks/useCategorias";
 
 export default function MenuDefaultScreen() {
-    const [categorias, setCategorias] = useState([]);
     const navigation = useNavigation();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [categoriasRes] = await Promise.all([
-                    MenuServices.mostrar(),
+                    MenuService.mostrar(),
                 ]);
                 setCategorias(categoriasRes);
             } catch (error) {
@@ -28,23 +28,20 @@ export default function MenuDefaultScreen() {
         <DefaultLayout>
             <View >
                 <Text style={globalStyles.title}>Categorias</Text>
-                <FlatList
-                 keyExtractor={(item) => item.id_categoria}
-                 data={categorias}
-                 renderItem={({ item: categoria }) => (
-                    
-                     <Card style={styles.card}>
-                         <TouchableOpacity
-                             onPress={() => navigation.navigate('CategoriaScreen', { id_categoria: item.id_categoria })}
-                         >
-                             <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
-                             <View style={styles.cardContent}>
-                                 <Text style={styles.cardText}>{categoria.cat_nom}</Text>
-                             </View>
-                         </TouchableOpacity>
-                     </Card>
-                 )}
-                />
+                <ScrollView>
+                    <View>
+                        {categorias.map((categoria) => (
+                            <TouchableOpacity key={categoria.id_categoria} onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria })}>
+                                <Card style={styles.card}>
+                                    <Image style={styles.img} source={{ uri: categoria.cat_foto }} />
+                                    <Card.Content style={styles.cardContent}>
+                                        <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                                    </Card.Content>
+                                </Card>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </ScrollView>
             </View>
         </DefaultLayout>
     );
