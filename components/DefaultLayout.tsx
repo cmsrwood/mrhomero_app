@@ -9,13 +9,6 @@ export default function DefaultLayout({ children }) {
 
     return (
         <View style={globalStyles.containerfluid}>
-            {/* Header */}
-            <View style={[styles.header, globalStyles.flex]}>
-                <Image source={mrhomeroImg} style={{ width: 40, height: 40 }} />
-                <Text style={[styles.headerText, { color: "#FFF", paddingLeft: 10 }]}>Mr. Homero</Text>
-            </View>
-
-            {/* Contenido Principal */}
             <ScrollView contentContainerStyle={styles.content}>
                 {children}
             </ScrollView>
