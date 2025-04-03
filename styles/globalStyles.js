@@ -25,6 +25,7 @@ const globalStyles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 20,
         fontFamily: "Homer-Simpson",
+        color: "#FFC107",
     },
 
     button: {
@@ -38,6 +39,10 @@ const globalStyles = StyleSheet.create({
     buttonText: {
         color: "#fffff",
         fontSize: 16,
+    },
+
+    fontHomero: {
+        fontFamily: "Homer-Simpson",
     },
 });
 

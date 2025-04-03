@@ -39,7 +39,7 @@ export default function RegistrarScreen() {
         <DefaultLayout>
             <View style={globalStyles.container}>
                 <View style={{ paddingVertical: 50 }}>
-                    <Text style={[globalStyles.title, { color: "#FFF" }]}>Registro</Text>
+                    <Text style={globalStyles.title}>Registro</Text>
                 </View>
 
                 <View style={styles.form}>

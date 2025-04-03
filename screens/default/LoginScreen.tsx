@@ -25,7 +25,7 @@ export default function LoginScreen() {
         <DefaultLayout>
             <View style={globalStyles.container}>
                 <View style={{ paddingVertical: 50 }}>
-                    <Text style={[globalStyles.title, { color: "#fff" }]}>Iniciar Sesión</Text>
+                    <Text style={globalStyles.title}>Iniciar Sesión</Text>
                 </View>
                 <View style={styles.form}>
                     <TextInput style={[styles.input, isFocused === "email" && styles.inputFocused]}
