@@ -18,17 +18,6 @@ const AuthService = {
         }
     },
 
-    logout: async () => {
-        const navigation = useNavigation();
-        try {
-            await AsyncStorage.removeItem("token");
-            navigation.navigate("Login");
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error.message);
-            throw error;
-        }
-    },
-
     validarToken: async () => {
         try {
             return await AuthRepository.validarToken();

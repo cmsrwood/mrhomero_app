@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthContext } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import useAuth from "./hooks/useAuth";
 import AdminNavigator from "./navigation/AdminNavigator";
 import EmpleadoNavigator from "./navigation/EmpleadoNavigator";
@@ -20,11 +20,11 @@ export default function App() {
   }
 
   return (
-    <AuthContext>
+    <AuthProvider>
       <NavigationContainer>
         <MainNavigator />
       </NavigationContainer>
-    </AuthContext>
+    </AuthProvider>
   );
 }
 

@@ -2,9 +2,9 @@ import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthService from "../services/AuthService";
 
-export const Context = createContext(null);
+export const AuthContext = createContext(null);
 
-export function AuthContext({ children }) {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -14,7 +14,12 @@ export function AuthContext({ children }) {
       const token = await AsyncStorage.getItem("token");
       if (token) {
         const userData = await AuthService.validarToken();
-        setUser(userData);
+        if (userData) {
+          setUser(userData);
+        } else {
+          await AsyncStorage.removeItem("token");
+          setUser(null);
+        }
       }
       setIsLoading(false);
     };
@@ -23,10 +28,15 @@ export function AuthContext({ children }) {
 
   const login = async (email, password) => {
     setIsLoading(true);
-    const response = await AuthService.login(email, password);
-    const { token } = response;
-    await AsyncStorage.setItem("token", token);
-    setUser(response);
+    try {
+      const response = await AuthService.login(email, password);
+      if (response?.token) {
+        await AsyncStorage.setItem("token", response.token);
+        setUser(response);
+      }
+    } catch (error) {
+      console.error("Error en login:", error);
+    }
     setIsLoading(false);
   };
 
@@ -38,8 +48,8 @@ export function AuthContext({ children }) {
   };
 
   return (
-    <Context.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
       {children}
-    </Context.Provider>
+    </AuthContext.Provider>
   );
 }
