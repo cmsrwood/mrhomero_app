@@ -21,7 +21,7 @@ export default function IndexDefault() {
     return (
         <DefaultLayout>
             <View>
-                <Text style={styles.text}>Mr homero</Text>
+                <Text >Mr homero</Text>
             </View>
             <View style={styles.slider}>
                 <Swiper autoplay autoplayTimeout={5} showsPagination>

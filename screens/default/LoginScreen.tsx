@@ -4,6 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import globalStyles from "../../styles/globalStyles";
 import DefaultLayout from "../../components/DefaultLayout";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
@@ -24,10 +25,11 @@ export default function LoginScreen() {
     return (
         <DefaultLayout>
             <View style={globalStyles.container}>
-                <View style={{ paddingVertical: 50 }}>
+                <View style={{ paddingVertical: 20 }}>
                     <Text style={globalStyles.title}>Iniciar Sesión</Text>
                 </View>
                 <View style={styles.form}>
+                    <Ionicons name="person-circle" style={styles.icon}></Ionicons>
                     <TextInput style={[styles.input, isFocused === "email" && styles.inputFocused]}
                         placeholder="Correo"
                         placeholderTextColor="#ccc"
@@ -89,12 +91,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         gap: 20,
-        marginVertical: 20,
-        paddingTop: 50
     },
     forgot: {
         fontSize: 12,
         paddingBottom: 20,
+        paddingTop: 10,
         color: "#ccc",
     },
     registrate: {
@@ -110,6 +111,10 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         height: 40,
         width: '40%',
+    },
+    icon: {
+        fontSize: 100,
+        color: "#ccc",
     }
 
 });
