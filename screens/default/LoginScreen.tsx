@@ -47,7 +47,7 @@ export default function LoginScreen() {
                         onBlur={() => setIsFocused(null)} />
                 </View>
                 <View style={styles.flex}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("RecuperarEmailScreen")}>
                         <Text style={styles.forgot}>Olvidaste tu contraseña?</Text>
                     </TouchableOpacity>
                 </View>

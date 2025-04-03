@@ -53,6 +53,15 @@ const AuthService = {
             throw error;
         }
     },
+    recuperar : async (email) => {
+        try {
+            const response = await AuthRepository.recuperar(email);
+            return response;
+        } catch (error) {
+            console.error("Error al enviar codigo:", error.message);
+            throw error;
+        }
+    },
 };
 
 export default AuthService;
