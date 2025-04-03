@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { StyleSheet, Text, View, Button, FlatList, Image } from 'react-native';
+import AdminLayout from '../../components/AdminLayout';
 
 export default function Details({ navigation }) {
 
@@ -18,33 +19,31 @@ export default function Details({ navigation }) {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>productos</Text>
-
-
-            <FlatList
-                data={productos || []}
-                keyExtractor={(producto) => producto.id_producto}
-                renderItem={({ item: producto }) => (
-                    <View style={styles.item}>
-                        <Image source={{ uri: producto.pro_foto }} style={styles.img} />
-                        <View style={styles.textoo}>
-                            <Text>{producto.pro_nom ?? 'Sin nombre'}</Text>
-                            <Text>{producto.pro_precio}</Text>
+        <AdminLayout>
+            <View style={styles.container}>
+                <Text style={styles.title}>productos</Text>
+                <FlatList
+                    data={productos || []}
+                    keyExtractor={(producto) => producto.id_producto}
+                    renderItem={({ item: producto }) => (
+                        <View style={styles.item}>
+                            <Image source={{ uri: producto.pro_foto }} style={styles.img} />
+                            <View style={styles.textoo}>
+                                <Text>{producto.pro_nom ?? 'Sin nombre'}</Text>
+                                <Text>{producto.pro_precio}</Text>
+                            </View>
                         </View>
-                    </View>
-                )}
-            />
-
-            <Button title="Volver" onPress={() => navigation.goBack()} />
-        </View>
+                    )}
+                />
+                <Button title="Volver" onPress={() => navigation.goBack()} />
+            </View>
+        </AdminLayout>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fefeff',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,

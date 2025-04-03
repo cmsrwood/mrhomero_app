@@ -1,21 +1,20 @@
 import React from 'react'
 import Const from 'expo-constants';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import homeroImg from '../../assets/favicon.png';
 import globalStyles from '../../styles/globalStyles';
+import AdminLayout from '../../components/AdminLayout';
 
 export default function IndexAdmin() {
     return (
-        <View style={styles.container}>
-            <Image style={styles.img} source={homeroImg}></Image>
-            <View>
-                <Text style={styles.text}>Si lo que buscas es sabor, Mr. Homero es el mejor</Text>
+        <AdminLayout>
+            <View style={styles.container}>
+                <Image style={styles.img} source={homeroImg}></Image>
+                <View>
+                    <Text style={styles.text}>Si lo que buscas es sabor, Mr. Homero es el mejor</Text>
+                </View>
             </View>
-            <TouchableOpacity style={globalStyles.button}>
-                Cerrar sesión
-            </TouchableOpacity>
-        </View>
+        </AdminLayout>
     );
 }
 const styles = StyleSheet.create({

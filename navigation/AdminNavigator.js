@@ -1,53 +1,27 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import CustomDrawerContent from '../components/CustomDrawerContent';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import IndexAdmin from '../screens/admin/IndexAdmin';
+import Details from '../screens/admin/Details';
 
-import { Ionicons } from '@expo/vector-icons';
-
-import IndexAdmin from "../screens/admin/IndexAdmin";
-import LoginScreen from "../screens/default/LoginScreen";
-import RegistrarScreen from "../screens/default/RegistrarScreen";
-import MenuDefault from '../screens/default/MenuDefaultScreen';
-
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-const LoginStack = () => {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="RegistrarScreen" component={RegistrarScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
-    );
-};
+const Drawer = createDrawerNavigator();
 
 export default function AdminNavigator() {
     return (
-        <Tab.Navigator screenOptions={({ route }) => ({
-            headerShown: false,
-            tabBarStyle: {
-                backgroundColor: "#2B3035",
-                height: 60,
-                paddingBottom: 5,
-            },
-            tabBarIcon: ({ color, size, focused }) => {
-                let iconName;
-                if (route.name === "IndexAdmin") {
-                    iconName = focused ? "home-sharp" : "home-outline";
-                } else if (route.name === "Menu") {
-                    iconName = focused ? "list" : "list-outline";
-                } else if (route.name === "Iniciar Sesion") {
-                    iconName = focused ? "person-circle" : "person-circle-outline";
-                }
-                return <Ionicons name={iconName} size={size} color={color} />;
-            },
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "#B0B0B0",
-        })}>
+        <Drawer.Navigator
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            screenOptions={{
+                headerShown: false,
+                drawerStyle: {
+                    backgroundColor: "#1E1E1E",
+                    width: 250,
+                },
+                drawerActiveTintColor: "#FFD700",
+                drawerInactiveTintColor: "#FFFFFF",
+            }}
+        >
+            <Drawer.Screen name="IndexAdmin" component={IndexAdmin} />
+            <Drawer.Screen name="Details" component={Details} />
+        </Drawer.Navigator>
 
-            <Tab.Screen name="IndexAdmin" component={IndexAdmin} />
-            <Tab.Screen name="Menu" component={MenuDefault} />
-            <Tab.Screen name="Iniciar Sesion" component={LoginStack} />
-        </Tab.Navigator>
     );
-};
+}
