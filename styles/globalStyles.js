@@ -20,7 +20,6 @@ const globalStyles = StyleSheet.create({
 
     title: {
         fontSize: 60,
-        fontWeight: "bold",
         color: "#333",
         textAlign: "center",
         marginBottom: 20,
