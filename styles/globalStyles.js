@@ -19,11 +19,12 @@ const globalStyles = StyleSheet.create({
     },
 
     title: {
-        fontSize: 30,
+        fontSize: 60,
         fontWeight: "bold",
         color: "#333",
         textAlign: "center",
         marginBottom: 20,
+        fontFamily: "Homer-Simpson",
     },
 
     button: {
