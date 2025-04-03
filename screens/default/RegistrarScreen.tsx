@@ -6,6 +6,7 @@ import globalStyles from "../../styles/globalStyles";
 import { FlatList, } from "react-native-gesture-handler";
 import DefaultLayout from "../../components/DefaultLayout"
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function RegistrarScreen() {
     const navigation = useNavigation();
@@ -38,11 +39,12 @@ export default function RegistrarScreen() {
     return (
         <DefaultLayout>
             <View style={globalStyles.container}>
-                <View style={{ paddingVertical: 50 }}>
+                <View >
                     <Text style={globalStyles.title}>Registro</Text>
                 </View>
 
                 <View style={styles.form}>
+                    <Ionicons name="people-circle" style={styles.icon}></Ionicons>
                     <TextInput style={[styles.input, isFocused === "nombres" && styles.focusedInput]}
                         placeholder="Nombres"
                         placeholderTextColor="#ccc"
@@ -124,8 +126,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         gap: 20,
-        marginVertical: 20,
-        paddingTop: 20
+        marginTop: 20
     },
     forgot: {
         fontSize: 12,
@@ -145,5 +146,9 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         height: 40,
         width: '40%',
+    }, 
+    icon: {
+        fontSize: 100,
+        color: "#ccc"
     }
 });
