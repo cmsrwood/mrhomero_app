@@ -1,18 +1,26 @@
 import React from 'react'
 import Const from 'expo-constants';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import homeroImg from '../../assets/favicon.png';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import globalStyles from '../../styles/globalStyles';
+import EmpleadoLayout from '../../components/EmpleadoLayout';
+import AuthService from '../../services/AuthService';
 
 export default function IndexEmpleado() {
+
+    const handleSubmit = async () => {
+        await AuthService.logout();
+    }
     return (
-        <View style={styles.container}>
-            <Image style={styles.img} source={homeroImg}></Image>
-            <View>
-                <Text style={styles.text}>Si lo que buscas es sabor, Mr. Homero es el mejor</Text>
-                <Text>EMPLEADO</Text>
+        <EmpleadoLayout>
+            <View style={styles.container}>
+                <View>
+                    <Text style={styles.text}>Si lo que buscas es sabor, Mr. Homero es el mejor</Text>
+                    <TouchableOpacity onPress={handleSubmit} style={globalStyles.button}>
+                        <Text>Cerrar sesión</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
+        </EmpleadoLayout>
     );
 }
 const styles = StyleSheet.create({

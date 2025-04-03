@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthRepository from "../repositories/AuthRepository";
+import { useNavigation } from "@react-navigation/native";
 
 const AuthService = {
+
     login: async (email, password) => {
         try {
             const data = await AuthRepository.login(email, password);
@@ -17,8 +19,10 @@ const AuthService = {
     },
 
     logout: async () => {
+        const navigation = useNavigation();
         try {
             await AsyncStorage.removeItem("token");
+            navigation.navigate("Login");
         } catch (error) {
             console.error("Error al cerrar sesión:", error.message);
             throw error;
@@ -29,6 +33,7 @@ const AuthService = {
         try {
             return await AuthRepository.validarToken();
         } catch (error) {
+
             console.warn("Token inválido o expirado.");
             return null;
         }
@@ -53,7 +58,7 @@ const AuthService = {
             throw error;
         }
     },
-    recuperar : async (email) => {
+    recuperar: async (email) => {
         try {
             const response = await AuthRepository.recuperar(email);
             return response;
