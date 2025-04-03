@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import { Card } from 'react-native-paper';
 import DefaultLayout from '../../components/DefaultLayout';
 import { useNavigation } from '@react-navigation/native';
 import MenuService from '../../services/MenuServices';
+import globalStyles from '../../styles/globalStyles';
 
 export default function MenuDefaultScreen() {
     const [categorias, setCategorias] = useState([]);
@@ -15,8 +16,7 @@ export default function MenuDefaultScreen() {
                 const [categoriasRes] = await Promise.all([
                     MenuService.mostrar(),
                 ]);
-                console.log("Datos obtenidos:", categoriasRes); // Corregido
-                setCategorias(categoriasRes); // Corregido
+                setCategorias(categoriasRes);
             } catch (error) {
                 console.log("Error al obtener datos:", error);
             }
@@ -26,73 +26,59 @@ export default function MenuDefaultScreen() {
 
     return (
         <DefaultLayout>
-            <View style={styles.container}>
-                <FlatList
-                    data={categorias}
-                    keyExtractor={(categoria) => categoria.id_categoria.toString()}
-                    renderItem={({ item: categoria }) => (
-                        <TouchableOpacity onPress={() => navigation.navigate("CategoriaDefaultScreen")}>
-                            <Card style={styles.card}>
-                                <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
-                                <Card.Content style={styles.contentCard}>
-                                    <Text style={styles.textCard}>{categoria.cat_nom}</Text>
-                                </Card.Content>
-                            </Card>
-                        </TouchableOpacity>
-                    )}
-                />
+            <View >
+                <Text style={globalStyles.title}>Categorias</Text>
+                <ScrollView>
+                    <View>
+                        {categorias.map((categoria) => (
+                            <TouchableOpacity onPress={() => navigation.navigate('CategoriaDefaultScreen', { cat_id: categoria.cat_id })} key={categoria.cat_id}>
+                                <Card style={styles.card}>
+                                    <Image style={styles.img} source={{ uri: categoria.cat_foto }} />
+                                    <Card.Content style={styles.cardContent}>
+                                        <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                                    </Card.Content>
+                                </Card>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </ScrollView>
             </View>
         </DefaultLayout>
     );
 }
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    card: {
+        display: 'flex',
+        alignSelf: 'center',
+        height: 300,
+        width: 250,
+        marginVertical: 10,
+        backgroundColor: '#2B3035',
+        shadowColor: '#fff',
+        padding: 0,
+    },
+    cardContent: {
+        display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
+        marginVertical: 10,
     },
     img: {
-        width: 299,
-        height: 200,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        
-        
-    },
-    contentCard: {
-        paddingTop: 0,
         display: 'flex',
-        flexDirection: 'row',
         justifyContent: 'center',
-        borderColor: '#fff',
-        alignItems: 'center',
-        marginTop: '10%',
+        alignSelf: 'center',
         width: '100%',
-
+        height: 240,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        overflow: 'hidden',
     },
-    textCard: {
+    cardText: {
         fontSize: 20,
+        color: '#ccc',
+        marginVertical: 5,
         fontWeight: 'bold',
-        color: '#fff',
     },
-    card: {
-        alignContent: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 300,
-        height: 260,
-        backgroundColor: '#2B3035',
-        borderRadius: 20,
-        elevation: 10,
-        marginBottom: 20,
-        marginTop: 20,
-        paddingBottom: 50,
-        paddingTop: 5,
-        borderBlockColor: '#000',
-        borderWidth: 1,
-        shadowColor: '#fff',
-    
 
-    },
-})
+});
+
