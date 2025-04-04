@@ -1,12 +1,7 @@
 import MenuRepository from "../repositories/MenuRepository";
 
-<<<<<<< Updated upstream
-const MenuServices = {
-    mostrar: async () => {
-=======
 class MenuService {
     static async getCategorias() {
->>>>>>> Stashed changes
         try {
             const data = await MenuRepository.getCategorias();
             return data || [];
@@ -17,4 +12,4 @@ class MenuService {
     }
 }
 
-export default MenuServices;
+export default MenuService;
