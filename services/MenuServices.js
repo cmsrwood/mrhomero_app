@@ -10,6 +10,15 @@ class MenuService {
             return [];
         }
     }
+    static async getProductos(id) {
+        try {
+            const data = await MenuRepository.getProductos(id);
+            return data || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default MenuService;

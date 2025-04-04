@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView }
 import { Card } from 'react-native-paper';
 import DefaultLayout from '../../components/DefaultLayout';
 import { useNavigation } from '@react-navigation/native';
-import MenuService from '../../services/MenuServices';
 import globalStyles from '../../styles/globalStyles';
 import useMenu from "../../hooks/useMenu"
 export default function MenuDefaultScreen() {
@@ -22,7 +21,7 @@ export default function MenuDefaultScreen() {
                             renderItem={({ item: categoria }) => (
                                 <Card style={styles.card}>
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('CategoriaScreen', { id_categoria: item.id_categoria })}
+                                        onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria , cat_nom: categoria.cat_nom })}
                                     >
                                         <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
                                         <View style={styles.cardContent}>

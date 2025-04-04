@@ -17,6 +17,9 @@ export default function useCategorias(type, params = {}) {
                 if (type === "categorias") {
                     results = await CategoriasService.getCategorias();
                 }
+                else if (type === "productos") {
+                    results = await CategoriasService.getProductos(params.id_categoria);
+                }
 
                 if (isMounted) {
                     setData(results);
@@ -40,4 +43,6 @@ export default function useCategorias(type, params = {}) {
     }, [type, JSON.stringify(params)]); 
 
     return { data, loading, error };
+
+   
 }
