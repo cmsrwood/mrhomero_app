@@ -22,7 +22,7 @@ export default function IndexDefault() {
     const navigation = useNavigation();
 
     const { data: categorias } = useMenu("categorias");
-    const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: 3});
+    const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
 
 
     return (
@@ -76,6 +76,7 @@ export default function IndexDefault() {
                                 <View style={styles.cartas}>
                                     <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
                                     <Text style={styles.textCartas}>{producto.pro_nom}</Text>
+                                    <Text style={{ color: "#FFC107", paddingTop: 5, fontSize: 10 }}>Cantidad: {producto.cantidad_vendida}</Text>
                                 </View>
                             </View>
                         )}
