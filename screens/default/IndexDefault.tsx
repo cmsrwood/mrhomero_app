@@ -1,11 +1,14 @@
-import React from 'react'
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import DefaultLayout from '../../components/DefaultLayout'
 import { useNavigation } from '@react-navigation/native'
 import foto from '../../assets/slider/hamburguesa.jpg'
 import Swiper from 'react-native-swiper';
+import useMenu from '../../hooks/useMenu'
+import useVentas from '../../hooks/useVentas'
 
 const { width } = Dimensions.get('window');
+
 
 const images = [
     { id: '1', image: foto },
@@ -13,31 +16,14 @@ const images = [
     { id: '3', image: foto },
 ]
 
-const categorias = [
-    { id: '1', title: 'Pizzas', image: foto },
-    { id: '2', title: 'Hamburguesas', image: foto },
-    { id: '3', title: 'Perros', image: foto },
-    { id: '4', title: 'Dorilocos', image: foto },
-    { id: '5', title: 'Dorilocos', image: foto },
-    { id: '6', title: 'Dorilocos', image: foto },
-    { id: '7', title: 'Dorilocos', image: foto },
-    { id: '8', title: 'Dorilocos', image: foto },
-]
-
-const productos = [
-    { id: '1', title: 'Pizzas', image: foto, precio: "20.000" },
-    { id: '2', title: 'Hamburguesas', image: foto, precio: "20.000" },
-    { id: '3', title: 'Perros', image: foto, precio: "20.000" },
-    { id: '4', title: 'Dorilocos', image: foto, precio: "20.000" },
-    { id: '5', title: 'Dorilocos', image: foto, precio: "20.000" },
-    { id: '6', title: 'Dorilocos', image: foto, precio: "20.000" },
-    { id: '7', title: 'Dorilocos', image: foto, precio: "20.000" },
-    { id: '8', title: 'Dorilocos', image: foto, precio: "20.000" },
-]
 
 
 export default function IndexDefault() {
     const navigation = useNavigation();
+
+    const { data: categorias } = useMenu("categorias");
+    const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: 3});
+
 
     return (
         <DefaultLayout>
@@ -56,33 +42,46 @@ export default function IndexDefault() {
                 <View style={styles.line} />
             </View>
             <View>
-                <ScrollView horizontal>
-                    <View style={styles.cartasContainer}>
-                        {categorias.map((item) => (
-                            <View key={item.id} style={styles.cartas}>
-                                < Image source={item.image} style={styles.imgCartas} />
-                                <Text style={styles.textCartas}>{item.title}</Text>
+                <FlatList
+                    data={categorias}
+                    keyExtractor={(item) => item.id_categoria}
+                    horizontal={true}
+                    renderItem={({ item: categoria }) => (
+                        <View style={styles.cartasContainer}>
+                            <View key={categoria.id_categoria} style={styles.cartas}>
+                                < Image source={{ uri: categoria.cat_foto }} style={styles.imgCartas} />
+                                <Text style={styles.textCartas}>{categoria.cat_nom}</Text>
                             </View>
-                        ))}
-                    </View>
-                </ScrollView>
+                        </View>
+                    )}
+                />
             </View>
             <View>
                 <View >
                     <Text style={styles.divider}>Destacados</Text>
                     <View style={styles.line} />
                 </View>
-                <ScrollView horizontal>
-                    <View style={styles.cartasContainer}>
-                        {productos.map((item) => (
-                            <View key={item.id} style={styles.cartas}>
-                                < Image source={item.image} style={styles.imgCartas} />
-                                <Text style={styles.textCartas}>{item.title}</Text>
-                                <Text style={styles.precioCartas}>$ {item.precio}</Text>
+                {productos.length === 0 ? (
+                    <Text style={{
+                        color: "#ccc", fontSize: 20, textAlign: "center",
+                        paddingVertical: 50
+                    }}>No hay productos destacados</Text>
+                ) : (
+                    <FlatList
+                        data={productos}
+                        keyExtractor={(item, index) => `${item.pro_nom}-${index}`}
+                        horizontal={true}
+                        renderItem={({ item: producto }) => (
+                            <View style={styles.cartasContainer}>
+                                <View style={styles.cartas}>
+                                    <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
+                                    <Text style={styles.textCartas}>{producto.pro_nom}</Text>
+                                </View>
                             </View>
-                        ))}
-                    </View>
-                </ScrollView>
+                        )}
+                    />
+                )}
+
             </View>
         </DefaultLayout >
     )
@@ -135,10 +134,10 @@ const styles = StyleSheet.create({
     },
     cartasContainer: {
         display: 'flex',
-        flexDirection: 'row',
-        gap: 23,
-        margin: 20,
-        paddingHorizontal: 10
+        marginTop: 6,
+        marginBottom: 10,
+        marginLeft: 15,
+        paddingLeft: 6
     },
     cartas: {
         display: 'flex',
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     textCartas: {
         color: '#fff',
         paddingTop: 6,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
 
     },
     precioCartas: {
