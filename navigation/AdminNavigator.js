@@ -1,4 +1,4 @@
-import CustomDrawerContent from '../components/CustomDrawerContent';
+import AdminDrawer from '../compo../components/AdminDrawer
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import IndexAdmin from '../screens/admin/IndexAdmin';
 import Details from '../screens/admin/Details';
@@ -8,7 +8,7 @@ const Drawer = createDrawerNavigator();
 export default function AdminNavigator() {
     return (
         <Drawer.Navigator
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            drawerContent={(props) => <AdminDrawer {...props} />}
             screenOptions={{
                 headerShown: false,
                 drawerStyle: {
@@ -22,6 +22,5 @@ export default function AdminNavigator() {
             <Drawer.Screen name="IndexAdmin" component={IndexAdmin} />
             <Drawer.Screen name="Details" component={Details} />
         </Drawer.Navigator>
-
     );
 }
