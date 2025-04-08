@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-paper';
 import DefaultLayout from '../../components/DefaultLayout';
 import { useNavigation } from '@react-navigation/native';
@@ -12,27 +12,20 @@ export default function MenuDefaultScreen() {
 
     return (
         <DefaultLayout>
-            <View style={{ flex: 1 }} >
+            <View >
                 <Text style={globalStyles.title}>Categorias</Text>
-                <View>
-                    <FlatList
-                        keyExtractor={(item) => item.id_categoria}
-                        data={categorias}
-                        scrollEnabled={false}
-                        renderItem={({ item: categoria }) => (
-                            <Card style={styles.card}>
-                                <TouchableOpacity
-                                    onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}
-                                >
+                    <View>
+                        {categorias.map((categoria) => (
+                            <Card key={categoria.id_categoria} style={styles.card}>
+                                <TouchableOpacity onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria , cat_nom: categoria.cat_nom })}>
                                     <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
                                     <View style={styles.cardContent}>
                                         <Text style={styles.cardText}>{categoria.cat_nom}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </Card>
-                        )}
-                    />
-                </View>
+                        ))}
+                    </View>
             </View>
         </DefaultLayout>
     );
