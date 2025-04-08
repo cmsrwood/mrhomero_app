@@ -24,6 +24,26 @@ export default function IndexDefault() {
     const { data: categorias } = useMenu("categorias");
     const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
 
+    const handleNavigateToCategoria = (id_categoria, cat_nom) => {
+        navigation.navigate("Menu", {
+            screen: "CategoriaScreen",
+            params: {
+                id_categoria: id_categoria,
+                cat_nom: cat_nom
+            }
+        });
+    };
+
+    const handleNavigateToProducto = (id_producto, pro_nom) => {
+        navigation.navigate("Menu", {
+            screen: "ProductoScreen",
+            params: {
+                id_producto: id_producto,
+                pro_nom: pro_nom
+            }
+        });
+    };
+
 
     return (
         <DefaultLayout>
@@ -47,12 +67,14 @@ export default function IndexDefault() {
                     keyExtractor={(item) => item.id_categoria}
                     horizontal={true}
                     renderItem={({ item: categoria }) => (
-                        <View style={styles.cartasContainer}>
-                            <View key={categoria.id_categoria} style={styles.cartas}>
-                                < Image source={{ uri: categoria.cat_foto }} style={styles.imgCartas} />
-                                <Text style={styles.textCartas}>{categoria.cat_nom}</Text>
+                        <TouchableOpacity onPress={() => handleNavigateToCategoria(categoria.id_categoria, categoria.cat_nom)}>
+                            <View style={styles.cartasContainer}>
+                                <View key={categoria.id_categoria} style={styles.cartas}>
+                                    < Image source={{ uri: categoria.cat_foto }} style={styles.imgCartas} />
+                                    <Text style={styles.textCartas}>{categoria.cat_nom}</Text>
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             </View>
@@ -72,13 +94,15 @@ export default function IndexDefault() {
                         keyExtractor={(item, index) => `${item.pro_nom}-${index}`}
                         horizontal={true}
                         renderItem={({ item: producto }) => (
-                            <View style={styles.cartasContainer}>
-                                <View style={styles.cartas}>
-                                    <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
-                                    <Text style={styles.textCartas}>{producto.pro_nom}</Text>
-                                    <Text style={{ color: "#FFC107", paddingTop: 5, fontSize: 10 }}>Cantidad: {producto.cantidad_vendida}</Text>
+                            <TouchableOpacity onPress={() => handleNavigateToProducto(producto.id_producto, producto.pro_nom)}>
+                                <View style={styles.cartasContainer}>
+                                    <View style={styles.cartas}>
+                                        <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
+                                        <Text style={styles.textCartas}>{producto.pro_nom}</Text>
+                                        <Text style={{ color: "#FFC107", paddingTop: 5, fontSize: 10 }}>Cantidad: {producto.cantidad_vendida}</Text>
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     />
                 )}
