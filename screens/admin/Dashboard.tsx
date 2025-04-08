@@ -5,7 +5,7 @@ import AdminLayout from '../../components/AdminLayout';
 
 const screenWidth = Dimensions.get('window').width;
 
-const MyChart = () => {
+export default function Dashboard() {
     const data = {
         labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
         datasets: [
@@ -36,5 +36,3 @@ const MyChart = () => {
         </AdminLayout>
     );
 };
-
-export default MyChart;
