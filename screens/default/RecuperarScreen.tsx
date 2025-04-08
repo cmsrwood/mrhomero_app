@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import AuthService from "../../services/AuthService";
+import { showMessage } from "react-native-flash-message";
 
 export default function RecuperarScreen() {
 
@@ -21,7 +22,7 @@ export default function RecuperarScreen() {
     const [error, setError] = useState('');
 
     const route = useRoute();
-    const { email } = route.params || {};
+    const email = route.params.email;
 
     const handleChange = (value) => {
         setUser({
@@ -31,25 +32,55 @@ export default function RecuperarScreen() {
     };
 
     const handleSubmit = async () => {
-        if (!codigo) {
-            setError("Ingrese codigo");
+        if (!user.newPassword || !user.confirmPassword || !user.verificationCode) {
+            const msg = "Todos los campos son obligatorios";
+            setError(msg);
+            showMessage({
+                message: msg,
+                type: "warning"
+            });
             return;
         }
+
+        if (user.newPassword !== user.confirmPassword) {
+            const msg = "Las contraseñas no coinciden";
+            setError(msg);
+            showMessage({
+                message: msg,
+                type: "warning"
+            })
+            return;
+        }
+
         try {
-            const response = await AuthService.resetPassword(email, codigo);
-            console.log(response);
+            const response = await AuthService.resetPassword(email, user.newPassword);
+
             if (response.success) {
-                alert("Contrasena cambiada con exito");
-                navigation.navigate("LoginScreen");
+                showMessage({
+                    message: "Contraseña actualizada",
+                    type: "success"
+                })
                 setError('');
+                navigation.navigate("Login");
             } else {
-                alert(response.message);
-                setError(response.message);
+                const msg = response.message || "Error al actualizar la contraseña";
+                setError(msg);
+                showMessage({
+                    message: msg,
+                    type: "warning"
+                })
             }
-        } catch (error) {
-            console.error("Error al enviar codigo:", error.message);
+        } catch (err) {
+            const msg = err?.response?.data?.message || "Error al actualizar la contraseña";
+            setError(msg);
+            showMessage({
+                message: msg,
+                type: "warning"
+            })
         }
     };
+
+
     return (
         <DefaultLayout>
             <View style={globalStyles.container}>

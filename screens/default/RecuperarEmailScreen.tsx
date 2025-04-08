@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import globalStyles from "../../styles/globalStyles";
 import DefaultLayout from "../../components/DefaultLayout";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import AuthService from "../../services/AuthService";
+import { showMessage } from "react-native-flash-message";
 
 export default function RecuperarEmailScreen() {
     const navigation = useNavigation();
@@ -15,21 +16,30 @@ export default function RecuperarEmailScreen() {
 
     const handleSubmit = async () => {
         if (!email) {
-            setError("Ingrese correo");
+            const msg = "Ingresa un correo";
+            setError(msg);
+            showMessage({
+                message: "Error",
+                description: msg,
+                type: "warning",
+                icon: "warning",
+            });
             return;
         }
         try {
             const response = await AuthService.recuperar(email);
-            console.log(response);
-            if (response.success) {
-                alert("Codigo enviado");
-                navigation.navigate("RecuperarScreen", { email });
-                setError('');
-            } else {
-                alert(response.message);
-                setError(response.message);
-            }
+            showMessage({
+                message: "Codigo enviado",
+                type: "success"
+            })
+            navigation.navigate("RecuperarScreen", { email });
+            setError('');
         } catch (error) {
+            setError("Error al enviar codigo");
+            showMessage({
+                message: "Error al enviar codigo",
+                type: "danger"
+            })
             console.error("Error al enviar codigo:", error.message);
         }
     };

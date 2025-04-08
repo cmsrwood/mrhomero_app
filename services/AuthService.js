@@ -2,9 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthRepository from "../repositories/AuthRepository";
 import { useNavigation } from "@react-navigation/native";
 
-const AuthService = {
-
-    login: async (email, password) => {
+class AuthService {
+    static async login(email, password) {
         try {
             const data = await AuthRepository.login(email, password);
             if (data?.token) {
@@ -13,59 +12,52 @@ const AuthService = {
             }
             throw new Error("No se recibió un token válido.");
         } catch (error) {
-            console.error("Error en login:", error.message);
             throw error;
         }
-    },
+    }
 
-    validarToken: async () => {
+    static async validarToken() {
         try {
             return await AuthRepository.validarToken();
         } catch (error) {
-
             console.warn("Token inválido o expirado.");
             return null;
         }
-    },
+    }
 
-    getToken: async () => {
+    static async getToken() {
         try {
             const token = await AsyncStorage.getItem("token");
             return token || null;
         } catch (error) {
-            console.error("Error al obtener el token:", error.message);
             return null;
         }
-    },
+    }
 
-    registrar: async (user) => {
+    static async registrar(user) {
         try {
             const response = await AuthRepository.registrar(user);
             return response;
         } catch (error) {
-            console.error("Error al registrar el usuario:", error.message);
             throw error;
         }
-    },
-    recuperar: async (email) => {
+    }
+    static async recuperar(email) {
         try {
             const response = await AuthRepository.recuperar(email);
-            console.log(`Respuesta de servicio: ${JSON.stringify(response)}`);
             return response;
         } catch (error) {
-            console.error("Error al enviar codigo:", error.message);
             throw error;
         }
-    },
-    resetPassword: async (email, password) => {
+    }
+    static async resetPassword(email, password) {
         try {
             const response = await AuthRepository.resetPassword(email, password);
             return response;
         } catch (error) {
-            console.error("Error al cambiar contrasena:", error.message);
             throw error;
         }
-    },
+    }
 };
 
 export default AuthService;

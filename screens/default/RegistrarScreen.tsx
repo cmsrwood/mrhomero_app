@@ -3,7 +3,6 @@ import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView 
 import AuthService from "../../services/AuthService";
 import mrhomeroImg from "../../assets/favicon.png";
 import globalStyles from "../../styles/globalStyles";
-import { FlatList, } from "react-native-gesture-handler";
 import DefaultLayout from "../../components/DefaultLayout"
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,12 +11,14 @@ export default function RegistrarScreen() {
     const navigation = useNavigation();
     const { registrar } = AuthService;
 
+    const [error, setError] = useState('');
+
     const [user, setUser] = useState({
         nombres: "",
         apellidos: "",
         email: "",
         password: "",
-        confirmarPassword: "",
+        confirmPassword: "",
     });
 
     const [isFocused, setIsFocused] = useState('');
@@ -27,11 +28,25 @@ export default function RegistrarScreen() {
     };
 
     const handleLogin = async () => {
-        if (!user.email || !user.password || !user.confirmarPassword) {
-            alert("Ingrese correo y contraseña");
+        if (!user.nombres || !user.apellidos || !user.email || !user.password || !user.confirmPassword) {
+            setError("Todos los campos son obligatorios");
             return;
         }
-        await registrar(user);
+        if (user.password !== user.confirmPassword) {
+            setError("Las contrasenas no coinciden");
+            return;
+        }
+        const nombreConGuiones = user.nombres.replace(/\s+/g, '_');
+        const id_unico = `user_${nombreConGuiones}_${Date.now()}_app`;
+        const data = {
+            id: id_unico,
+            nombres: user.nombres,
+            apellidos: user.apellidos,
+            email: user.email,
+            password: user.password,
+            confirmPassword: user.confirmPassword
+        }
+        const response = await registrar(data);
     };
 
     return (
@@ -40,7 +55,6 @@ export default function RegistrarScreen() {
                 <View >
                     <Text style={globalStyles.title}>Registro</Text>
                 </View>
-
                 <View style={styles.form}>
                     <Ionicons name="people-circle" style={styles.icon}></Ionicons>
                     <TextInput style={[styles.input, isFocused === "nombres" && styles.focusedInput]}
@@ -60,7 +74,6 @@ export default function RegistrarScreen() {
                     <TextInput style={[styles.input, isFocused === "email" && styles.focusedInput]}
                         placeholder="Correo"
                         placeholderTextColor="#ccc"
-
                         onChangeText={handleChange("email")}
                         value={user.email}
                         onFocus={() => setIsFocused("email")}
@@ -68,7 +81,7 @@ export default function RegistrarScreen() {
                     <TextInput style={[styles.input, isFocused === "password" && styles.focusedInput]}
                         placeholder="Contraseña"
                         placeholderTextColor="#ccc"
-
+                        secureTextEntry
                         onChangeText={handleChange("password")}
                         value={user.password}
                         onFocus={() => setIsFocused("password")}
@@ -76,12 +89,13 @@ export default function RegistrarScreen() {
                     <TextInput style={[styles.input, isFocused === "confirmarPassword" && styles.focusedInput]}
                         placeholder="Confirmar Contraseña"
                         placeholderTextColor="#ccc"
-
-                        onChangeText={handleChange("confirmarPassword")}
-                        value={user.confirmarPassword}
-                        onFocus={() => setIsFocused("confirmarPassword")}
+                        secureTextEntry
+                        onChangeText={handleChange("confirmPassword")}
+                        value={user.confirmPassword}
+                        onFocus={() => setIsFocused("confirmPassword")}
                         onBlur={() => setIsFocused(null)} />
                 </View>
+                <Text style={[globalStyles.error, { textAlign: "center", marginTop: 10 }]}>{error}</Text>
                 <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center", marginTop: 15 }]}>
                     <Text style={globalStyles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
@@ -106,10 +120,12 @@ const styles = StyleSheet.create({
         height: 40,
         width: '100%',
         borderRadius: 15,
-        padding: 10
+        padding: 10,
+        color: "#fff"
     },
     focusedInput: {
         borderColor: "#FFC107",
+        color: "#FFC107"
     },
     flex: {
         display: "flex",

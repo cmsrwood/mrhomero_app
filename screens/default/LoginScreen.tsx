@@ -5,10 +5,13 @@ import globalStyles from "../../styles/globalStyles";
 import DefaultLayout from "../../components/DefaultLayout";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
+import { showMessage } from "react-native-flash-message";
 
 export default function LoginScreen() {
     const navigation = useNavigation();
     const { login } = useAuth()
+
+    const [error, setError] = useState("");
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,7 +19,14 @@ export default function LoginScreen() {
 
     const handleLogin = async () => {
         if (!email || !password) {
-            alert("Ingrese correo y contraseña");
+            const msg = "Todos los campos son obligatorios";
+            setError(msg);
+            showMessage({
+                message: "Error",
+                description: msg,
+                type: "warning", 
+                icon: "warning",
+            });
             return;
         }
         await login(email, password);

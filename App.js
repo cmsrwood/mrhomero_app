@@ -8,6 +8,7 @@ import ClienteNavigator from "./navigation/ClienteNavigator";
 import PublicNavigator from "./navigation/PublicNavigator";
 import Loader from "./components/Loader";
 import { useFonts } from 'expo-font';
+import FlashMessage from "react-native-flash-message";
 
 export default function App() {
 
@@ -22,6 +23,7 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
+        <FlashMessage position="top" />
         <MainNavigator />
       </NavigationContainer>
     </AuthProvider>

@@ -18,6 +18,10 @@ const globalStyles = StyleSheet.create({
         flexDirection: "row",
     },
 
+    error: {
+        color: "red",
+    },
+
     title: {
         fontSize: 60,
         color: "#333",

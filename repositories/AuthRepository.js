@@ -1,29 +1,30 @@
 import API from "../config/api";
 
-const AuthRepository = {
-  login: async (email, password) => {
+class AuthRepository {
+  static async login(email, password) {
     const response = await API.post("/auth/ingresar", { email, password });
     return response.data;
-  },
+  }
 
-  validarToken: async () => {
+  static async validarToken() {
     const response = await API.get("/auth/validarToken");
     return response.data;
-  },
+  }
 
-  registrar: async (user) => {
+  static async registrar(user) {
     const response = await API.post("/auth/registrar", user);
     return response.data;
-  },
-  recuperar: async (email) => {
+  }
+  static async recuperar(email) {
     const response = await API.post("/auth/recuperar", { email });
+    console.log(response.data);
     return response.data;
-  },
+  }
 
-  resetPassword: async (email, password) => {
+  static async resetPassword(email, password) {
     const response = await API.post("/auth/resetPassword", { email, password });
     return response.data;
-  },
+  }
 };
 
 export default AuthRepository;
