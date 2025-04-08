@@ -1,4 +1,4 @@
-import AdminDrawer from '../compo../components/AdminDrawer
+import AdminDrawer from '../components/AdminDrawer';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import IndexAdmin from '../screens/admin/IndexAdmin';
 import Details from '../screens/admin/Details';

@@ -22,10 +22,8 @@ export default function RegistrarScreen() {
 
     const [isFocused, setIsFocused] = useState('');
 
-    const handleChange = () => {
-        return (e) => {
-            setUser({ ...user, [e.target.name]: e.target.value });
-        };
+    const handleChange = (data) => (value) => {
+        setUser({ ...user, [data]: value });
     };
 
     const handleLogin = async () => {
@@ -48,16 +46,14 @@ export default function RegistrarScreen() {
                     <TextInput style={[styles.input, isFocused === "nombres" && styles.focusedInput]}
                         placeholder="Nombres"
                         placeholderTextColor="#ccc"
-
-                        onChangeText={handleChange()}
+                        onChangeText={handleChange("nombres")}
                         value={user.nombres}
                         onFocus={() => setIsFocused("nombres")}
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "apellidos" && styles.focusedInput]}
                         placeholder="Apellidos"
                         placeholderTextColor="#ccc"
-
-                        onChangeText={handleChange()}
+                        onChangeText={handleChange("apellidos")}
                         value={user.apellidos}
                         onFocus={() => setIsFocused("apellidos")}
                         onBlur={() => setIsFocused(null)} />
@@ -65,7 +61,7 @@ export default function RegistrarScreen() {
                         placeholder="Correo"
                         placeholderTextColor="#ccc"
 
-                        onChangeText={handleChange()}
+                        onChangeText={handleChange("email")}
                         value={user.email}
                         onFocus={() => setIsFocused("email")}
                         onBlur={() => setIsFocused(null)} />
@@ -73,7 +69,7 @@ export default function RegistrarScreen() {
                         placeholder="Contraseña"
                         placeholderTextColor="#ccc"
 
-                        onChangeText={handleChange()}
+                        onChangeText={handleChange("password")}
                         value={user.password}
                         onFocus={() => setIsFocused("password")}
                         onBlur={() => setIsFocused(null)} />
@@ -81,7 +77,7 @@ export default function RegistrarScreen() {
                         placeholder="Confirmar Contraseña"
                         placeholderTextColor="#ccc"
 
-                        onChangeText={handleChange()}
+                        onChangeText={handleChange("confirmarPassword")}
                         value={user.confirmarPassword}
                         onFocus={() => setIsFocused("confirmarPassword")}
                         onBlur={() => setIsFocused(null)} />
@@ -146,7 +142,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         height: 40,
         width: '40%',
-    }, 
+    },
     icon: {
         fontSize: 100,
         color: "#ccc"
