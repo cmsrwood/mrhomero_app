@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import AdminLayout from '../../components/AdminLayout';
+import { showMessage } from 'react-native-flash-message';
 
 export default function Dashboard() {
     return (
