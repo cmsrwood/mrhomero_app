@@ -1,10 +1,8 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 
 export default function Loader() {
     return (
-        <View>
-            <Text>Loading...</Text>
-        </View>
+        <ActivityIndicator size="large" color="#FFC107" style={{ marginTop: 100, backgroundColor: "#2B3035", height: "100%", width: "100%" }} />
     )
 }

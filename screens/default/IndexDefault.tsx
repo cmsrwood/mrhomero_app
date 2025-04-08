@@ -6,6 +6,7 @@ import foto from '../../assets/slider/hamburguesa.jpg'
 import Swiper from 'react-native-swiper';
 import useMenu from '../../hooks/useMenu'
 import useVentas from '../../hooks/useVentas'
+import { Ionicons } from '@expo/vector-icons'
 
 const { width } = Dimensions.get('window');
 
@@ -94,14 +95,14 @@ export default function IndexDefault() {
                         keyExtractor={(item, index) => `${item.pro_nom}-${index}`}
                         horizontal={true}
                         renderItem={({ item: producto }) => (
-                            <TouchableOpacity onPress={() => handleNavigateToProducto(producto.id_producto, producto.pro_nom)}>
-                                <View style={styles.cartasContainer}>
+                            <TouchableOpacity style={styles.cartasContainer} onPress={() => handleNavigateToProducto(producto.id_producto, producto.pro_nom)}>
+                                <View>
                                     <View style={styles.cartas}>
                                         <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
                                         <Text style={styles.textCartas}>{producto.pro_nom}</Text>
-                                        <Text style={{ color: "#FFC107", paddingTop: 5, fontSize: 10 }}>Cantidad: {producto.cantidad_vendida}</Text>
                                     </View>
                                 </View>
+                                <Ionicons name="flame" style={{ position: 'absolute', top: 10, right: 0, color: "#FFC107" }} size={24} color="black" />
                             </TouchableOpacity>
                         )}
                     />
@@ -162,7 +163,9 @@ const styles = StyleSheet.create({
         marginTop: 6,
         marginBottom: 10,
         marginLeft: 15,
-        paddingLeft: 6
+        marginRight: 15,
+        paddingLeft: 6,
+        width: 100
     },
     cartas: {
         display: 'flex',
