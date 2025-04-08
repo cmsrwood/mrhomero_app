@@ -12,26 +12,27 @@ export default function MenuDefaultScreen() {
 
     return (
         <DefaultLayout>
-            <View >
+            <View style={{ flex: 1 }} >
                 <Text style={globalStyles.title}>Categorias</Text>
-                    <View>
-                        <FlatList
-                            keyExtractor={(item) => item.id_categoria}
-                            data={categorias}
-                            renderItem={({ item: categoria }) => (
-                                <Card style={styles.card}>
-                                    <TouchableOpacity
-                                        onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria , cat_nom: categoria.cat_nom })}
-                                    >
-                                        <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
-                                        <View style={styles.cardContent}>
-                                            <Text style={styles.cardText}>{categoria.cat_nom}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </Card>
-                            )}
-                        />
-                    </View>
+                <View>
+                    <FlatList
+                        keyExtractor={(item) => item.id_categoria}
+                        data={categorias}
+                        scrollEnabled={false}
+                        renderItem={({ item: categoria }) => (
+                            <Card style={styles.card}>
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}
+                                >
+                                    <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
+                                    <View style={styles.cardContent}>
+                                        <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </Card>
+                        )}
+                    />
+                </View>
             </View>
         </DefaultLayout>
     );
