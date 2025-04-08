@@ -28,7 +28,7 @@ const MenuStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MenuDefaultScreen" component={MenuDefaultScreen} />
         <Stack.Screen name="CategoriaDefaultScreen" component={CategoriaScreen} />
-        <Stack.Screen name="ProductoScreen" component={ProductoScreen} />
+        <Stack.Screen name="ProductoDefaultScreen" component={ProductoScreen} />
     </Stack.Navigator>
 );
 

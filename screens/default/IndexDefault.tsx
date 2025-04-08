@@ -26,7 +26,7 @@ export default function IndexDefault() {
 
     const handleNavigateToCategoria = (id_categoria, cat_nom) => {
         navigation.navigate("Menu", {
-            screen: "CategoriaScreen",
+            screen: "CategoriaDefaultScreen",
             params: {
                 id_categoria: id_categoria,
                 cat_nom: cat_nom
@@ -36,7 +36,7 @@ export default function IndexDefault() {
 
     const handleNavigateToProducto = (id_producto, pro_nom) => {
         navigation.navigate("Menu", {
-            screen: "ProductoScreen",
+            screen: "ProductoDefaultScreen",
             params: {
                 id_producto: id_producto,
                 pro_nom: pro_nom
