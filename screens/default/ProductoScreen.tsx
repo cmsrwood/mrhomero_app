@@ -48,8 +48,9 @@ const styles = StyleSheet.create({
     borderColor: '#B7B7B7',
   },
   desp: {
-    marginLeft: 40,
-    marginTop: 10
+    marginLeft: 20,
+    marginTop: 10,
+    gap: 8
   },
   desc: {
     color: '#fff',
