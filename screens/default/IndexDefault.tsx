@@ -102,7 +102,9 @@ export default function IndexDefault() {
                                         <Text style={styles.textCartas}>{producto.pro_nom}</Text>
                                     </View>
                                 </View>
-                                <Ionicons name="flame" style={{ position: 'absolute', top: 10, right: 0, color: "#FFC107" }} size={24} color="black" />
+                                <View style={styles.flame}>
+                                    <Ionicons name="flame" size={24} color="black" style={{ color: "orange" }} />
+                                </View>
                             </TouchableOpacity>
                         )}
                     />
@@ -186,5 +188,15 @@ const styles = StyleSheet.create({
     precioCartas: {
         color: '#FFC107',
         paddingTop: 4
+    },
+    flame: {
+        backgroundColor: "#2B3035",
+        borderRadius: 10,
+        position: "absolute",
+        top: 10,
+        right: -15,
+        display: "flex",
+        flexDirection: "row",
+        gap: 5
     }
 })
