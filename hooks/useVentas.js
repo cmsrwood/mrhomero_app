@@ -26,6 +26,11 @@ export default function useVentas(type, params = {}) {
                     results = await VentasService.getProductosMasVendidos(year, month);
                 }
 
+                if (type === "ventasMensuales") {
+                    const { ano, mes } = stableParams;
+                    results = await VentasService.getVentasMensuales(ano, mes);
+                }
+
                 if (isMounted) {
                     setData(results);
                 }
@@ -45,7 +50,7 @@ export default function useVentas(type, params = {}) {
         return () => {
             isMounted = false;
         };
-    }, [type, stableParams]); 
+    }, [type, stableParams]);
 
     return { data, loading, error };
 }
