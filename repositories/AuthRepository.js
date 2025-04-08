@@ -17,13 +17,14 @@ class AuthRepository {
   }
   static async recuperar(email) {
     const response = await API.post("/auth/recuperar", { email });
-    console.log(response.data);
-    return response.data;
+    if (response.status === 200) return response.data;
+    else return response.data.error;
   }
 
-  static async resetPassword(email, password) {
-    const response = await API.post("/auth/resetPassword", { email, password });
-    return response.data;
+  static async resetPassword(email, newPassword, verificationCode) {
+    const response = await API.post("/auth/resetPassword", { email, newPassword, verificationCode,});
+    if (response.status === 200) return response.data;
+    else return response.data.error;
   }
 };
 

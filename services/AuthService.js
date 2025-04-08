@@ -50,9 +50,9 @@ class AuthService {
             throw error;
         }
     }
-    static async resetPassword(email, password) {
+    static async resetPassword(email, newPassword, verificationCode) {
         try {
-            const response = await AuthRepository.resetPassword(email, password);
+            const response = await AuthRepository.resetPassword(email, newPassword, verificationCode);
             return response;
         } catch (error) {
             throw error;

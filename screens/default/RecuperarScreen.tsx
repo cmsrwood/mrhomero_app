@@ -24,11 +24,8 @@ export default function RecuperarScreen() {
     const route = useRoute();
     const email = route.params.email;
 
-    const handleChange = (value) => {
-        setUser({
-            ...user,
-            [isFocused]: value
-        });
+    const handleChange = (data) => (value) => {
+        setUser({ ...user, [data]: value });
     };
 
     const handleSubmit = async () => {
@@ -53,29 +50,23 @@ export default function RecuperarScreen() {
         }
 
         try {
-            const response = await AuthService.resetPassword(email, user.newPassword);
-
-            if (response.success) {
-                showMessage({
-                    message: "Contraseña actualizada",
-                    type: "success"
-                })
-                setError('');
-                navigation.navigate("Login");
-            } else {
-                const msg = response.message || "Error al actualizar la contraseña";
-                setError(msg);
-                showMessage({
-                    message: msg,
-                    type: "warning"
-                })
-            }
+            const response = await AuthService.resetPassword(email, user.newPassword, user.verificationCode);
+            const msg = response.message
+            showMessage({
+                icon: "success",
+                message: msg,
+                type: "success"
+            })
+            setError('');
+            navigation.navigate("LoginScreen");
         } catch (err) {
             const msg = err?.response?.data?.message || "Error al actualizar la contraseña";
             setError(msg);
             showMessage({
-                message: msg,
-                type: "warning"
+                icon: "danger",
+                message: "Error al actualizar la contraseña",
+                description: msg,
+                type: "danger"
             })
         }
     };
@@ -93,21 +84,23 @@ export default function RecuperarScreen() {
                     <TextInput style={[styles.input, isFocused === "codigo" && styles.inputFocused]}
                         placeholder="Codigo"
                         placeholderTextColor="#ccc"
-                        onChangeText={handleChange}
+                        onChangeText={handleChange("verificationCode")}
                         value={user.verificationCode}
                         onFocus={() => setIsFocused("codigo")}
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "contrasena" && styles.inputFocused]}
                         placeholder="Contraseña"
                         placeholderTextColor="#ccc"
-                        onChangeText={handleChange}
+                        onChangeText={handleChange("newPassword")}
+                        secureTextEntry
                         value={user.newPassword}
                         onFocus={() => setIsFocused("contrasena")}
                         onBlur={() => setIsFocused(null)} />
                     <TextInput style={[styles.input, isFocused === "contrasenaConfirmar" && styles.inputFocused]}
                         placeholder="Confirmar Contrasena"
                         placeholderTextColor="#ccc"
-                        onChangeText={handleChange}
+                        secureTextEntry
+                        onChangeText={handleChange("confirmPassword")}
                         value={user.confirmPassword}
                         onFocus={() => setIsFocused("contrasenaConfirmar")}
                         onBlur={() => setIsFocused(null)} />

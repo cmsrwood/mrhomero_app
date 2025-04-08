@@ -30,7 +30,10 @@ export default function RecuperarEmailScreen() {
             const response = await AuthService.recuperar(email);
             showMessage({
                 message: "Codigo enviado",
-                type: "success"
+                description: response.message,
+                type: "success",
+                icon: "success",
+                duration: 2000
             })
             navigation.navigate("RecuperarScreen", { email });
             setError('');
@@ -38,7 +41,9 @@ export default function RecuperarEmailScreen() {
             setError("Error al enviar codigo");
             showMessage({
                 message: "Error al enviar codigo",
-                type: "danger"
+                description: error.message,
+                type: "danger",
+                icon: "danger",
             })
             console.error("Error al enviar codigo:", error.message);
         }
