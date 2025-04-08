@@ -8,7 +8,7 @@ export default function AdminLayout({ children }) {
     const navigation = useNavigation();
 
     return (
-        <View style={styles.container}>
+        <View style={globalStyles.containerfluid}>
             <TouchableOpacity
                 onPress={() => navigation.openDrawer()}
                 style={styles.menuButton}
@@ -24,10 +24,6 @@ export default function AdminLayout({ children }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#1E1E1E",
-    },
     menuButton: {
         position: "absolute",
         top: 50,
@@ -37,7 +33,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flexGrow: 1,
-        paddingVertical: 20,
+        paddingVertical: 100,
         paddingBottom: 70,
     },
 });

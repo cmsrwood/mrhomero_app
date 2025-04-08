@@ -1,8 +1,10 @@
+import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
 import { View, Dimensions, Text, StyleSheet, FlatList, Image } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 
 export default function Dashboard() {
     const formatCurrency = (value) => {
@@ -25,10 +27,10 @@ export default function Dashboard() {
     };
 
     const chartConfig = {
-        backgroundGradientFrom: "#fff",
-        backgroundGradientTo: "#fff",
+        backgroundGradientFrom: "#2B3035",
+        backgroundGradientTo: "#2B3035",
         color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         strokeWidth: 2,
         propsForDots: {
             r: "6",
@@ -38,6 +40,29 @@ export default function Dashboard() {
     };
 
     const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
+
+    const [ano, setAno] = useState(new Date().getFullYear());
+    const [mes, setMes] = useState(new Date().getMonth() + 1);
+    const [ia, setIA] = useState('');
+
+    const handleAnoChange = (event) => {
+        setAno(event.target.value);
+        setIA('');
+        const collapseElement = document.getElementById('CollapseIA');
+        collapseElement.classList.remove('show');
+    };
+
+    const handleMesChange = (event) => {
+        setMes(event.target.value);
+        const collapseElement = document.getElementById('CollapseIA');
+        collapseElement.classList.remove('show');
+        setIA('');
+    };
+
+    const diasMes = [];
+    for (let dia = 1; dia <= moment(`${ano}-${mes}-01`, "YYYY-MM").daysInMonth(); dia++) {
+        diasMes.push(dia);
+    }
 
     return (
         <AdminLayout>
@@ -105,7 +130,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#6C757D",
         padding: 30,
-        shadowRadius: 10,
     },
     col_2: {
         width: "100%",
@@ -114,7 +138,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#6C757D",
         padding: 30,
-        shadowRadius: 10,
     },
     titulo_col: {
         fontSize: 20,
