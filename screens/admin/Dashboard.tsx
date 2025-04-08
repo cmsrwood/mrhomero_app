@@ -1,53 +1,40 @@
 import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import { View, Dimensions } from 'react-native';
+import { BarChart, LineChart } from 'react-native-chart-kit';
 import AdminLayout from '../../components/AdminLayout';
-import { showMessage } from 'react-native-flash-message';
 
-export default function Dashboard() {
+const screenWidth = Dimensions.get('window').width;
+
+const MyChart = () => {
+    const data = {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
+        datasets: [
+            {
+                data: [20, 45, 28, 80, 99]
+            }
+        ]
+    };
+
+    const chartConfig = {
+        backgroundGradientFrom: '#fff',
+        backgroundGradientTo: '#fff',
+        decimalPlaces: 0,
+        color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        barPercentage: 0.6
+    };
+
     return (
         <AdminLayout>
-            <View>
-                <Text style={{ fontSize: 20, textAlign: 'center', marginVertical: 10 }}>
-                    Ventas Semanales
-                </Text>
-                <LineChart
-                    data={{
-                        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-                        datasets: [
-                            {
-                                data: [20, 45, 28, 80, 99, 43],
-                            },
-                        ],
-                    }}
-                    width={Dimensions.get('window').width - 40}
-                    height={220}
-                    yAxisLabel="$"
-                    yAxisSuffix="k"
-                    chartConfig={{
-                        backgroundColor: '#1E1E1E',
-                        backgroundGradientFrom: '#1E1E1E',
-                        backgroundGradientTo: '#333',
-                        decimalPlaces: 2,
-                        color: (opacity = 1) => `rgba(255, 215, 0, ${opacity})`,
-                        labelColor: () => '#fff',
-                        style: {
-                            borderRadius: 16,
-                        },
-                        propsForDots: {
-                            r: '6',
-                            strokeWidth: '2',
-                            stroke: '#FFD700',
-                        },
-                    }}
-                    bezier
-                    style={{
-                        marginVertical: 10,
-                        borderRadius: 16,
-                        alignSelf: 'center',
-                    }}
-                />
-            </View>
+            <LineChart
+                data={data}
+                width={screenWidth - 32}
+                height={220}
+                chartConfig={chartConfig}
+                style={{ marginVertical: 8, borderRadius: 16, marginHorizontal: 16 }}
+            />
         </AdminLayout>
     );
-}
+};
+
+export default MyChart;
