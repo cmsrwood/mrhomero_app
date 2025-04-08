@@ -5,26 +5,16 @@ import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
+import globalStyles from '../../styles/globalStyles';
 
 export default function Dashboard() {
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
-        }).format(value);
-    }
+
+    const anoActual = moment().format('YYYY');
+    const mesActual = moment().format('M');
+    const [ano, setAno] = useState(anoActual);
+    const [mes, setMes] = useState(mesActual);
 
     const screenWidth = Dimensions.get("window").width;
-
-    const data = {
-        labels: ["Ene", "Feb", "Mar", "Abr", "May"],
-        datasets: [
-            {
-                data: [20, 45, 28, 80, 99]
-            }
-        ]
-    };
 
     const chartConfig = {
         backgroundGradientFrom: "#2B3035",
@@ -33,46 +23,57 @@ export default function Dashboard() {
         labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         strokeWidth: 2,
         propsForDots: {
-            r: "6",
-            strokeWidth: "2",
+            r: "1",
+            strokeWidth: "1",
             stroke: "#007AFF"
         }
     };
 
     const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
+    const { data: ventasMensuales } = useVentas("ventasMensuales", { ano: ano, mes: mes });
 
-    const [ano, setAno] = useState(new Date().getFullYear());
-    const [mes, setMes] = useState(new Date().getMonth() + 1);
     const [ia, setIA] = useState('');
-
-    const handleAnoChange = (event) => {
-        setAno(event.target.value);
-        setIA('');
-        const collapseElement = document.getElementById('CollapseIA');
-        collapseElement.classList.remove('show');
-    };
-
-    const handleMesChange = (event) => {
-        setMes(event.target.value);
-        const collapseElement = document.getElementById('CollapseIA');
-        collapseElement.classList.remove('show');
-        setIA('');
-    };
 
     const diasMes = [];
     for (let dia = 1; dia <= moment(`${ano}-${mes}-01`, "YYYY-MM").daysInMonth(); dia++) {
         diasMes.push(dia);
     }
 
+    const ventasDiarias = diasMes.map(dia => {
+        const venta = ventasMensuales.find(venta => venta.dia == dia);
+        return {
+            dia: dia,
+            total_ventas: venta ? venta.total_ventas : 0
+        };
+    });
+
+    const dataGrafica = {
+        labels: ventasDiarias.map(venta =>
+            [1, 5, 10, 15, 20, 25, 30].includes(venta.dia) ? `${venta.dia}` : ''
+        ),
+        datasets: [{
+            data: ventasDiarias.map(venta => venta.total_ventas),
+        }]
+    };
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(value);
+    }
+
     return (
         <AdminLayout>
             <View>
+                <Text style={globalStyles.title}>Dashboard</Text>
                 <LineChart
-                    data={data}
+                    data={dataGrafica}
                     width={screenWidth - 32}
                     height={220}
                     chartConfig={chartConfig}
-                    style={{ marginHorizontal: 16, marginVertical: 8, borderRadius: 16 }}
+                    style={{ marginVertical: 8, borderRadius: 16, paddingHorizontal: 16 }}
                 />
                 <View style={styles.row}>
                     <View style={styles.col}>

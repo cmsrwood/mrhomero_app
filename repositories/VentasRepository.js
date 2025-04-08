@@ -10,6 +10,11 @@ class VentasRepository {
         const response = await API.get(`/tienda/ventas/productosMasVendidos/${year}/${month}`);
         return response.data
     }
+
+    static async getVentasMensuales(ano, mes) {
+        const response = await API.get(`/tienda/ventas/ventasMensuales/${ano}/${mes}`);
+        return response.data
+    }
 }
 
 export default VentasRepository;
