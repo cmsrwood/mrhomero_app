@@ -2,6 +2,7 @@ import AdminDrawer from '../components/AdminDrawer';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import IndexAdmin from '../screens/admin/IndexAdmin';
 import Details from '../screens/admin/Details';
+import Dashboard from '../screens/admin/Dashboard';
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +22,7 @@ export default function AdminNavigator() {
         >
             <Drawer.Screen name="IndexAdmin" component={IndexAdmin} />
             <Drawer.Screen name="Details" component={Details} />
+            <Drawer.Screen name="Dashboard" component={Dashboard} />
         </Drawer.Navigator>
     );
 }
