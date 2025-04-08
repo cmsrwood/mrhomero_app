@@ -63,9 +63,9 @@ export default function IndexDefault() {
                 </View>
                 {productos.length === 0 ? (
                     <Text style={{
-                        color: "#ccc", fontSize: 20, textAlign: "center",
+                        color: "#ccc", fontSize: 18, textAlign: "center",
                         paddingVertical: 50
-                    }}>No hay productos destacados</Text>
+                    }}>No hay productos destacados este mes</Text>
                 ) : (
                     <FlatList
                         data={productos}
