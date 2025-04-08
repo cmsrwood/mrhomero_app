@@ -9,6 +9,10 @@ class MenuRepository {
         const response = await API.get(`/tienda/productos/categoria/${id}`);        
         return response.data
     }
+    static async getProducto(id) {
+        const response = await API.get(`/tienda/productos/${id}`);        
+        return response.data
+    }
     
 }
 

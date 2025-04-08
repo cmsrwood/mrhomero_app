@@ -19,7 +19,7 @@ export default function CategoriaScreen() {
         <Text style={globalStyles.title}>{cat_nom}</Text>
         <View>
           {productos.map((producto) => (
-            <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_producto: producto.id_producto })}>
+            <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoDefaultScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
               <Card style={styles.card}>
                 <Image style={styles.img} source={{ uri: producto.pro_foto }} />
                 <Card.Content style={styles.cardContent}>
