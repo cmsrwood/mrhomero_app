@@ -9,6 +9,7 @@ import PublicNavigator from "./navigation/PublicNavigator";
 import Loader from "./components/Loader";
 import { useFonts } from 'expo-font';
 import FlashMessage from "react-native-flash-message";
+import Constants from "expo-constants";
 
 export default function App() {
 
@@ -23,7 +24,7 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <FlashMessage position="top" />
+        <FlashMessage position="top" style={{ paddingTop: Constants.statusBarHeight, }} />
         <MainNavigator />
       </NavigationContainer>
     </AuthProvider>
