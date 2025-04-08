@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-import { View, Dimensions, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import globalStyles from '../../styles/globalStyles';
+import { Picker } from '@react-native-picker/picker';
 
 export default function Dashboard() {
 
@@ -13,6 +14,16 @@ export default function Dashboard() {
     const mesActual = moment().format('M');
     const [ano, setAno] = useState(anoActual);
     const [mes, setMes] = useState(mesActual);
+    const [tipoReporte, setTipoReporte] = useState('');
+
+    const handleAnoChange = (itemValue) => {
+        setAno(itemValue);
+    };
+
+    const handleMesChange = (itemValue) => {
+        setMes(itemValue);
+    };
+
 
     const screenWidth = Dimensions.get("window").width;
 
@@ -29,7 +40,7 @@ export default function Dashboard() {
         }
     };
 
-    const { data: productos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
+    const { data: productos } = useVentas("productosMasVendidos", { year: ano, month: mes });
     const { data: ventasMensuales } = useVentas("ventasMensuales", { ano: ano, mes: mes });
 
     const [ia, setIA] = useState('');
@@ -68,6 +79,56 @@ export default function Dashboard() {
         <AdminLayout>
             <View>
                 <Text style={globalStyles.title}>Dashboard</Text>
+                <View style={styles.pickerContainer}>
+                    <View style={styles.pickerWrapper}>
+                        <Picker
+                            selectedValue={ano}
+                            onValueChange={handleAnoChange}
+                            style={styles.picker}
+                            dropdownIconColor="#fff"
+                        >
+                            {[0, 1, 2, 3, 4].map(offset => {
+                                const yearOption = parseInt(anoActual) - offset;
+                                return <Picker.Item key={yearOption} label={`${yearOption}`} value={`${yearOption}`} />;
+                            })}
+                        </Picker>
+                    </View>
+                    <View style={styles.pickerWrapper}>
+                        <Picker
+                            selectedValue={mes}
+                            onValueChange={handleMesChange}
+                            style={styles.picker}
+                            dropdownIconColor="#fff"
+                        >
+                            {[
+                                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                            ].map((mesNombre, index) => (
+                                <Picker.Item key={index + 1} label={mesNombre} value={`${index + 1}`} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+                <View style={{ paddingHorizontal: 24 }}>
+                    <Picker
+                        selectedValue={tipoReporte}
+                        onValueChange={value => setTipoReporte(value)}
+                        style={styles.picker}
+                        dropdownIconColor="#fff"
+                    >
+                        <Picker.Item label="Mensual" value="mensual" />
+                        <Picker.Item label="Anual" value="anual" />
+                    </Picker>
+                </View>
+                <View style={{ marginVertical: 16, paddingHorizontal: 24, flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
+                    <TouchableOpacity style={{ backgroundColor: '#DC3545', padding: 8, borderRadius: 8 }}>
+                        <Ionicons style={{ color: '#fff' }} name="calendar-outline" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ backgroundColor: '#0B5ED7', padding: 8, borderRadius: 8 }}>
+                        <Ionicons style={{ color: '#fff' }} name="color-wand-outline" size={24} color="black" />
+                    </TouchableOpacity>
+                </View>
+
                 <LineChart
                     data={dataGrafica}
                     width={screenWidth - 32}
@@ -186,7 +247,7 @@ const styles = StyleSheet.create({
         paddingTop: 4
     },
     flame: {
-        backgroundColor: "#1E1E1E",
+        backgroundColor: "#2B3035",
         borderRadius: 10,
         position: "absolute",
         top: 10,
@@ -194,5 +255,25 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         gap: 5
-    }
+    },
+    pickerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        marginTop: 16,
+        gap: 10
+    },
+    pickerWrapper: {
+        flex: 1,
+        backgroundColor: '#2B3035',
+        borderRadius: 8,
+        padding: 8
+    },
+    picker: {
+        color: '#fff',
+        backgroundColor: '#2B3035',
+        height: 54,
+        width: '100%'
+    },
+
 });
