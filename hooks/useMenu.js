@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CategoriasService from "../services/MenuServices";
+import MenuService from "../services/MenuServices";
 
 export default function useCategorias(type, params = {}) {
     const [data, setData] = useState([]);
@@ -15,10 +15,13 @@ export default function useCategorias(type, params = {}) {
                 let results = [];
 
                 if (type === "categorias") {
-                    results = await CategoriasService.getCategorias();
+                    results = await MenuService.getCategorias();
                 }
                 else if (type === "productos") {
-                    results = await CategoriasService.getProductos(params.id_categoria);
+                    results = await MenuService.getProductos(params.id_categoria);
+                }
+                else if (type === "producto"){
+                    results = await MenuService.getProducto(params.id_producto);
                 }
 
                 if (isMounted) {

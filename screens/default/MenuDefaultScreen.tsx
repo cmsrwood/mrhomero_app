@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import globalStyles from '../../styles/globalStyles';
 import useMenu from "../../hooks/useMenu"
 export default function MenuDefaultScreen() {
-    const navigation = useNavigation();
 
+    const navigation = useNavigation();
     const { data: categorias, loading, error } = useMenu("categorias")
 
     return (
