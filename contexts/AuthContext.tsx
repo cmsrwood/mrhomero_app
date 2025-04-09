@@ -58,8 +58,11 @@ export function AuthProvider({ children }) {
     setIsLoading(true);
     await AsyncStorage.removeItem("token");
     showMessage({
-      message: "Has cerrado sesión",
-      type: "danger",
+      message: "Has cerrado sesión correctamente",
+      icon: "success",
+      duration: 2000, 
+      description: "Hasta pronto",
+      type: "success",
     })
     setUser(null);
     setIsLoading(false);
