@@ -17,7 +17,7 @@ export default function CategoriaScreen() {
     <DefaultLayout>
       <View >
         <Text style={globalStyles.title}>{cat_nom}</Text>
-        <View>
+        <View style={styles.type}>
           {productos.map((producto) => (
             <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoDefaultScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
               <Card style={styles.card}>
@@ -34,11 +34,19 @@ export default function CategoriaScreen() {
   )
 }
 const styles = StyleSheet.create({
+  type: {
+    padding: 20,
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    alignContent: 'space-between',
+  },
   card: {
     display: 'flex',
     alignSelf: 'center',
-    height: 300,
-    width: 250,
+    height: 230,
+    width: 160,
     marginVertical: 10,
     backgroundColor: '#2B3035',
     shadowColor: '#fff',
@@ -55,13 +63,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     width: '100%',
-    height: 240,
+    height: 150,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     overflow: 'hidden',
   },
   cardText: {
-    fontSize: 20,
+    fontSize: 15,
     color: '#ccc',
     marginVertical: 5,
     fontWeight: 'bold',

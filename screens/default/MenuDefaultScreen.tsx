@@ -14,7 +14,7 @@ export default function MenuDefaultScreen() {
         <DefaultLayout>
             <View >
                 <Text style={globalStyles.title}>Categorias</Text>
-                    <View>
+                    <View style={styles.type}>
                         {categorias.map((categoria) => (
                             <Card key={categoria.id_categoria} style={styles.card}>
                                 <TouchableOpacity onPress={() => navigation.navigate('CategoriaDefaultScreen', { id_categoria: categoria.id_categoria , cat_nom: categoria.cat_nom })}>
@@ -31,11 +31,19 @@ export default function MenuDefaultScreen() {
     );
 }
 const styles = StyleSheet.create({
+    type:{
+        padding: 20,
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignContent: 'space-between',
+    },
     card: {
         display: 'flex',
         alignSelf: 'center',
-        height: 300,
-        width: 250,
+        height: 200,
+        width: 160,
         marginVertical: 10,
         backgroundColor: '#2B3035',
         shadowColor: '#fff',
@@ -52,13 +60,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
         width: '100%',
-        height: 240,
+        height: 150,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         overflow: 'hidden',
     },
     cardText: {
-        fontSize: 20,
+        fontSize: 15,
         color: '#ccc',
         marginVertical: 5,
         fontWeight: 'bold',
