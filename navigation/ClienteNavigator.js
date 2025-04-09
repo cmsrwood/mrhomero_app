@@ -4,7 +4,7 @@ import React from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 
-import IndexAdmin from "../screens/admin/IndexAdmin";
+import IndexAdmin from "../screens/admin/IndexAdminScreen";
 import LoginScreen from "../screens/default/LoginScreen";
 import RegistrarScreen from "../screens/default/RegistrarScreen";
 import MenuDefault from '../screens/default/MenuDefaultScreen';

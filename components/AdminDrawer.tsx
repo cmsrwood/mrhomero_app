@@ -38,17 +38,17 @@ export default function CustomDrawerContent({ navigation }) {
 
                 {ventasExpanded && (
                     <View>
-                        <TouchableOpacity onPress={() => handlePress('analisisVentas')} style={[styles.buttons, { paddingLeft: 20 }]}>
+                        <TouchableOpacity onPress={() => handlePress('analisisVentas', 'Dashboard')} style={[styles.buttons, { paddingLeft: 20 }]}>
                             <Ionicons name="analytics" style={[styles.icon, activeButton === 'analisisVentas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'analisisVentas' && styles.active]}>  Analisis de ventas</Text>
                             </Ionicons>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('gestionVentas')} style={[styles.buttons, { paddingLeft: 20 }]}>
+                        <TouchableOpacity onPress={() => handlePress('gestionVentas', 'Ventas')} style={[styles.buttons, { paddingLeft: 20 }]}>
                             <Ionicons name="bar-chart" style={[styles.icon, activeButton === 'gestionVentas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'gestionVentas' && styles.active]}>  Gestion de ventas</Text>
                             </Ionicons>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('pedidos')} style={styles.buttons}>
+                        <TouchableOpacity onPress={() => handlePress('pedidos', 'Pedidos')} style={[styles.buttons, { paddingLeft: 20 }]}>
                             <Ionicons name="wallet" style={[styles.icon, activeButton === 'pedidos' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'pedidos' && styles.active]}>  Pedidos</Text>
                             </Ionicons>
@@ -56,31 +56,31 @@ export default function CustomDrawerContent({ navigation }) {
                     </View>
                 )}
 
-                <TouchableOpacity onPress={() => handlePress('inventario', 'Dashboard')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('inventario', 'Inventario')} style={styles.buttons}>
                     <Ionicons name="file-tray" style={[styles.icon, activeButton === 'inventario' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'inventario' && styles.active]}>  Inventario</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('menu', 'Details')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('menu', 'Menu')} style={styles.buttons}>
                     <Ionicons name="fast-food" style={[styles.icon, activeButton === 'menu' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'menu' && styles.active]}>  Menú</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('recompensas', 'Details')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('recompensas', 'Recompensas')} style={styles.buttons}>
                     <Ionicons name="gift" style={[styles.icon, activeButton === 'recompensas' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'recompensas' && styles.active]}>  Recompensas</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('recompensasObtenidas', 'Details')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('recompensasObtenidas', 'RecompensasObtenidas')} style={styles.buttons}>
                     <Ionicons name="bag-check" style={[styles.icon, activeButton === 'recompensasObtenidas' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'recompensasObtenidas' && styles.active]}>  Recompensas Obtenidas</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('clientes', 'Details')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('clientes', 'Clientes')} style={styles.buttons}>
                     <Ionicons name="people" style={[styles.icon, activeButton === 'clientes' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'clientes' && styles.active]}>  Clientes</Text>
                     </Ionicons>
@@ -94,13 +94,13 @@ export default function CustomDrawerContent({ navigation }) {
 
                 {empleadosExpanded && (
                     <View>
-                        <TouchableOpacity onPress={() => handlePress('empleados', 'Details')} style={[styles.buttons, { paddingLeft: 20 }]}>
+                        <TouchableOpacity onPress={() => handlePress('empleados', 'Empleados')} style={[styles.buttons, { paddingLeft: 20 }]}>
                             <Ionicons name="person-circle" style={[styles.icon, activeButton === 'empleados' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'empleados' && styles.active]}>  Empleados</Text>
                             </Ionicons>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => handlePress('horas', 'Details')} style={[styles.buttons, { paddingLeft: 20 }]}>
+                        <TouchableOpacity onPress={() => handlePress('horas', 'HorasEmpleados')} style={[styles.buttons, { paddingLeft: 20 }]}>
                             <Ionicons name="time" style={[styles.icon, activeButton === 'horas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'horas' && styles.active]}>  Horas de empleados</Text>
                             </Ionicons>
@@ -108,7 +108,7 @@ export default function CustomDrawerContent({ navigation }) {
                     </View>
                 )}
 
-                <TouchableOpacity onPress={() => handlePress('proveedores', 'Details')} style={styles.buttons}>
+                <TouchableOpacity onPress={() => handlePress('proveedores', 'Proveedores')} style={styles.buttons}>
                     <Ionicons name="bag-add" style={[styles.icon, activeButton === 'proveedores' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'proveedores' && styles.active]}>  Proveedores</Text>
                     </Ionicons>

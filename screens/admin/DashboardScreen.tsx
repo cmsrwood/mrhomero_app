@@ -8,7 +8,7 @@ import moment from 'moment';
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 
-export default function Dashboard() {
+export default function DashboardScreen() {
 
     const anoActual = moment().format('YYYY');
     const mesActual = moment().format('M');
