@@ -6,6 +6,8 @@ import globalStyles from "../../styles/globalStyles";
 import DefaultLayout from "../../components/DefaultLayout"
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { showMessage } from "react-native-flash-message";
+
 
 export default function RegistrarScreen() {
     const navigation = useNavigation();
@@ -27,17 +29,20 @@ export default function RegistrarScreen() {
         setUser({ ...user, [data]: value });
     };
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         if (!user.nombres || !user.apellidos || !user.email || !user.password || !user.confirmPassword) {
             setError("Todos los campos son obligatorios");
             return;
         }
+
         if (user.password !== user.confirmPassword) {
-            setError("Las contrasenas no coinciden");
+            setError("Las contraseñas no coinciden");
             return;
         }
-        const nombreConGuiones = user.nombres.replace(/\s+/g, '_');
+
+        const nombreConGuiones = user.nombres.replace(/\s+/g, "_");
         const id_unico = `user_${nombreConGuiones}_${Date.now()}_app`;
+
         const data = {
             id: id_unico,
             nombres: user.nombres,
@@ -45,9 +50,30 @@ export default function RegistrarScreen() {
             email: user.email,
             password: user.password,
             confirmPassword: user.confirmPassword
+        };
+
+        try {
+            const response = await registrar(data);
+
+            showMessage({
+                message: response.message || "Usuario registrado correctamente.",
+                type: "success",
+                icon: "success",
+                duration: 3000,
+            });
+
+            navigation.navigate("LoginScreen"); 
+        } catch (error) {
+            showMessage({
+                message: error.message || "Hubo un problema al registrar.",
+                description: "Por favor, intenta nuevamente.",
+                type: "danger",
+                icon: "danger",
+                duration: 3000,
+            });
         }
-        const response = await registrar(data);
     };
+
 
     return (
         <DefaultLayout>
@@ -86,7 +112,7 @@ export default function RegistrarScreen() {
                         value={user.password}
                         onFocus={() => setIsFocused("password")}
                         onBlur={() => setIsFocused(null)} />
-                    <TextInput style={[styles.input, isFocused === "confirmarPassword" && styles.focusedInput]}
+                    <TextInput style={[styles.input, isFocused === "confirmPassword" && styles.focusedInput]}
                         placeholder="Confirmar Contraseña"
                         placeholderTextColor="#ccc"
                         secureTextEntry
@@ -96,7 +122,7 @@ export default function RegistrarScreen() {
                         onBlur={() => setIsFocused(null)} />
                 </View>
                 <Text style={[globalStyles.error, { textAlign: "center", marginTop: 10 }]}>{error}</Text>
-                <TouchableOpacity onPress={handleLogin} style={[globalStyles.button, { width: "60%", alignSelf: "center", marginTop: 15 }]}>
+                <TouchableOpacity onPress={handleRegister} style={[globalStyles.button, { width: "60%", alignSelf: "center", marginTop: 15 }]}>
                     <Text style={globalStyles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>

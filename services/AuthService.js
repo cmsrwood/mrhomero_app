@@ -39,7 +39,8 @@ class AuthService {
             const response = await AuthRepository.registrar(user);
             return response;
         } catch (error) {
-            throw error;
+            const errorMessage = error?.response?.data?.message || "Error al registrar el usuario.";
+            throw new Error(errorMessage);
         }
     }
     static async recuperar(email) {
