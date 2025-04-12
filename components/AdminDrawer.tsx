@@ -20,7 +20,7 @@ export default function CustomDrawerContent({ navigation }) {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#1E1E1E" }}>
+        <View style={{ flex: 1, backgroundColor: "#2B3035" }}>
             <DrawerContentScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 <Text style={[globalStyles.title, { fontSize: 40, paddingTop: 25 }]}>Mr. Homero</Text>
 
@@ -133,8 +133,9 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "white",
-        fontSize: 20,
+        fontSize: 26,
         alignContent: "center",
+        fontFamily: 'Homer-Simpson',
     },
     buttons: {
         paddingVertical: 13,
@@ -142,11 +143,12 @@ const styles = StyleSheet.create({
     active: {
         backgroundColor: "gray",
         borderRadius: 10,
-        padding: 10
+        padding: 10,
+        color: "#FFC107",
     },
     footer: {
         padding: 15,
         borderTopWidth: 1,
-        borderTopColor: '#333',
+        borderTopColor: '#0003',
     }
 });
