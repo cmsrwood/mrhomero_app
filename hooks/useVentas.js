@@ -31,6 +31,21 @@ export default function useVentas(type, params = {}) {
                     results = await VentasService.getVentasMensuales(ano, mes);
                 }
 
+                if (type === "ventasAnuales") {
+                    const { ano } = stableParams;
+                    results = await VentasService.getVentasAnuales(ano);
+                }
+
+                if (type === "cuentaProductosVendidosPorMes") {
+                    const { ano, mes } = stableParams;
+                    results = await VentasService.getCuentaProductosVendidosPorMes(ano, mes);
+                }
+
+                if (type === "cuentaVentasMes") {
+                    const { ano, mes } = stableParams;
+                    results = await VentasService.getCuentaVentasMes(ano, mes);
+                }
+
                 if (isMounted) {
                     setData(results);
                 }

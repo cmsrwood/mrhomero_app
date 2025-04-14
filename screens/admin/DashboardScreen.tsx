@@ -40,8 +40,30 @@ export default function DashboardScreen() {
         }
     };
 
+    // Información de ventas
     const { data: productos } = useVentas("productosMasVendidos", { year: ano, month: mes });
     const { data: ventasMensuales } = useVentas("ventasMensuales", { ano: ano, mes: mes });
+
+    // Información de productos vendidos por mes
+
+    const mesInt = parseInt(mes);
+    const anoInt = parseInt(ano);
+    const mesAnterior = mesInt - 1 <= 0 ? 12 : mesInt - 1;
+    const anoAnterior = mesInt - 1 <= 0 ? anoInt - 1 : anoInt;
+
+    const { data: cuentaProductosVendidosPorMes } = useVentas("cuentaProductosVendidosPorMes", { ano: anoInt, mes: mesInt });
+
+    const { data: cuentaProductosVendidosPorMesAnterior } = useVentas("cuentaProductosVendidosPorMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
+
+    const porcentajeProductos = (Math.floor(((cuentaProductosVendidosPorMes - cuentaProductosVendidosPorMesAnterior) / cuentaProductosVendidosPorMes) * 100));
+
+    // Información total de ventas por mes
+
+    const { data: cuentaVentasMes } = useVentas("cuentaVentasMes", { ano: anoInt, mes: mesInt });
+
+    const { data: cuentaVentasMesAnterior } = useVentas("cuentaVentasMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
+
+    const porcentajeVentas = (Math.floor(((cuentaVentasMes - cuentaVentasMesAnterior) / cuentaVentasMes) * 100));
 
     const [ia, setIA] = useState('');
 
@@ -139,13 +161,13 @@ export default function DashboardScreen() {
                 <View style={styles.row}>
                     <View style={styles.col}>
                         <Text style={styles.titulo_col}>Productos vendidos por mes</Text>
-                        <Text style={styles.subtitulo_col}>69 Unidades</Text>
-                        <Text style={styles.porcentaje_positivo}>+x este mes</Text>
+                        <Text style={styles.subtitulo_col}>{cuentaProductosVendidosPorMes} Unidades</Text>
+                        <Text style={porcentajeProductos > 0 ? styles.porcentaje_positivo : styles.porcentaje_negativo}>{porcentajeProductos}% este mes</Text>
                     </View>
                     <View style={styles.col}>
                         <Text style={styles.titulo_col}>Total ventas por mes</Text>
-                        <Text style={styles.subtitulo_col}>{formatCurrency(10000)}</Text>
-                        <Text style={styles.porcentaje_negativo}>+x este mes</Text>
+                        <Text style={styles.subtitulo_col}>{formatCurrency(cuentaVentasMes)}</Text>
+                        <Text style={porcentajeVentas > 0 ? styles.porcentaje_positivo : styles.porcentaje_negativo}>{porcentajeVentas}% este mes</Text>
                     </View>
                     <View style={styles.col_2}>
                         <Text style={styles.titulo_col}>Productos más vendidos</Text>

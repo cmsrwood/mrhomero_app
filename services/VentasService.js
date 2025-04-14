@@ -31,6 +31,36 @@ class VentasService {
             return [];
         }
     }
+    static async getVentasAnuales(ano) {
+        try {
+            const data = await VentasRepository.getVentasAnuales(ano);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async getCuentaProductosVendidosPorMes(ano, mes) {
+        try {
+            const data = await VentasRepository.getCuentaProductosVendidosPorMes(ano, mes);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async getCuentaVentasMes(ano, mes) {
+        try {
+            const data = await VentasRepository.getCuentaVentasMes(ano, mes);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default VentasService;   
