@@ -1,79 +1,123 @@
 import React from 'react'
-import Const from 'expo-constants';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import homeroImg from '../../assets/favicon.png';
-import globalStyles from '../../styles/globalStyles';
 import AdminLayout from '../../components/AdminLayout';
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons';
+import useClientes from '../../hooks/useClientes';
+import { Icon } from 'react-native-paper';
 
 
 export default function IndexAdmin() {
     const navigation = useNavigation();
+    const { data: clientesRegistrados } = useClientes("clientesRegistrados");
+    const { data: clientes } = useClientes("clientesRegistradosTotales");
+    const { data: resenasGoogle } = useClientes("resenasUsuarios");
 
     const handlePress = (screen) => {
         navigation.navigate(screen);
     };
+
+    const renderEstrellas = (valor) => {
+        const estrellasLlenas = Math.floor(valor);
+        const tieneMedia = valor - estrellasLlenas >= 0.5;
+        const estrellasTotales = 5;
+
+        const estrellas = [];
+
+        for (let i = 0; i < estrellasLlenas; i++) {
+            estrellas.push(
+                <Ionicons key={`full-${i}`} name="star" size={20} color="#FFC107" />
+            );
+        }
+
+        if (tieneMedia) {
+            estrellas.push(
+                <Ionicons key="half" name="star-half" size={20} color="#FFC107" />
+            );
+        }
+
+        const vacías = estrellasTotales - estrellas.length;
+        for (let i = 0; i < vacías; i++) {
+            estrellas.push(
+                <Ionicons key={`empty-${i}`} name="star-outline" size={20} color="#FFC107" />
+            );
+        }
+
+        return estrellas;
+    };
+
+
 
     return (
         <AdminLayout>
             <View style={styles.container}>
                 <Image style={styles.img} source={homeroImg}></Image>
                 <View style={styles.cardContainer}>
-                    <Text style={styles.cardText}> Bienvenido Don oscar</Text>
-                    <Text style={{ color: '#fff', fontSize: 14 }}> Estas son algunas de las funciones disponibles </Text>
-                    <View style={styles.cardInfo}>
-                        <Text style={styles.cardTitle}>Ventas</Text>
-                        <TouchableOpacity onPress={() => handlePress("Dashboard")}>
-                            <Text style={styles.cardLinks}>Analisis de ventas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress("Ventas")}>
-                            <Text style={styles.cardLinks}>Gestion de ventas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress("Pedidos")}>
-                            <Text style={styles.cardLinks}>Pedidos</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.cardInfo}>
-                        <Text style={styles.cardTitle}>Recompensas</Text>
-                        <TouchableOpacity onPress={() => handlePress("Recompensas")}>
-                            <Text style={styles.cardLinks}>Recompensas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress("RecompensasObtenidas")}>
-                            <Text style={styles.cardLinks}>Recompensas Obtenidas</Text>
-                        </TouchableOpacity>
-                    </View> <View style={styles.cardInfo}>
-                        <Text style={styles.cardTitle}>Gestion de usuarios</Text>
-                        <TouchableOpacity onPress={() => handlePress("Clientes")}>
-                            <Text style={styles.cardLinks}>Clientes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress("Empleados")}>
-                            <Text style={styles.cardLinks}>Empleados</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress("Proveedores")}>
-                            <Text style={styles.cardLinks}>Proveedores</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <Text style={[styles.cardText, { marginHorizontal: 7 }]}> Bienvenido, Don oscar</Text>
+                    <Text style={{ color: '#BDC3C7', fontSize: 14, marginHorizontal: 12 }}> Estas son algunas de las funciones disponibles </Text>
                 </View>
                 <View style={styles.cardContainer}>
-                    <Text style={styles.cardTitle}>Usuarios Registrados</Text>
-                    <Text style={{ alignSelf: 'center', marginVertical: 10, fontSize: 20, color: '#fff', fontWeight: 'bold' }}> 5 Usuarios Registrados</Text>
-                    <Text style={[styles.cardLinks, { color: '#FFC107', alignSelf: 'center', left: 20, fontSize: 20, marginBottom: 10 }]}> + 2 este mes</Text>
+                    <TouchableOpacity style={styles.cardInfo} onPress={() => handlePress("Ventas")}>
+                        <View style={[styles.iconContainer, { backgroundColor: '#FF6B4A' }]}>
+                            <Ionicons style={styles.icon} name="cash"></Ionicons>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={[styles.textTitle, { color: '#FF6B4A' }]}>Ventas</Text>
+                            <Text style={styles.cardContentText}>Analisis de ventas, gestion de ventas y pedidos.</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.cardInfo} onPress={() => handlePress("Recompensas")}>
+                        <View style={[styles.iconContainer, { backgroundColor: '#FFCE54' }]}>
+                            <Ionicons style={styles.icon} name="gift"></Ionicons>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={[styles.textTitle, { color: '#FFCE54' }]}>Recompensas</Text>
+                            <Text style={styles.cardContentText}>Gestion de recompensas y promociones.</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.cardInfo} onPress={() => handlePress("Clientes")}>
+                        <View style={[styles.iconContainer, { backgroundColor: '#4FC1E9' }]}>
+                            <Ionicons style={styles.icon} name="cash"></Ionicons>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={[styles.textTitle, { color: '#4FC1E9' }]}>Gestion de usuarios</Text>
+                            <Text style={styles.cardContentText}>Clientes, empleados y proveedores.</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.cardContainer}>
-                    <Text style={styles.cardTitle}>Reseñas</Text>
-                    <Text style={{ alignSelf: 'center', marginVertical: 10, fontSize: 20, color: '#fff', fontWeight: 'bold' }}> 4.6 promedio de reseñas</Text>
-                    <Text style={{ color: '#FFC107', alignSelf: 'center', fontSize: 20, marginBottom: 10 }}> ⭐⭐⭐⭐⭐</Text>
+                <View style={styles.cardStatsContainer}>
+                    <View style={styles.cardStats} >
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFC107' }}>Clientes Registrados</Text>
+                        <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+                            <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFC107' }}>{clientes.length}</Text>
+                            <Text style={{ fontSize: 14, color: '#BDC3C7', paddingTop: 15, paddingLeft: 6 }}> Clientes</Text>
+                        </View>
+                        <Text style={{ color: '#BDC3C7', fontSize: 14, paddingTop: 10, fontWeight: 'bold' }}> + {clientesRegistrados.length} este mes</Text>
+                    </View>
+
+                    <View style={styles.cardStats}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFC107', alignSelf: 'flex-start', paddingLeft: 15 }}>Reseñas</Text>
+                        <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+                            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#FFC107' }}>{resenasGoogle}</Text>
+                            <Text style={{ fontSize: 14, color: '#BDC3C7', paddingTop: 15, paddingLeft: 0 }}>/ 5.0</Text>
+                        </View>
+                        <Text style={{ color: '#BDC3C7', fontSize: 14, paddingTop: 10, fontWeight: 'bold' }}>{renderEstrellas(resenasGoogle)}</Text>
+                    </View>
                 </View>
             </View>
-        </AdminLayout>
+
+
+        </AdminLayout >
     );
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingTop: Const.statusBarHeight
     },
     img: {
         display: 'flex',
@@ -90,24 +134,29 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     cardContainer: {
-        borderColor: '#B7B7B7',
+        borderColor: '#4A5159',
         borderWidth: 1,
         borderRadius: 8,
         width: '90%',
         marginTop: 15,
-        paddingLeft: 10,
-        paddingVertical: 15
+        paddingVertical: 15,
+        backgroundColor: '#3A4149',
     },
     cardText: {
         fontFamily: 'Homer-Simpson',
-        fontSize: 35,
+        fontSize: 32,
         color: '#FFC107',
     },
     cardInfo: {
         display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-        padding: 10
+        flexDirection: 'row',
+        backgroundColor: '#343B42',
+        marginVertical: 10,
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        alignSelf: 'center',
+        width: '95%',
+        borderRadius: 10,
     },
     cardTitle: {
         fontSize: 20,
@@ -118,8 +167,54 @@ const styles = StyleSheet.create({
 
     },
     cardLinks: {
-        color: '#fff',
+        color: '#BDC3C7',
         width: '50%',
         fontWeight: 'bold',
+        flexWrap: 'wrap',
+    },
+    icon: {
+        color: '#fff',
+        fontSize: 28,
+    },
+    iconContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 40,
+        height: 40,
+        borderRadius: 50
+    },
+    textContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        marginLeft: 10
+    },
+    textTitle: {
+        fontSize: 20,
+        color: '#FFC107',
+        fontWeight: 'bold',
+    },
+    cardContentText: {
+        color: '#BDC3C7',
+        fontSize: 12
+    },
+    cardStats: {
+        display: 'flex',
+        borderColor: '#4A5159',
+        borderWidth: 1,
+        borderRadius: 8,
+        backgroundColor: '#3A4149',
+        width: '43%',
+        height: 120,
+        alignItems: 'center',
+        marginHorizontal: 8,
+        paddingVertical: 15
+    },
+    cardStatsContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginVertical: 15,
+        justifyContent: 'space-between',
     }
 });
