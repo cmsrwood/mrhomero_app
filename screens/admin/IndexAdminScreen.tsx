@@ -5,7 +5,6 @@ import AdminLayout from '../../components/AdminLayout';
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import useClientes from '../../hooks/useClientes';
-import { Icon } from 'react-native-paper';
 
 
 export default function IndexAdmin() {
@@ -96,7 +95,7 @@ export default function IndexAdmin() {
                             <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFC107' }}>{clientes.length}</Text>
                             <Text style={{ fontSize: 14, color: '#BDC3C7', paddingTop: 15, paddingLeft: 6 }}> Clientes</Text>
                         </View>
-                        <Text style={{ color: '#BDC3C7', fontSize: 14, paddingTop: 10, fontWeight: 'bold' }}> + {clientesRegistrados.length} este mes</Text>
+                        <Text style={{ color: '#BDC3C7', fontSize: 14, paddingTop: 10, fontWeight: 'bold' }}> Un {clientesRegistrados.length}% este mes</Text>
                     </View>
 
                     <View style={styles.cardStats}>
