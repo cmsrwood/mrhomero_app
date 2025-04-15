@@ -4,14 +4,25 @@ import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
-
+import useMenu from '../../hooks/useMenu';
+import { Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 export default function MenuAdminScreen() {
-    const [estadoFiltro, setEstadoFiltro] = useState(1);
+    const navigation = useNavigation();
+    const { data: categorias, loading, error } = useMenu("categorias")
+    const [estadoFiltro, setEstadoFiltro] = useState(-1);
+
     function filtrarCategoriasPorEstado(estado) {
-        setEstadoFiltro(estado);
+        setEstadoFiltro(Number(estado));
     }
+
+    const categoriasFiltradas = categorias.filter(categoria =>
+        estadoFiltro === -1 || categoria.cat_estado === estadoFiltro
+    );
+
     const [modalVisible, setModalVisible] = useState(false);
-      const [isFocused, setIsFocused] = useState('');
+    const [isFocused, setIsFocused] = useState('');
+
     return (
         <AdminLayout>
             <View style={styles.general}>
@@ -41,7 +52,7 @@ export default function MenuAdminScreen() {
                                 <Text style={styles.modalTitulo}>Añadir categoria</Text>
                                 <Image source={require('../../assets/favicon.png')} style={styles.modalImagen}></Image>
                                 <Text style={styles.modalLabel} >Imagen</Text>
-                                <View style={styles.modalBotones}>
+                                <View style={styles.Botones}>
                                     <TouchableOpacity
                                         style={styles.cancelar}
                                         onPress={() => {
@@ -66,10 +77,31 @@ export default function MenuAdminScreen() {
 
                     <Picker style={styles.picker}
                         selectedValue={estadoFiltro} onValueChange={filtrarCategoriasPorEstado}>
-                        <Picker.Item label="Todos" value={1} />
-                        <Picker.Item label="Activos" value={2} />
-                        <Picker.Item label="Inactivos" value={3} />
+                        <Picker.Item label="Todos" value={-1} />
+                        <Picker.Item label="Activos" value={1} />
+                        <Picker.Item label="Inactivos" value={0} />
                     </Picker>
+                </View>
+
+                <View style={styles.type}>
+                    {categoriasFiltradas.map((categoria) => (
+                        <Card key={categoria.id_categoria} style={styles.card}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Categoria', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
+                                <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
+                                <View style={styles.cardContent}>
+                                    <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                                </View>
+                                <View style={styles.Botones}>
+                                    <TouchableOpacity>
+                                        <Ionicons name="add-circle-outline" size={30} color="white" ></Ionicons>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity>
+                                        <Ionicons></Ionicons>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableOpacity>
+                        </Card>
+                    ))}
                 </View>
 
             </View>
@@ -100,9 +132,9 @@ const styles = StyleSheet.create({
     picker: {
         color: '#fff',
         backgroundColor: '#565E64',
-        height: 54,
-        width: 150,
         height: 50,
+        width: 150,
+
 
     },
     modalContainer: {
@@ -125,9 +157,9 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
 
     },
-    modalLabel:{
+    modalLabel: {
         marginTop: 10,
-        fontSize:20,
+        fontSize: 20,
         color: '#fff',
     },
     modalContenido: {
@@ -142,13 +174,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 20,
     },
-    modalBotones:{
+    Botones: {
         display: 'flex',
         flexDirection: 'row',
         gap: 5,
         justifyContent: 'flex-end',
     },
-    cancelar:{
+    cancelar: {
         width: 100,
         height: 50,
         backgroundColor: '#DC3545',
@@ -157,18 +189,58 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center'
     },
-    guardar:{
-        width:100,
+    guardar: {
+        width: 100,
         height: 50,
         backgroundColor: '#198754',
         borderRadius: 15,
-        alignItems:'center',
+        alignItems: 'center',
         padding: 10,
-        justifyContent:'center'
+        justifyContent: 'center'
     },
-    botonTexto:{
+    botonTexto: {
         color: '#fff',
         fontSize: 17
-    }
-
+    },
+    type: {
+        padding: 20,
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap:2,
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignContent: 'space-between',
+    },
+    card: {
+        display: 'flex',
+        alignSelf: 'center',
+        height: 250,
+        width: 160,
+        marginVertical: 10,
+        backgroundColor: '#2B3035',
+        shadowColor: '#fff',
+        padding: 0,
+    },
+    cardContent: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    img: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        width: '100%',
+        height: 150,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        overflow: 'hidden',
+    },
+    cardText: {
+        fontSize: 15,
+        color: '#ccc',
+        marginVertical: 5,
+        fontWeight: 'bold',
+    },
 })

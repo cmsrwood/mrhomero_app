@@ -4,7 +4,7 @@ import { Card } from 'react-native-paper';
 import DefaultLayout from '../../components/DefaultLayout';
 import { useNavigation } from '@react-navigation/native';
 import globalStyles from '../../styles/globalStyles';
-import useMenu from "../../hooks/useMenu"
+import useMenu from "../../hooks/useMenu";
 export default function MenuDefaultScreen() {
 
     const navigation = useNavigation();
