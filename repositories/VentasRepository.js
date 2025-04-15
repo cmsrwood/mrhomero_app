@@ -26,9 +26,18 @@ class VentasRepository {
         return response.data[0].cantidad
     }
 
-    static async getCuentaVentasMes (ano, mes) {
+    static async getCuentaVentasMes(ano, mes) {
         const response = await API.get(`/tienda/ventas/cuentaVentasMes/${ano}/${mes}`);
         return response.data[0].total
+    }
+    static async getReportePDF(tipo, ano, mes) {
+        const endpoint = tipo === 'anual'
+            ? `/tienda/ventas/reporte/${ano}`
+            : `/tienda/ventas/reporte/${ano}/${mes}`;
+
+        const response = await API.get(endpoint, { responseType: 'blob', });
+
+        return response.data;
     }
 }
 
