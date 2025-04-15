@@ -39,6 +39,14 @@ class VentasRepository {
 
         return response.data;
     }
+    static async getIA(tipo, ano, mes) {
+        const endpoint = tipo === 'anual'
+            ? `/tienda/ventas/reporteIA/${ano}`
+            : `/tienda/ventas/reporteIA/${ano}/${mes}`;
+
+        const response = await API.get(endpoint);
+        return response.data;
+    }
 }
 
 export default VentasRepository;

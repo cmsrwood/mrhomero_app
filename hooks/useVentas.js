@@ -51,6 +51,11 @@ export default function useVentas(type, params = {}) {
                     results = await VentasService.getReportePDF(tipo, ano, mes);
                 }
 
+                if (type === "IA") {
+                    const { tipo, ano, mes } = stableParams;
+                    results = await VentasService.getIA(tipo, ano, mes);
+                }
+
                 if (isMounted) {
                     setData(results);
                 }

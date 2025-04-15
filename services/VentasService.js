@@ -118,6 +118,16 @@ class VentasService {
             throw error;
         }
     }
+    static async getIA(tipo, ano, mes) {
+        try {
+            const data = await VentasRepository.getIA(tipo, ano, mes);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default VentasService;   
