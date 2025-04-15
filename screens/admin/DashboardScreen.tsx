@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
+import VentasService from '../../services/VentasService';
+import { showMessage } from "react-native-flash-message";
 
 export default function DashboardScreen() {
 
@@ -97,6 +99,63 @@ export default function DashboardScreen() {
         }).format(value);
     }
 
+    const handleDescargarPDF = async () => {
+        try {
+            if (!tipoReporte) return;
+
+            Alert.alert(
+                "Opciones de Reporte",
+                "¿Qué deseas hacer con el reporte?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Solo Guardar",
+                        onPress: async () => {
+                            try {
+                                await VentasService.getReportePDF(tipoReporte, ano, mes, 'guardar');
+                                setTipoReporte('');
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al guardar el PDF',
+                                    type: 'danger',
+                                    duration: 3000
+                                });
+                            }
+                        }
+                    },
+                    {
+                        text: "Guardar y Compartir",
+                        onPress: async () => {
+                            try {
+                                await VentasService.getReportePDF(tipoReporte, ano, mes, 'compartir');
+                                setTipoReporte('');
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al compartir el PDF',
+                                    type: 'danger',
+                                    duration: 3000
+                                });
+                            }
+                        }
+                    }
+                ]
+            );
+
+        } catch (error) {
+            console.error('Error al descargar el PDF:', error);
+            showMessage({
+                message: 'Error al procesar el reporte',
+                type: 'danger',
+                duration: 3000
+            });
+        }
+    };
+
     return (
         <AdminLayout>
             <View>
@@ -138,13 +197,23 @@ export default function DashboardScreen() {
                         style={styles.picker}
                         dropdownIconColor="#fff"
                     >
+                        <Picker.Item label="Tipo de reporte" value="" enabled={false} />
                         <Picker.Item label="Mensual" value="mensual" />
                         <Picker.Item label="Anual" value="anual" />
                     </Picker>
                 </View>
                 <View style={{ marginVertical: 16, paddingHorizontal: 24, flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-                    <TouchableOpacity style={{ backgroundColor: '#DC3545', padding: 8, borderRadius: 8 }}>
-                        <Ionicons style={{ color: '#fff' }} name="calendar-outline" size={24} color="black" />
+                    <TouchableOpacity
+                        onPress={handleDescargarPDF}
+                        disabled={tipoReporte === ''}
+                        style={{
+                            backgroundColor: '#DC3545',
+                            padding: 8,
+                            borderRadius: 8,
+                            opacity: tipoReporte === '' ? 0.5 : 1,
+                        }}
+                    >
+                        <Ionicons name="document-outline" size={24} color="#fff" />
                     </TouchableOpacity>
                     <TouchableOpacity style={{ backgroundColor: '#0B5ED7', padding: 8, borderRadius: 8 }}>
                         <Ionicons style={{ color: '#fff' }} name="color-wand-outline" size={24} color="black" />
@@ -295,7 +364,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         backgroundColor: '#2B3035',
         height: 54,
-        width: '100%'
+        width: '100%',
+        borderRadius: 6,
     },
 
 });
