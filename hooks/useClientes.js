@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import MenuService from "../services/MenuServices";
+import ClientesService from "../services/ClientesServices";
 
-export default function useCategorias(type, params = {}) {
+export default function useClientes(type, params = {}) {
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,14 +15,14 @@ export default function useCategorias(type, params = {}) {
                 setLoading(true);
                 let results = [];
 
-                if (type === "categorias") {
-                    results = await MenuService.getCategorias();
+                if (type === "clientesRegistrados") {
+                    results = await ClientesService.getUsuariosRegistradosPorMes();
                 }
-                else if (type === "productos") {
-                    results = await MenuService.getProductos(params.id_categoria);
+                else if (type === "clientesRegistradosTotales") {
+                    results = await ClientesService.getUsuariosRegistrados();
                 }
-                else if (type === "producto") {
-                    results = await MenuService.getProducto(params.id_producto);
+                else if (type === "resenasUsuarios") {
+                    results = await ClientesService.getResenasUsuarios();
                 }
 
                 if (isMounted) {
@@ -46,5 +47,4 @@ export default function useCategorias(type, params = {}) {
     }, [type, JSON.stringify(params)]);
 
     return { data, loading, error };
-
 }
