@@ -28,6 +28,33 @@ class MenuService {
             return [];
         }
     }
+    static async crearCategoria(data) {
+        try {
+            const response = await MenuRepository.crearCategoria(data);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async actualizarCategoria(id,data) {
+        try {
+            const response = await MenuRepository.editarCategoria(id,data);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async eliminarCategoria(id) {
+        try {
+            const response = await MenuRepository.eliminarCategoria(id);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default MenuService;

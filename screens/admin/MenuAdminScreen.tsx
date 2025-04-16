@@ -1,17 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native'
 import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 import useMenu from '../../hooks/useMenu';
+import useImagenes from '../../hooks/useImagenes';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import MenuService from '../../services/MenuServices';
+import ImagenesService from '../../services/ImagenesService';
+
+
 export default function MenuAdminScreen() {
     const navigation = useNavigation();
-    const { data: categorias, loading, error } = useMenu("categorias")
+    
+    const [refreshKey, setRefreshKey] = useState(0);
+    const { data: categorias, loading, error, refetch } = useMenu("categorias", {}, refreshKey);
+    const [imagePreview, setImagePreview] = useState('')
     const [estadoFiltro, setEstadoFiltro] = useState(-1);
 
+    const handleSeleccionarImagen = async () => {
+
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Se requieren permisos para acceder a la galería.');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.7,
+        });
+
+        if (!result.canceled) {
+            const imageUri = result.assets[0].uri;
+
+            const file = {
+                uri: imageUri,
+                type: 'image/jpeg',
+                name: `foto_${Date.now()}.jpg`
+            };
+
+            setCategoria(prev => ({ ...prev, foto: file }));
+            setImagePreview(imageUri);
+        }
+    };
     function filtrarCategoriasPorEstado(estado) {
         setEstadoFiltro(Number(estado));
     }
@@ -22,6 +58,57 @@ export default function MenuAdminScreen() {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [isFocused, setIsFocused] = useState('');
+    const [categoria, setCategoria] = useState({
+        categoria: '',
+        foto: null,
+    });
+    console.log(categoria)
+    const handleChange = (data) => (value) => {
+        setCategoria({ ...categoria, [data]: value });
+    };
+
+    const handleSubmit = async () => {
+        let nombre = categoria.categoria;
+        let nombreConGuiones = nombre.replace(/\s+/g, '_');
+        const id_unico = `categoria_${nombreConGuiones}_${Date.now()}`;
+
+        try {
+            const categoriaData = {
+                id: id_unico,
+                categoria: categoria.categoria,
+                foto: ''
+            };
+            const response = await MenuService.crearCategoria(categoriaData);
+
+            if (response.status === 200) {
+                const formData = new FormData();
+                formData.append('foto', categoria.foto);
+                formData.append('upload_preset', 'categorias');
+                formData.append('public_id', id_unico);
+
+                try {
+                    const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                    const url = cloudinaryResponse.url;
+
+                    await MenuService.actualizarCategoria(id_unico, { foto: url });
+
+           
+                    setModalVisible(false);
+                    setCategoria({ categoria: '', foto: null });
+                    setImagePreview('');
+                    setRefreshKey(prev => prev + 1);
+                } catch (imgError) {
+                    console.log(imgError);
+                    await MenuService.eliminarCategoria(id_unico); 
+                    alert("Error al subir la imagen.");
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            alert("Error al crear la categoría.");
+        }
+    };
+
 
     return (
         <AdminLayout>
@@ -37,7 +124,7 @@ export default function MenuAdminScreen() {
                             }
                         }>
                         <Ionicons name="add-circle-outline" size={24} color="white" />
-                        <Text >Productos</Text>
+                        <Text style={styles.botonTexto} >Añadir Categoria</Text>
                     </TouchableOpacity>
                     <Modal
                         visible={modalVisible}
@@ -50,8 +137,24 @@ export default function MenuAdminScreen() {
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContenido}>
                                 <Text style={styles.modalTitulo}>Añadir categoria</Text>
-                                <Image source={require('../../assets/favicon.png')} style={styles.modalImagen}></Image>
-                                <Text style={styles.modalLabel} >Imagen</Text>
+                                <Text style={styles.modalLabel}>Imagen</Text>
+                                <TouchableOpacity onPress={handleSeleccionarImagen} style={{ marginVertical: 10 }}>
+                                    <Text style={styles.modalInput}>Seleccionar Imagen</Text>
+                                    {imagePreview ? (
+                                        <Image source={{ uri: imagePreview }} style={{ width: 200, height: 120, alignSelf: 'center' }} />
+                                    ) : (
+                                        <Text style={{ color: '#aaa', textAlign: 'center' }}>No se ha seleccionado imagen</Text>
+                                    )}
+                                </TouchableOpacity>
+
+
+                                <Text style={styles.modalLabel} >Nombre</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    placeholder="Ingrese el nombre de la categoria"
+                                    value={categoria.categoria}
+                                    onChangeText={handleChange('categoria')}
+                                />
                                 <View style={styles.Botones}>
                                     <TouchableOpacity
                                         style={styles.cancelar}
@@ -64,7 +167,9 @@ export default function MenuAdminScreen() {
                                     <TouchableOpacity
                                         style={styles.guardar}
                                         onPress={() => {
+                                            handleSubmit();
                                             setModalVisible(false);
+                                            
                                         }}
                                     >
                                         <Text style={styles.botonTexto}>Guardar</Text>
@@ -77,9 +182,9 @@ export default function MenuAdminScreen() {
 
                     <Picker style={styles.picker}
                         selectedValue={estadoFiltro} onValueChange={filtrarCategoriasPorEstado}>
-                        <Picker.Item label="Todos" value={-1} />
-                        <Picker.Item label="Activos" value={1} />
-                        <Picker.Item label="Inactivos" value={0} />
+                        <Picker.Item style={styles.itemPicker} label="Todos" value={-1} />
+                        <Picker.Item style={styles.itemPicker} label="Activos" value={1} />
+                        <Picker.Item style={styles.itemPicker} label="Inactivos" value={0} />
                     </Picker>
                 </View>
 
@@ -88,18 +193,19 @@ export default function MenuAdminScreen() {
                         <Card key={categoria.id_categoria} style={styles.card}>
                             <TouchableOpacity onPress={() => navigation.navigate('Categoria', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
                                 <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
-                                <View style={styles.cardContent}>
-                                    <Text style={styles.cardText}>{categoria.cat_nom}</Text>
-                                </View>
-                                <View style={styles.Botones}>
-                                    <TouchableOpacity>
-                                        <Ionicons name="add-circle-outline" size={30} color="white" ></Ionicons>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity>
-                                        <Ionicons></Ionicons>
-                                    </TouchableOpacity>
-                                </View>
                             </TouchableOpacity>
+
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                            </View>
+                            <View style={styles.cardActions}>
+                                <TouchableOpacity style={styles.cardEdit}>
+                                    <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.cardDelete}>
+                                    <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
+                                </TouchableOpacity>
+                            </View>
                         </Card>
                     ))}
                 </View>
@@ -108,6 +214,7 @@ export default function MenuAdminScreen() {
         </AdminLayout>
     )
 }
+
 
 const styles = StyleSheet.create({
     general: {
@@ -120,7 +227,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     add: {
-        width: 150,
+        width: 170,
         height: 50,
         display: 'flex',
         flexDirection: 'row',
@@ -128,14 +235,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         backgroundColor: '#157347',
+        borderRadius: 10,
     },
     picker: {
         color: '#fff',
         backgroundColor: '#565E64',
         height: 50,
-        width: 150,
-
-
+        width: 170,
+        fontSize: 16,
+        borderRadius: 10,
+    },
+    itemPicker: {
+        color: '#fff',
+        fontSize: 16,
+        width: 100,
     },
     modalContainer: {
         flex: 1,
@@ -200,13 +313,13 @@ const styles = StyleSheet.create({
     },
     botonTexto: {
         color: '#fff',
-        fontSize: 17
+        fontSize: 16
     },
     type: {
         padding: 20,
         display: 'flex',
         flexWrap: 'wrap',
-        gap:2,
+        gap: 2,
         justifyContent: 'space-around',
         flexDirection: 'row',
         alignContent: 'space-between',
@@ -214,7 +327,7 @@ const styles = StyleSheet.create({
     card: {
         display: 'flex',
         alignSelf: 'center',
-        height: 250,
+        height: 260,
         width: 160,
         marginVertical: 10,
         backgroundColor: '#2B3035',
@@ -242,5 +355,35 @@ const styles = StyleSheet.create({
         color: '#ccc',
         marginVertical: 5,
         fontWeight: 'bold',
+    },
+    cardActions: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 5,
+        justifyContent: 'center'
+    },
+    cardEdit: {
+        width: 40,
+        height: 40,
+        backgroundColor: '#FFCA2C',
+        borderRadius: 10,
+        padding: 10
+    },
+    cardDelete: {
+        width: 40,
+        height: 40,
+        backgroundColor: '#BB2D3B',
+        borderRadius: 10,
+        padding: 10
+    },
+    modalInput: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        height: 40,
+        width: '100%',
+        borderRadius: 15,
+        padding: 10,
+        color: "#fff",
+        margin: 10
     },
 })
