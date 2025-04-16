@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
@@ -67,7 +67,7 @@ export default function DashboardScreen() {
 
     const porcentajeVentas = (Math.floor(((cuentaVentasMes - cuentaVentasMesAnterior) / cuentaVentasMes) * 100));
 
-    const [ia, setIA] = useState('');
+    const [IA, setIA] = useState('');
 
     const diasMes = [];
     for (let dia = 1; dia <= moment(`${ano}-${mes}-01`, "YYYY-MM").daysInMonth(); dia++) {
@@ -156,6 +156,26 @@ export default function DashboardScreen() {
         }
     };
 
+    const [loadingIA, setLoadingIA] = useState(false);
+
+    const handleIA = async () => {
+        try {
+            setLoadingIA(true);
+            const response = await VentasService.getIA(tipoReporte, ano, mes);
+            setIA(response);
+            setLoadingIA(false);
+            setTipoReporte('');
+        }
+        catch (error) {
+            console.error('Error al generar el reporte con IA:', error);
+            showMessage({
+                message: 'Error al generar el reporte con IA',
+                type: 'danger',
+                duration: 3000
+            });
+        }
+    }
+
     return (
         <AdminLayout>
             <View>
@@ -215,11 +235,22 @@ export default function DashboardScreen() {
                     >
                         <Ionicons name="document-outline" size={24} color="#fff" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ backgroundColor: '#0B5ED7', padding: 8, borderRadius: 8 }}>
-                        <Ionicons style={{ color: '#fff' }} name="color-wand-outline" size={24} color="black" />
+                    <TouchableOpacity
+                        onPress={handleIA}
+                        disabled={tipoReporte === ''}
+                        style={{
+                            backgroundColor: '#0B5ED7',
+                            padding: 8,
+                            borderRadius: 8,
+                            opacity: tipoReporte === '' ? 0.5 : 1,
+                        }}
+                    >
+                        {loadingIA ? <ActivityIndicator size="small" color="#fff" /> : <Ionicons style={{ color: '#fff' }} name="color-wand-outline" size={24} color="black" />}
                     </TouchableOpacity>
                 </View>
-
+                <View>
+                    {loadingIA ? <ActivityIndicator size="large" color="#fff" /> : IA && <Text style={{ color: '#fff', paddingHorizontal: 24, fontSize: 15, marginVertical: 16 }}>{IA}</Text>}
+                </View>
                 <LineChart
                     data={dataGrafica}
                     width={screenWidth - 32}
@@ -366,6 +397,10 @@ const styles = StyleSheet.create({
         height: 54,
         width: '100%',
         borderRadius: 6,
+    },
+    IA: {
+        padding: 30,
+        color: "#fff"
     },
 
 });
