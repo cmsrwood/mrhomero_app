@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import useAuth from '../hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
 import globalStyles from '../styles/globalStyles';
+import Constants from 'expo-constants';
+import homeroImg from '../assets/favicon.png';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 export default function CustomDrawerContent({ navigation }) {
     const { user, logout } = useAuth();
@@ -20,12 +23,21 @@ export default function CustomDrawerContent({ navigation }) {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#2B3035" }}>
-            <DrawerContentScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-                <Text style={[globalStyles.title, { fontSize: 40, paddingTop: 25 }]}>Mr. Homero</Text>
+        <View style={{ flex: 1, backgroundColor: "#2B3035", paddingTop: Constants.statusBarHeight }}>
+            <View style={{ flexDirection: "row", alignItems: "center", paddingLeft: 15 }}>
+                <Image style={{ width: 50, height: 50, marginTop: 25 }} source={homeroImg}></Image>
+                <View style={{ flexDirection: "column", paddingLeft: 10 }}>
+                    <Text style={[globalStyles.title, { fontSize: 30, marginTop: Constants.statusBarHeight }]}>Mr. Homero</Text>
+                    <Text style={{ color: "#BDC3C7", marginTop: -20, fontSize: 12 }}> Administrador</Text>
+                </View>
+            </View>
 
-                <TouchableOpacity onPress={() => handlePress('inicio', 'IndexAdmin')} style={styles.buttons}>
-                    <Ionicons name="home" style={[styles.icon, activeButton === 'inicio' && styles.active]}>
+            <DrawerContentScrollView>
+                <Text style={styles.divider}></Text>
+                <Text style={styles.dividerText}>PRINCIPAL</Text>
+
+                <TouchableOpacity onPress={() => handlePress('inicio', 'IndexAdmin')} style={[styles.buttons, { backgroundColor: activeButton === 'inicio' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={ activeButton === 'inicio' ? "home" : "home-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inicio' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'inicio' && styles.active]}>  Inicio</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -38,50 +50,56 @@ export default function CustomDrawerContent({ navigation }) {
 
                 {ventasExpanded && (
                     <View>
-                        <TouchableOpacity onPress={() => handlePress('analisisVentas', 'Dashboard')} style={[styles.buttons, { paddingLeft: 20 }]}>
-                            <Ionicons name="analytics" style={[styles.icon, activeButton === 'analisisVentas' && styles.active]}>
+                        <TouchableOpacity onPress={() => handlePress('analisisVentas', 'Dashboard')} style={[styles.buttons, { backgroundColor: activeButton === 'analisisVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
+                            <Ionicons name="analytics" style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'analisisVentas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'analisisVentas' && styles.active]}>  Analisis de ventas</Text>
                             </Ionicons>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('gestionVentas', 'Ventas')} style={[styles.buttons, { paddingLeft: 20 }]}>
-                            <Ionicons name="bar-chart" style={[styles.icon, activeButton === 'gestionVentas' && styles.active]}>
+                        <TouchableOpacity onPress={() => handlePress('gestionVentas', 'Ventas')} style={[styles.buttons, { backgroundColor: activeButton === 'gestionVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
+                            <Ionicons name={activeButton === 'gestionVentas' ? "bar-chart" : "bar-chart-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'gestionVentas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'gestionVentas' && styles.active]}>  Gestion de ventas</Text>
                             </Ionicons>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('pedidos', 'Pedidos')} style={[styles.buttons, { paddingLeft: 20 }]}>
-                            <Ionicons name="wallet" style={[styles.icon, activeButton === 'pedidos' && styles.active]}>
+                        <TouchableOpacity onPress={() => handlePress('pedidos', 'Pedidos')} style={[styles.buttons, { backgroundColor: activeButton === 'pedidos' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10, marginBottom: 8 }]}>
+                            <Ionicons name={activeButton === 'pedidos' ? "wallet" : "wallet-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'pedidos' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'pedidos' && styles.active]}>  Pedidos</Text>
                             </Ionicons>
                         </TouchableOpacity>
                     </View>
                 )}
 
-                <TouchableOpacity onPress={() => handlePress('inventario', 'Inventario')} style={styles.buttons}>
-                    <Ionicons name="file-tray" style={[styles.icon, activeButton === 'inventario' && styles.active]}>
+                <TouchableOpacity onPress={() => handlePress('inventario', 'Inventario')} style={[styles.buttons, { backgroundColor: activeButton === 'inventario' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={activeButton === 'inventario' ? "file-tray-full" : "file-tray-full-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inventario' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'inventario' && styles.active]}>  Inventario</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('menu', 'Menu')} style={styles.buttons}>
-                    <Ionicons name="fast-food" style={[styles.icon, activeButton === 'menu' && styles.active]}>
+                <TouchableOpacity onPress={() => handlePress('menu', 'Menu')} style={[styles.buttons, { backgroundColor: activeButton === 'menu' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={activeButton === 'menu' ? "fast-food" : "fast-food-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'menu' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'menu' && styles.active]}>  Menú</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('recompensas', 'Recompensas')} style={styles.buttons}>
-                    <Ionicons name="gift" style={[styles.icon, activeButton === 'recompensas' && styles.active]}>
+                <Text style={styles.divider}></Text>
+                <Text style={styles.dividerText}>RECOMPENSAS</Text>
+
+                <TouchableOpacity onPress={() => handlePress('recompensas', 'Recompensas')} style={[styles.buttons, { backgroundColor: activeButton === 'recompensas' ? 'rgba(255, 206, 84, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={ activeButton === 'recompensas' ? "gift" : "gift-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensas' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'recompensas' && styles.active]}>  Recompensas</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('recompensasObtenidas', 'RecompensasObtenidas')} style={styles.buttons}>
-                    <Ionicons name="bag-check" style={[styles.icon, activeButton === 'recompensasObtenidas' && styles.active]}>
-                        <Text style={[styles.text, activeButton === 'recompensasObtenidas' && styles.active]}>  Recompensas Obtenidas</Text>
+                <TouchableOpacity onPress={() => handlePress('recompensasObtenidas', 'RecompensasObtenidas')} style={[styles.buttons, { backgroundColor: activeButton === 'recompensasObtenidas' ? 'rgba(255, 206, 84, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={ activeButton === 'recompensasObtenidas' ? "bag-check" : "bag-check-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensasObtenidas' && styles.active]}>
+                        <Text style={[styles.text, { fontSize: activeButton === 'recompensasObtenidas' ? 22 : 26 }]}>  Recompensas Obtenidas</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handlePress('clientes', 'Clientes')} style={styles.buttons}>
-                    <Ionicons name="people" style={[styles.icon, activeButton === 'clientes' && styles.active]}>
+                <Text style={styles.divider}></Text>
+                <Text style={styles.dividerText}>USUARIOS</Text>
+
+                <TouchableOpacity onPress={() => handlePress('clientes', 'Clientes')} style={[styles.buttons, { backgroundColor: activeButton === 'clientes' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={ activeButton === 'clientes' ? "people" : "people-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'clientes' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'clientes' && styles.active]}>  Clientes</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -94,22 +112,22 @@ export default function CustomDrawerContent({ navigation }) {
 
                 {empleadosExpanded && (
                     <View>
-                        <TouchableOpacity onPress={() => handlePress('empleados', 'Empleados')} style={[styles.buttons, { paddingLeft: 20 }]}>
-                            <Ionicons name="person-circle" style={[styles.icon, activeButton === 'empleados' && styles.active]}>
+                        <TouchableOpacity onPress={() => handlePress('empleados', 'Empleados')} style={[styles.buttons, { backgroundColor: activeButton === 'empleados' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
+                            <Ionicons name={activeButton === 'empleados' ? "person-circle" : "person-circle-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'empleados' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'empleados' && styles.active]}>  Empleados</Text>
                             </Ionicons>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => handlePress('horas', 'HorasEmpleados')} style={[styles.buttons, { paddingLeft: 20 }]}>
-                            <Ionicons name="time" style={[styles.icon, activeButton === 'horas' && styles.active]}>
+                        <TouchableOpacity onPress={() => handlePress('horas', 'HorasEmpleados')} style={[styles.buttons, { backgroundColor: activeButton === 'horas' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
+                            <Ionicons name={ activeButton === 'horas' ? "time" : "time-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'horas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'horas' && styles.active]}>  Horas de empleados</Text>
                             </Ionicons>
                         </TouchableOpacity>
                     </View>
                 )}
 
-                <TouchableOpacity onPress={() => handlePress('proveedores', 'Proveedores')} style={styles.buttons}>
-                    <Ionicons name="bag-add" style={[styles.icon, activeButton === 'proveedores' && styles.active]}>
+                <TouchableOpacity onPress={() => handlePress('proveedores', 'Proveedores')} style={[styles.buttons, {backgroundColor: activeButton === 'proveedores' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035'}]}>
+                    <Ionicons name={activeButton === 'proveedores' ? "bag-add" : "bag-add-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'proveedores' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'proveedores' && styles.active]}>  Proveedores</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -122,7 +140,7 @@ export default function CustomDrawerContent({ navigation }) {
                     </Ionicons>
                 </TouchableOpacity>
             </View>
-        </View>
+        </View >
     );
 }
 
@@ -139,16 +157,32 @@ const styles = StyleSheet.create({
     },
     buttons: {
         paddingVertical: 13,
+        alignItems: "flex-start",
+        borderRadius: 10
     },
     active: {
-        backgroundColor: "gray",
-        borderRadius: 10,
-        padding: 10,
-        color: "#FFC107",
+        padding: 2,
+        width: "100%",
+        alignItems: "flex-start",
+        paddingLeft: 5
+
     },
     footer: {
-        padding: 15,
+        padding: 10,
+        paddingLeft: 20,
         borderTopWidth: 1,
         borderTopColor: '#0003',
+        backgroundColor: "#343B42",
+        alignItems: "flex-start",
+        height: 70
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#4A5159',
+        marginVertical: 10,
+    },
+    dividerText: {
+        color: '#6C7883',
+        fontSize: 11
     }
 });
