@@ -15,7 +15,7 @@ class MenuRepository {
     }
     static async crearCategoria(data) {
         const response = await API.post("/tienda/categorias/crear", data);     
-        return response.data
+        return response
     }
     static async actualizarCategoria(id, data) {
         const response = await API.put( `/tienda/categorias/actualizar/${id}`, data);        

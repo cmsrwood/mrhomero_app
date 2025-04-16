@@ -15,7 +15,7 @@ import ImagenesService from '../../services/ImagenesService';
 
 export default function MenuAdminScreen() {
     const navigation = useNavigation();
-    
+
     const [refreshKey, setRefreshKey] = useState(0);
     const { data: categorias, loading, error, refetch } = useMenu("categorias", {}, refreshKey);
     const [imagePreview, setImagePreview] = useState('')
@@ -44,8 +44,6 @@ export default function MenuAdminScreen() {
                 name: asset.fileName ?? `foto_${Date.now()}.jpg`,
             };
 
-            console.log("Imagen seleccionada:", file);
-
             setCategoria(prev => ({ ...prev, foto: file }));
             setImagePreview(asset.uri);
         } else {
@@ -66,14 +64,11 @@ export default function MenuAdminScreen() {
         categoria: '',
         foto: null,
     });
-    console.log(categoria)
     const handleChange = (data) => (value) => {
         setCategoria({ ...categoria, [data]: value });
     };
 
     const handleSubmit = async () => {
-        console.log("🧪 Enviando categoría con imagen:", categoria); 
-
         if (!categoria.categoria || !categoria.foto) {
             alert("Por favor, ingresa un nombre y selecciona una imagen.");
             return;
@@ -92,23 +87,19 @@ export default function MenuAdminScreen() {
 
             const response = await MenuService.crearCategoria(categoriaData);
 
-            if (response.status === 200) {
+            if (response.status == 200) {
                 const formData = new FormData();
-                formData.append("foto", {
-                    uri: categoria.foto,
-                    name:  "foto.jpg",
-                    type: "image/jpeg",
-                } as any);
+                formData.append("file", categoria.foto);
                 formData.append("upload_preset", "categorias");
                 formData.append("public_id", `categoria_${categoria.categoria}_${id_unico}`);
-
-            
                 try {
+                    console.log('Enviando imagen...');
                     const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                    const url = cloudinaryResponse.url; 
+                    console.log(cloudinaryResponse);
+                    const url = cloudinaryResponse.url;
                     await MenuService.actualizarCategoria(id_unico, { foto: url });
 
-                    
+
                     setCategoria({ categoria: '', foto: null });
                     setImagePreview('');
                     setRefreshKey(prev => prev + 1);
@@ -186,7 +177,7 @@ export default function MenuAdminScreen() {
                                         onPress={() => {
                                             handleSubmit();
                                             setModalVisible(false);
-                                            
+
                                         }}
                                     >
                                         <Text style={styles.botonTexto}>Guardar</Text>
