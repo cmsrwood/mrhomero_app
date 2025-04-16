@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons';
@@ -187,6 +187,8 @@ export default function DashboardScreen() {
                             onValueChange={handleAnoChange}
                             style={styles.picker}
                             dropdownIconColor="#fff"
+                            itemStyle={styles.pickerItem}
+                            mode="dropdown"
                         >
                             {[0, 1, 2, 3, 4].map(offset => {
                                 const yearOption = parseInt(anoActual) - offset;
@@ -200,6 +202,8 @@ export default function DashboardScreen() {
                             onValueChange={handleMesChange}
                             style={styles.picker}
                             dropdownIconColor="#fff"
+                            itemStyle={styles.pickerItem}
+                            mode="dropdown"
                         >
                             {[
                                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -216,6 +220,8 @@ export default function DashboardScreen() {
                         onValueChange={value => setTipoReporte(value)}
                         style={styles.picker}
                         dropdownIconColor="#fff"
+                        itemStyle={styles.pickerItem}
+                        mode="dropdown"
                     >
                         <Picker.Item label="Tipo de reporte" value="" enabled={false} />
                         <Picker.Item label="Mensual" value="mensual" />
@@ -389,14 +395,19 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#2B3035',
         borderRadius: 8,
-        padding: 8
+        overflow: 'hidden',
+        borderWidth: Platform.OS === 'ios' ? 1 : 0,
+        borderColor: '#6C757D'
     },
     picker: {
         color: '#fff',
         backgroundColor: '#2B3035',
-        height: 54,
+        height: Platform.OS === 'ios' ? 100 : 54,
         width: '100%',
-        borderRadius: 6,
+    },
+    pickerItem: {
+        color: '#fff',
+        fontSize: Platform.OS === 'ios' ? 16 : 14,
     },
     IA: {
         padding: 30,
