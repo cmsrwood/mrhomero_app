@@ -22,7 +22,6 @@ export default function MenuAdminScreen() {
     const [estadoFiltro, setEstadoFiltro] = useState(-1);
 
     const handleSeleccionarImagen = async () => {
-
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             alert('Se requieren permisos para acceder a la galería.');
@@ -33,19 +32,24 @@ export default function MenuAdminScreen() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 0.7,
+            base64: false
         });
 
-        if (!result.canceled) {
-            const imageUri = result.assets[0].uri;
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            const asset = result.assets[0];
 
             const file = {
-                uri: imageUri,
-                type: 'image/jpeg',
-                name: `foto_${Date.now()}.jpg`
+                uri: asset.uri,
+                type: asset.type ?? 'image/jpeg',
+                name: asset.fileName ?? `foto_${Date.now()}.jpg`,
             };
 
+            console.log("Imagen seleccionada:", file);
+
             setCategoria(prev => ({ ...prev, foto: file }));
-            setImagePreview(imageUri);
+            setImagePreview(asset.uri);
+        } else {
+            console.log("No se seleccionó ninguna imagen");
         }
     };
     function filtrarCategoriasPorEstado(estado) {
@@ -68,6 +72,13 @@ export default function MenuAdminScreen() {
     };
 
     const handleSubmit = async () => {
+        console.log("🧪 Enviando categoría con imagen:", categoria); 
+
+        if (!categoria.categoria || !categoria.foto) {
+            alert("Por favor, ingresa un nombre y selecciona una imagen.");
+            return;
+        }
+
         let nombre = categoria.categoria;
         let nombreConGuiones = nombre.replace(/\s+/g, '_');
         const id_unico = `categoria_${nombreConGuiones}_${Date.now()}`;
@@ -78,36 +89,42 @@ export default function MenuAdminScreen() {
                 categoria: categoria.categoria,
                 foto: ''
             };
+
             const response = await MenuService.crearCategoria(categoriaData);
 
             if (response.status === 200) {
                 const formData = new FormData();
-                formData.append('foto', categoria.foto);
-                formData.append('upload_preset', 'categorias');
-                formData.append('public_id', id_unico);
+                formData.append("foto", {
+                    uri: categoria.foto,
+                    name:  "foto.jpg",
+                    type: "image/jpeg",
+                } as any);
+                formData.append("upload_preset", "categorias");
+                formData.append("public_id", `categoria_${categoria.categoria}_${id_unico}`);
 
+            
                 try {
                     const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                    const url = cloudinaryResponse.url;
-
+                    const url = cloudinaryResponse.url; 
                     await MenuService.actualizarCategoria(id_unico, { foto: url });
 
-           
-                    setModalVisible(false);
+                    
                     setCategoria({ categoria: '', foto: null });
                     setImagePreview('');
                     setRefreshKey(prev => prev + 1);
                 } catch (imgError) {
                     console.log(imgError);
-                    await MenuService.eliminarCategoria(id_unico); 
+                    await MenuService.eliminarCategoria(id_unico);
                     alert("Error al subir la imagen.");
                 }
             }
+            setModalVisible(false);
         } catch (error) {
             console.log(error);
             alert("Error al crear la categoría.");
         }
     };
+
 
 
     return (
@@ -139,7 +156,7 @@ export default function MenuAdminScreen() {
                                 <Text style={styles.modalTitulo}>Añadir categoria</Text>
                                 <Text style={styles.modalLabel}>Imagen</Text>
                                 <TouchableOpacity onPress={handleSeleccionarImagen} style={{ marginVertical: 10 }}>
-                                    <Text style={styles.modalInput}>Seleccionar Imagen</Text>
+                                    <Text style={styles.modalInput}></Text>
                                     {imagePreview ? (
                                         <Image source={{ uri: imagePreview }} style={{ width: 200, height: 120, alignSelf: 'center' }} />
                                     ) : (
