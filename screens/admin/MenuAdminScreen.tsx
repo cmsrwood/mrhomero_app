@@ -88,8 +88,11 @@ export default function MenuAdminScreen() {
             const response = await MenuService.crearCategoria(categoriaData);
 
             if (response.status == 200) {
+                const responseImage = await fetch(categoria.foto.uri);
+                const blob = await responseImage.blob();
+
                 const formData = new FormData();
-                formData.append("file", categoria.foto);
+                formData.append("foto", blob, categoria.foto.name);
                 formData.append("upload_preset", "categorias");
                 formData.append("public_id", `categoria_${categoria.categoria}_${id_unico}`);
                 try {

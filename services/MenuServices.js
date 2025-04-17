@@ -39,7 +39,7 @@ class MenuService {
     }
     static async actualizarCategoria(id,data) {
         try {
-            const response = await MenuRepository.editarCategoria(id,data);
+            const response = await MenuRepository.actualizarCategoria(id,data);
             return response || null;
         } catch (error) {
             console.log(error);
