@@ -37,7 +37,7 @@ export default function CustomDrawerContent({ navigation }) {
                 <Text style={styles.dividerText}>PRINCIPAL</Text>
 
                 <TouchableOpacity onPress={() => handlePress('inicio', 'IndexAdmin')} style={[styles.buttons, { backgroundColor: activeButton === 'inicio' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
-                    <Ionicons name={ activeButton === 'inicio' ? "home" : "home-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inicio' && styles.active]}>
+                    <Ionicons name={activeButton === 'inicio' ? "home" : "home-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inicio' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'inicio' && styles.active]}>  Inicio</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -84,13 +84,13 @@ export default function CustomDrawerContent({ navigation }) {
                 <Text style={styles.dividerText}>RECOMPENSAS</Text>
 
                 <TouchableOpacity onPress={() => handlePress('recompensas', 'Recompensas')} style={[styles.buttons, { backgroundColor: activeButton === 'recompensas' ? 'rgba(255, 206, 84, 0.2)' : '#2B3035' }]}>
-                    <Ionicons name={ activeButton === 'recompensas' ? "gift" : "gift-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensas' && styles.active]}>
+                    <Ionicons name={activeButton === 'recompensas' ? "gift" : "gift-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensas' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'recompensas' && styles.active]}>  Recompensas</Text>
                     </Ionicons>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => handlePress('recompensasObtenidas', 'RecompensasObtenidas')} style={[styles.buttons, { backgroundColor: activeButton === 'recompensasObtenidas' ? 'rgba(255, 206, 84, 0.2)' : '#2B3035' }]}>
-                    <Ionicons name={ activeButton === 'recompensasObtenidas' ? "bag-check" : "bag-check-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensasObtenidas' && styles.active]}>
+                    <Ionicons name={activeButton === 'recompensasObtenidas' ? "bag-check" : "bag-check-outline"} style={[styles.icon, { color: "#FFCE54" }, activeButton === 'recompensasObtenidas' && styles.active]}>
                         <Text style={[styles.text, { fontSize: activeButton === 'recompensasObtenidas' ? 22 : 26 }]}>  Recompensas Obtenidas</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -99,7 +99,7 @@ export default function CustomDrawerContent({ navigation }) {
                 <Text style={styles.dividerText}>USUARIOS</Text>
 
                 <TouchableOpacity onPress={() => handlePress('clientes', 'Clientes')} style={[styles.buttons, { backgroundColor: activeButton === 'clientes' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035' }]}>
-                    <Ionicons name={ activeButton === 'clientes' ? "people" : "people-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'clientes' && styles.active]}>
+                    <Ionicons name={activeButton === 'clientes' ? "people" : "people-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'clientes' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'clientes' && styles.active]}>  Clientes</Text>
                     </Ionicons>
                 </TouchableOpacity>
@@ -119,14 +119,14 @@ export default function CustomDrawerContent({ navigation }) {
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => handlePress('horas', 'HorasEmpleados')} style={[styles.buttons, { backgroundColor: activeButton === 'horas' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
-                            <Ionicons name={ activeButton === 'horas' ? "time" : "time-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'horas' && styles.active]}>
+                            <Ionicons name={activeButton === 'horas' ? "time" : "time-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'horas' && styles.active]}>
                                 <Text style={[styles.text, activeButton === 'horas' && styles.active]}>  Horas de empleados</Text>
                             </Ionicons>
                         </TouchableOpacity>
                     </View>
                 )}
 
-                <TouchableOpacity onPress={() => handlePress('proveedores', 'Proveedores')} style={[styles.buttons, {backgroundColor: activeButton === 'proveedores' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035'}]}>
+                <TouchableOpacity onPress={() => handlePress('proveedores', 'Proveedores')} style={[styles.buttons, { backgroundColor: activeButton === 'proveedores' ? 'rgba(79, 193, 233, 0.2)' : '#2B3035' }]}>
                     <Ionicons name={activeButton === 'proveedores' ? "bag-add" : "bag-add-outline"} style={[styles.icon, { color: "#4FC1E9" }, activeButton === 'proveedores' && styles.active]}>
                         <Text style={[styles.text, activeButton === 'proveedores' && styles.active]}>  Proveedores</Text>
                     </Ionicons>
@@ -135,8 +135,8 @@ export default function CustomDrawerContent({ navigation }) {
 
             <View style={styles.footer}>
                 <TouchableOpacity onPress={() => logout()} style={styles.buttons}>
-                    <Ionicons name="log-out" style={styles.icon}>
-                        <Text style={styles.text}>  Cerrar sesión</Text>
+                    <Ionicons name="log-out" style={styles.iconRed}>
+                        <Text style={styles.textRed}>  Cerrar sesión</Text>
                     </Ionicons>
                 </TouchableOpacity>
             </View>
@@ -149,8 +149,18 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 20,
     },
+    iconRed: {
+        color: "#FF6B4A",
+        fontSize: 20,
+    },
     text: {
         color: "white",
+        fontSize: 26,
+        alignContent: "center",
+        fontFamily: 'Homer-Simpson',
+    },
+    textRed: {
+        color: "#FF6B4A",
         fontSize: 26,
         alignContent: "center",
         fontFamily: 'Homer-Simpson',
