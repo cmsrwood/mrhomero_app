@@ -1,55 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert, FlatList } from 'react-native'
 import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 import useMenu from '../../hooks/useMenu';
-import useImagenes from '../../hooks/useImagenes';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import MenuService from '../../services/MenuServices';
 import ImagenesService from '../../services/ImagenesService';
-
+import { showMessage } from 'react-native-flash-message';
 
 export default function MenuAdminScreen() {
+
     const navigation = useNavigation();
 
     const [refreshKey, setRefreshKey] = useState(0);
     const { data: categorias, loading, error, refetch } = useMenu("categorias", {}, refreshKey);
-    const [imagePreview, setImagePreview] = useState('')
     const [estadoFiltro, setEstadoFiltro] = useState(-1);
 
-    const handleSeleccionarImagen = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Se requieren permisos para acceder a la galería.');
-            return;
-        }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 0.7,
-            base64: false
-        });
-
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            const asset = result.assets[0];
-
-            const file = {
-                uri: asset.uri,
-                type: asset.type ?? 'image/jpeg',
-                name: asset.fileName ?? `foto_${Date.now()}.jpg`,
-            };
-
-            setCategoria(prev => ({ ...prev, foto: file }));
-            setImagePreview(asset.uri);
-        } else {
-            console.log("No se seleccionó ninguna imagen");
-        }
-    };
     function filtrarCategoriasPorEstado(estado) {
         setEstadoFiltro(Number(estado));
     }
@@ -59,11 +30,34 @@ export default function MenuAdminScreen() {
     );
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [isFocused, setIsFocused] = useState('');
+
+    const [imagePreview, setImagePreview] = useState(null);;
     const [categoria, setCategoria] = useState({
         categoria: '',
         foto: null,
     });
+
+    console.log('categorias', categoria)
+
+    const handleSeleccionarImagen = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const asset = result.assets[0];
+            const response = await fetch(asset.uri);
+            const blob = await response.blob();
+            const file = new File([blob], `foto_${Date.now()}.jpg`, { type: blob.type });
+
+            setCategoria({ ...categoria, foto: file });
+            setImagePreview(asset.uri);
+        }
+    };
+
     const handleChange = (data) => (value) => {
         setCategoria({ ...categoria, [data]: value });
     };
@@ -88,28 +82,29 @@ export default function MenuAdminScreen() {
             const response = await MenuService.crearCategoria(categoriaData);
 
             if (response.status == 200) {
-                const responseImage = await fetch(categoria.foto.uri);
-                const blob = await responseImage.blob();
-
                 const formData = new FormData();
-                formData.append("foto", blob, categoria.foto.name);
+                formData.append('foto', categoria.foto);
                 formData.append("upload_preset", "categorias");
                 formData.append("public_id", `categoria_${categoria.categoria}_${id_unico}`);
                 try {
-                    console.log('Enviando imagen...');
+                    console.log('Enviando imagen..');
                     const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                    console.log(cloudinaryResponse);
-                    const url = cloudinaryResponse.url;
+                    const url = cloudinaryResponse.data.url;
+                    console.log(url);
                     await MenuService.actualizarCategoria(id_unico, { foto: url });
-
-
+                    showMessage({
+                        message: "Categoría creada con éxito",
+                        type: "success",
+                        icon: "success",
+                        duration: 2000
+                    })
                     setCategoria({ categoria: '', foto: null });
                     setImagePreview('');
                     setRefreshKey(prev => prev + 1);
                 } catch (imgError) {
                     console.log(imgError);
                     await MenuService.eliminarCategoria(id_unico);
-                    alert("Error al subir la imagen.");
+                    alert(`"Error al subir la imagen."`);
                 }
             }
             setModalVisible(false);
