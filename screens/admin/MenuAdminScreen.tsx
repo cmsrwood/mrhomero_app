@@ -136,20 +136,32 @@ export default function MenuAdminScreen() {
                             <View style={styles.modalContenido}>
                                 <Text style={styles.modalTitulo}>Añadir categoria</Text>
                                 <Text style={styles.modalLabel}>Imagen</Text>
-                                <TouchableOpacity onPress={handleSeleccionarImagen} style={{ marginVertical: 10 }}>
-                                    <Text style={styles.modalInput}></Text>
-                                    {imagePreview ? (
-                                        <Image source={{ uri: imagePreview }} style={{ width: 200, height: 120, alignSelf: 'center' }} />
-                                    ) : (
-                                        <Text style={{ color: '#aaa', textAlign: 'center' }}>No se ha seleccionado imagen</Text>
-                                    )}
-                                </TouchableOpacity>
-
+                                <View style={styles.imageSection}>
+                                    <Text style={styles.sectionLabel}>Imagen de la categoría</Text>
+                                    <TouchableOpacity
+                                        onPress={handleSeleccionarImagen}
+                                        style={styles.imageUploadButton}
+                                    >
+                                        {imagePreview ? (
+                                            <Image
+                                                source={{ uri: imagePreview }}
+                                                style={styles.imagePreview}
+                                                resizeMode="cover"
+                                            />
+                                        ) : (
+                                            <View style={styles.imagePlaceholder}>
+                                                <Ionicons name="image-outline" size={40} color="#aaa" />
+                                                <Text style={styles.placeholderText}>Seleccionar imagen</Text>
+                                            </View>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
 
                                 <Text style={styles.modalLabel} >Nombre</Text>
                                 <TextInput
-                                    style={styles.modalInput}
+                                    style={[styles.modalInput]}
                                     placeholder="Ingrese el nombre de la categoria"
+                                    placeholderTextColor="#aaa"
                                     value={categoria.categoria}
                                     onChangeText={handleChange('categoria')}
                                 />
@@ -381,7 +393,106 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 15,
         padding: 10,
-        color: "#fff",
         margin: 10
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        backgroundColor: '#f8f9fa',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#333',
+    },
+    closeButton: {
+        padding: 4,
+    },
+    modalBody: {
+        padding: 20,
+    },
+    imageSection: {
+        marginBottom: 20,
+    },
+    sectionLabel: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#555',
+        marginBottom: 8,
+    },
+    imageUploadButton: {
+        marginVertical: 15,
+        height: 150,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+    },
+    imagePlaceholder: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+    },
+    placeholderText: {
+        marginTop: 8,
+        color: '#aaa',
+        fontSize: 14,
+    },
+    inputSection: {
+        marginBottom: 10,
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 16,
+        color: '#333',
+        backgroundColor: '#f9f9f9',
+    },
+    modalFooter: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        padding: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+    },
+    actionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 6,
+        marginLeft: 10,
+    },
+    cancelButton: {
+        backgroundColor: '#f1f1f1',
+    },
+    saveButton: {
+        backgroundColor: '#28a745',
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginRight: 5,
+        color: '#fff',
     },
 })
