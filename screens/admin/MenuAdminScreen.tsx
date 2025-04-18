@@ -37,8 +37,6 @@ export default function MenuAdminScreen() {
         foto: null,
     });
 
-    console.log('categorias', categoria)
-
     const handleSeleccionarImagen = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
@@ -49,11 +47,12 @@ export default function MenuAdminScreen() {
 
         if (!result.canceled) {
             const asset = result.assets[0];
-            const response = await fetch(asset.uri);
-            const blob = await response.blob();
-            const file = new File([blob], `foto_${Date.now()}.jpg`, { type: blob.type });
-
-            setCategoria({ ...categoria, foto: file });
+            const foto = {
+                uri: asset.uri,
+                type: 'image/jpeg',
+                name: `foto_${Date.now()}.jpg`,
+            }
+            setCategoria({ ...categoria, foto });
             setImagePreview(asset.uri);
         }
     };
@@ -68,53 +67,46 @@ export default function MenuAdminScreen() {
             return;
         }
 
-        let nombre = categoria.categoria;
-        let nombreConGuiones = nombre.replace(/\s+/g, '_');
-        const id_unico = `categoria_${nombreConGuiones}_${Date.now()}`;
-
         try {
+            // 1. Crear la categoría sin imagen
+            const id_unico = `categoria_${categoria.categoria.replace(/\s+/g, '_')}_${Date.now()}`;
             const categoriaData = {
                 id: id_unico,
                 categoria: categoria.categoria,
-                foto: ''
+                foto: '',
             };
 
             const response = await MenuService.crearCategoria(categoriaData);
 
-            if (response.status == 200) {
+            if (response.status === 200) {
+                // 2. Subir la imagen a Cloudinary
                 const formData = new FormData();
-                formData.append('foto', categoria.foto);
-                formData.append("upload_preset", "categorias");
-                formData.append("public_id", `categoria_${categoria.categoria}_${id_unico}`);
-                try {
-                    console.log('Enviando imagen..');
-                    const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                    const url = cloudinaryResponse.data.url;
-                    console.log(url);
-                    await MenuService.actualizarCategoria(id_unico, { foto: url });
-                    showMessage({
-                        message: "Categoría creada con éxito",
-                        type: "success",
-                        icon: "success",
-                        duration: 2000
-                    })
-                    setCategoria({ categoria: '', foto: null });
-                    setImagePreview('');
-                    setRefreshKey(prev => prev + 1);
-                } catch (imgError) {
-                    console.log(imgError);
-                    await MenuService.eliminarCategoria(id_unico);
-                    alert(`"Error al subir la imagen."`);
-                }
+                formData.append('foto', {
+                    uri: categoria.foto.uri,
+                    type: categoria.foto.type,
+                    name: categoria.foto.name,
+                });
+                formData.append('upload_preset', 'categorias');
+                formData.append('public_id', `categoria_${categoria.categoria}_${id_unico}`);
+
+                const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                const url = cloudinaryResponse.data.url;
+
+                // 3. Actualizar la categoría con la URL de la imagen
+                await MenuService.actualizarCategoria(id_unico, { foto: url });
+
+                // Éxito
+                showMessage({ message: "Categoría creada con éxito", type: "success" });
+                setCategoria({ categoria: '', foto: null });
+                setImagePreview(null);
+                setRefreshKey(prev => prev + 1);
             }
-            setModalVisible(false);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             alert("Error al crear la categoría.");
         }
+        setModalVisible(false);
     };
-
-
 
     return (
         <AdminLayout>
