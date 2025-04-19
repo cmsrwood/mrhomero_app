@@ -188,7 +188,7 @@ export default function DashboardScreen() {
                             style={styles.picker}
                             dropdownIconColor="#fff"
                             itemStyle={styles.pickerItem}
-                            mode="dropdown"
+                            mode={Platform.OS === 'android' ? 'dropdown' : null}
                         >
                             {[0, 1, 2, 3, 4].map(offset => {
                                 const yearOption = parseInt(anoActual) - offset;
@@ -203,7 +203,7 @@ export default function DashboardScreen() {
                             style={styles.picker}
                             dropdownIconColor="#fff"
                             itemStyle={styles.pickerItem}
-                            mode="dropdown"
+                            mode={Platform.OS === 'android' ? 'dropdown' : null}
                         >
                             {[
                                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -218,10 +218,10 @@ export default function DashboardScreen() {
                     <Picker
                         selectedValue={tipoReporte}
                         onValueChange={value => setTipoReporte(value)}
-                        style={styles.picker}
+                        style={Platform.OS === 'ios' ? styles.pickerIOS : styles.picker}
                         dropdownIconColor="#fff"
                         itemStyle={styles.pickerItem}
-                        mode="dropdown"
+                        mode={Platform.OS === 'android' ? 'dropdown' : null}
                     >
                         <Picker.Item label="Tipo de reporte" value="" enabled={false} />
                         <Picker.Item label="Mensual" value="mensual" />
@@ -420,13 +420,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#2B3035',
         borderRadius: 8,
         overflow: 'hidden',
-        borderWidth: Platform.OS === 'ios' ? 1 : 0,
-        borderColor: '#6C757D'
+    },
+    pickerIOS: {
+        flex: 1,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: 50,
+        marginVertical: 10
     },
     picker: {
         color: '#fff',
         backgroundColor: '#2B3035',
-        height: Platform.OS === 'ios' ? 100 : 54,
+        height: Platform.OS === 'ios' ? 50 : 54,
+        justifyContent: 'center',
         width: '100%',
     },
     pickerItem: {
