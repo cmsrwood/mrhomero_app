@@ -267,13 +267,33 @@ export default function DashboardScreen() {
                 <View style={styles.row}>
                     <View style={styles.col}>
                         <Text style={styles.titulo_col}>Productos vendidos por mes</Text>
-                        <Text style={styles.subtitulo_col}>{cuentaProductosVendidosPorMes} Unidades</Text>
-                        <Text style={porcentajeProductos > 0 ? styles.porcentaje_positivo : styles.porcentaje_negativo}>{porcentajeProductos}% este mes</Text>
+                        {
+                            cuentaProductosVendidosPorMes.length == 0 ?
+                                <View style={{ alignItems: "center" }}>
+                                    <Text style={styles.titulo_col_naranja}>0 unidades</Text>
+                                    <Text style={[styles.titulo_col, { textAlign: 'center' }]}>No hay productos vendidos este mes</Text>
+                                </View>
+                                :
+                                <View style={{ alignItems: "center" }}>
+                                    <Text style={styles.titulo_col}>{cuentaProductosVendidosPorMes}</Text>
+                                    <Text style={styles.porcentaje_positivo}>{porcentajeProductos}% este mes</Text>
+                                </View>
+                        }
                     </View>
                     <View style={styles.col}>
                         <Text style={styles.titulo_col}>Total ventas por mes</Text>
-                        <Text style={styles.subtitulo_col}>{formatCurrency(cuentaVentasMes)}</Text>
-                        <Text style={porcentajeVentas > 0 ? styles.porcentaje_positivo : styles.porcentaje_negativo}>{porcentajeVentas}% este mes</Text>
+                        {
+                            cuentaVentasMes.length == 0 ?
+                                <View style={{ alignItems: "center" }}>
+                                    <Text style={styles.titulo_col_naranja}>$0</Text>
+                                    <Text style={styles.titulo_col}>No hay ventas este mes</Text>
+                                </View>
+                                :
+                                <View style={{ alignItems: "center" }}>
+                                    <Text style={styles.titulo_col}>{formatCurrency(cuentaVentasMes)}</Text>
+                                    <Text style={styles.porcentaje_positivo}>{porcentajeVentas}% este mes</Text>
+                                </View>
+                        }
                     </View>
                     <View style={styles.col_2}>
                         <Text style={styles.titulo_col}>Productos más vendidos</Text>
@@ -332,6 +352,10 @@ const styles = StyleSheet.create({
     titulo_col: {
         fontSize: 20,
         color: "#fff"
+    },
+    titulo_col_naranja: {
+        fontSize: 20,
+        color: "#FFC107"
     },
     subtitulo_col: {
         fontSize: 20,

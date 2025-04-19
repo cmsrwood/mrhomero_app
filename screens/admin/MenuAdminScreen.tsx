@@ -111,7 +111,7 @@ export default function MenuAdminScreen() {
     return (
         <AdminLayout>
             <View style={styles.general}>
-                <Text style={globalStyles.title}>Menu admin</Text>
+                <Text style={globalStyles.title}>Menu</Text>
 
                 <View style={styles.up}>
 

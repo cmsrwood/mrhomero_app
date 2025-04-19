@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import MenuService from "../services/MenuServices";
+import RecompensasService from "../services/RecompensasService";
 
-export default function useMenu(type, params = {}) {
+export default function useRecompensas(type, params = {}) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,12 +19,11 @@ export default function useMenu(type, params = {}) {
                 setLoading(true);
                 let results = [];
 
-                if (type === "categorias") {
-                    results = await MenuService.getCategorias();
-                } else if (type === "productos") {
-                    results = await MenuService.getProductos(params.id_categoria);
-                } else if (type === "producto") {
-                    results = await MenuService.getProducto(params.id_producto);
+                if (type === "recompensas") {
+                    results = await RecompensasService.getRecompensas();
+                }
+                else if (type === "recompensa") {
+                    results = await RecompensasService.getRecompensa(params.id_recompensa);
                 }
 
                 if (isMounted) {
