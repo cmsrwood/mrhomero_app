@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal, FlatList, Alert } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert, Platform } from 'react-native'
 import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
@@ -215,7 +215,7 @@ export default function RecompensasAdminScreen() {
                         <Text style={styles.botonTexto} >Añadir</Text>
                     </TouchableOpacity>
 
-                    <Picker style={styles.picker} mode="dropdown" selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarRecompensasPorEstado(itemValue)}>
+                    <Picker style={Platform.OS === 'ios' ? styles.pickerIOS : styles.picker} mode="dialog" itemStyle={Platform.OS === 'ios' ? styles.colorLetterIOS : {}} selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarRecompensasPorEstado(itemValue)}>
                         <Picker.Item label="Activos" value={'1'} />
                         <Picker.Item label="Inactivos" value={'0'} />
                         <Picker.Item label="Todos" value={'-1'} />
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     add: {
-        width: 170,
+        width: Platform.OS === 'ios' ? 170 : 170,
         height: 50,
         display: 'flex',
         flexDirection: 'row',
@@ -377,6 +377,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         backgroundColor: '#157347',
+        marginHorizontal: Platform.OS === 'ios' ? 10 : 10,
+        borderRadius: 10,
     },
     picker: {
         backgroundColor: '#5C636A',
@@ -384,6 +386,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 170,
         fontSize: 16,
+        borderRadius: Platform.OS === 'android' ? 10 : 10,
     },
 
     // Modal para añadir
@@ -583,4 +586,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#2B3035',
         borderRadius: 15,
     },
+    pickerIOS: {
+        flex: 1,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: 50,
+        borderRadius: 10
+    },
+    colorLetterIOS: {
+        color: '#fff',
+    }
 })

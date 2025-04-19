@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import Constants from "expo-constants";
 
 const globalStyles = StyleSheet.create({
@@ -134,6 +134,20 @@ const globalStyles = StyleSheet.create({
     },
     negative: {
         color: '#dc3545'
+    },
+    pickerIOS: {
+        flex: 1,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: 50,
+        marginVertical: 10
+    },
+    picker: {
+        color: '#fff',
+        backgroundColor: '#2B3035',
+        height: Platform.OS === 'ios' ? 50 : 54,
+        justifyContent: 'center',
+        width: '100%',
     },
 });
 

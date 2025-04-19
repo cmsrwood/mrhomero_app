@@ -185,10 +185,10 @@ export default function DashboardScreen() {
                         <Picker
                             selectedValue={ano}
                             onValueChange={handleAnoChange}
-                            style={styles.picker}
+                            style={globalStyles.picker}
                             dropdownIconColor="#fff"
                             itemStyle={styles.pickerItem}
-                            mode={Platform.OS === 'android' ? 'dropdown' : null}
+                            mode={Platform.OS === 'android' ? 'dialog' : null}
                         >
                             {[0, 1, 2, 3, 4].map(offset => {
                                 const yearOption = parseInt(anoActual) - offset;
@@ -200,10 +200,10 @@ export default function DashboardScreen() {
                         <Picker
                             selectedValue={mes}
                             onValueChange={handleMesChange}
-                            style={styles.picker}
+                            style={globalStyles.picker}
                             dropdownIconColor="#fff"
                             itemStyle={styles.pickerItem}
-                            mode={Platform.OS === 'android' ? 'dropdown' : null}
+                            mode={Platform.OS === 'android' ? 'dialog' : null}
                         >
                             {[
                                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -218,10 +218,10 @@ export default function DashboardScreen() {
                     <Picker
                         selectedValue={tipoReporte}
                         onValueChange={value => setTipoReporte(value)}
-                        style={Platform.OS === 'ios' ? styles.pickerIOS : styles.picker}
+                        style={Platform.OS === 'ios' ? globalStyles.pickerIOS : globalStyles.picker}
                         dropdownIconColor="#fff"
                         itemStyle={styles.pickerItem}
-                        mode={Platform.OS === 'android' ? 'dropdown' : null}
+                        mode={Platform.OS === 'android' ? 'dialog' : null}
                     >
                         <Picker.Item label="Tipo de reporte" value="" enabled={false} />
                         <Picker.Item label="Mensual" value="mensual" />
@@ -421,20 +421,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
     },
-    pickerIOS: {
-        flex: 1,
-        overflow: 'hidden',
-        justifyContent: 'center',
-        height: 50,
-        marginVertical: 10
-    },
-    picker: {
-        color: '#fff',
-        backgroundColor: '#2B3035',
-        height: Platform.OS === 'ios' ? 50 : 54,
-        justifyContent: 'center',
-        width: '100%',
-    },
+    
     pickerItem: {
         color: '#fff',
         fontSize: Platform.OS === 'ios' ? 16 : 14,
