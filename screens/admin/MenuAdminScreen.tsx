@@ -17,10 +17,11 @@ export default function MenuAdminScreen() {
     const navigation = useNavigation();
 
     const { data: categorias, loading, error, refetch } = useMenu("categorias");
-    const [estadoFiltro, setEstadoFiltro] = useState(-1);
+    const [estadoFiltro, setEstadoFiltro] = useState(1);
 
 
     function filtrarCategoriasPorEstado(estado) {
+        refetch();
         setEstadoFiltro(Number(estado));
     }
 
@@ -123,6 +124,7 @@ export default function MenuAdminScreen() {
                         <Ionicons name="add-circle-outline" size={24} color="white" />
                         <Text style={styles.botonTexto} >Añadir Categoria</Text>
                     </TouchableOpacity>
+                    {/* Modal para agregar */}
                     <Modal
                         visible={modalVisible}
                         animationType="slide"
@@ -190,28 +192,28 @@ export default function MenuAdminScreen() {
                     </Modal>
 
                     <Picker style={styles.picker}
-                        selectedValue={estadoFiltro} onValueChange={filtrarCategoriasPorEstado}>
-                        <Picker.Item style={styles.itemPicker} label="Todos" value={-1} />
-                        <Picker.Item style={styles.itemPicker} label="Activos" value={1} />
-                        <Picker.Item style={styles.itemPicker} label="Inactivos" value={0} />
+                        selectedValue={estadoFiltro} onValueChange={(itemValue)=>filtrarCategoriasPorEstado(itemValue)}>
+                        <Picker.Item label="Activos" value={'1'} />
+                        <Picker.Item label="Inactivos" value={'0'} />
+                        <Picker.Item label="Todos" value={'-1'} />
                     </Picker>
                 </View>
 
-                <View style={styles.type}>
+                <View style={globalStyles.row}>
                     {categoriasFiltradas.map((categoria) => (
-                        <Card key={categoria.id_categoria} style={styles.card}>
+                        <Card key={categoria.id_categoria} style={globalStyles.card}>
                             <TouchableOpacity onPress={() => navigation.navigate('Categoria', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
-                                <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
+                                <Image source={{ uri: categoria.cat_foto }} style={globalStyles.img} />
                             </TouchableOpacity>
 
-                            <View style={styles.cardContent}>
-                                <Text style={styles.cardText}>{categoria.cat_nom}</Text>
+                            <View style={globalStyles.cardContent}>
+                                <Text style={globalStyles.cardText}>{categoria.cat_nom}</Text>
                             </View>
-                            <View style={styles.cardActions}>
-                                <TouchableOpacity style={styles.cardEdit}>
+                            <View style={globalStyles.cardActions}>
+                                <TouchableOpacity style={globalStyles.cardEdit}>
                                     <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.cardDelete}>
+                                <TouchableOpacity style={globalStyles.cardDelete}>
                                     <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
                                 </TouchableOpacity>
                             </View>
@@ -229,12 +231,14 @@ const styles = StyleSheet.create({
     general: {
         padding: 10,
     },
+    // Estilos para los botones superiores
     up: {
         display: 'flex',
         flexDirection: 'row',
         gap: 10,
         justifyContent: 'center',
     },
+    // Estilos para el boton de agregar
     add: {
         width: 170,
         height: 50,
@@ -244,8 +248,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         backgroundColor: '#157347',
-        borderRadius: 10,
     },
+    //Estilos para el select de estado
     picker: {
         color: '#fff',
         backgroundColor: '#565E64',
@@ -254,11 +258,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderRadius: 10,
     },
-    itemPicker: {
-        color: '#fff',
-        fontSize: 16,
-        width: 100,
-    },
+    //Estilos para el modal de agregar 
+    // Estilos para el fondo del modal
     modalContainer: {
         flex: 1,
         height: '100%',
@@ -266,23 +267,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    modalTitulo: {
-        fontFamily: "Homer-Simpson",
-        fontSize: 40,
-        color: "#FFC107",
-    },
-    modalImagen: {
-        marginTop: 20,
-        width: 300,
-        height: 200,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-    },
-    modalLabel: {
-        marginTop: 10,
-        fontSize: 20,
-        color: '#fff',
-    },
+    // Estilos para el contenido del modal
     modalContenido: {
         width: 330,
         height: 600,
@@ -291,144 +276,30 @@ const styles = StyleSheet.create({
         borderRadius: 15,
 
     },
-    textoModal: {
-        fontSize: 16,
-        marginBottom: 20,
+    //Estilos para el titulo del modal
+    modalTitulo: {
+        fontFamily: "Homer-Simpson",
+        fontSize: 40,
+        color: "#FFC107",
     },
-    Botones: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 5,
-        justifyContent: 'flex-end',
-    },
-    cancelar: {
-        width: 100,
-        height: 50,
-        backgroundColor: '#DC3545',
-        borderRadius: 15,
-        alignItems: 'center',
-        padding: 10,
-        justifyContent: 'center'
-    },
-    guardar: {
-        width: 100,
-        height: 50,
-        backgroundColor: '#198754',
-        borderRadius: 15,
-        alignItems: 'center',
-        padding: 10,
-        justifyContent: 'center'
-    },
-    botonTexto: {
+    // Estilos para el label de la imagen
+    modalLabel: {
+        marginTop: 10,
+        fontSize: 20,
         color: '#fff',
-        fontSize: 16
     },
-    type: {
-        padding: 20,
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 2,
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-        alignContent: 'space-between',
-    },
-    card: {
-        display: 'flex',
-        alignSelf: 'center',
-        height: 260,
-        width: 160,
-        marginVertical: 10,
-        backgroundColor: '#2B3035',
-        shadowColor: '#fff',
-        padding: 0,
-    },
-    cardContent: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    img: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        width: '100%',
-        height: 150,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        overflow: 'hidden',
-    },
-    cardText: {
-        fontSize: 15,
-        color: '#ccc',
-        marginVertical: 5,
-        fontWeight: 'bold',
-    },
-    cardActions: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 5,
-        justifyContent: 'center'
-    },
-    cardEdit: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#FFCA2C',
-        borderRadius: 10,
-        padding: 10
-    },
-    cardDelete: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#BB2D3B',
-        borderRadius: 10,
-        padding: 10
-    },
-    modalInput: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        height: 40,
-        width: '100%',
-        borderRadius: 15,
-        padding: 10,
-        margin: 10
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        backgroundColor: '#f8f9fa',
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#333',
-    },
-    closeButton: {
-        padding: 4,
-    },
-    modalBody: {
-        padding: 20,
-    },
+    //Estilos para la sección de la imagen
     imageSection: {
         marginBottom: 20,
     },
+    // Estilos para el label que acompaña la imagen
     sectionLabel: {
         fontSize: 14,
         fontWeight: '500',
         color: '#555',
         marginBottom: 8,
     },
+    //Estilos para el input de la imagen
     imageUploadButton: {
         marginVertical: 15,
         height: 150,
@@ -439,58 +310,65 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         overflow: 'hidden',
     },
+    //Estilos para la imagen previa
     imagePreview: {
         width: '100%',
         height: '100%',
     },
+    //Estilos para el placeholder de la imagen (se usa en caso de que no se haya seleccionado ninguna imagen)
     imagePlaceholder: {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
     },
+    //Estilos para el texto del placeholder que aparece cuando no se ha seleccionado ninguna imagen
     placeholderText: {
         marginTop: 8,
         color: '#aaa',
         fontSize: 14,
     },
-    inputSection: {
-        marginBottom: 10,
-    },
-    textInput: {
+    //Estilos para el input del nombre
+    modalInput: {
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        color: '#333',
-        backgroundColor: '#f9f9f9',
+        borderColor: "#ccc",
+        height: 40,
+        width: '100%',
+        borderRadius: 15,
+        padding: 10,
+        margin: 10
     },
-    modalFooter: {
+    //Estilos para las acciones del modal
+    Botones: {
+        display: 'flex',
         flexDirection: 'row',
+        gap: 5,
         justifyContent: 'flex-end',
-        padding: 16,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
     },
-    actionButton: {
-        flexDirection: 'row',
+    //Estilos para el boton de cancelar
+    cancelar: {
+        width: 100,
+        height: 50,
+        backgroundColor: '#DC3545',
+        borderRadius: 15,
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 6,
-        marginLeft: 10,
+        padding: 10,
+        justifyContent: 'center'
     },
-    cancelButton: {
-        backgroundColor: '#f1f1f1',
+    //Estilos para el boton de guardar
+    guardar: {
+        width: 100,
+        height: 50,
+        backgroundColor: '#198754',
+        borderRadius: 15,
+        alignItems: 'center',
+        padding: 10,
+        justifyContent: 'center'
     },
-    saveButton: {
-        backgroundColor: '#28a745',
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: '500',
-        marginRight: 5,
+    //Estilos para el texto de los botones
+    botonTexto: {
         color: '#fff',
+        fontSize: 16
     },
+
+    
 })
