@@ -16,8 +16,7 @@ export default function MenuAdminScreen() {
 
     const navigation = useNavigation();
 
-    const [refreshKey, setRefreshKey] = useState(0);
-    const { data: categorias, loading, error, refetch } = useMenu("categorias", {}, refreshKey);
+    const { data: categorias, loading, error, refetch } = useMenu("categorias");
     const [estadoFiltro, setEstadoFiltro] = useState(-1);
 
 
@@ -99,7 +98,7 @@ export default function MenuAdminScreen() {
                 showMessage({ message: "Categoría creada con éxito", type: "success" });
                 setCategoria({ categoria: '', foto: null });
                 setImagePreview(null);
-                setRefreshKey(prev => prev + 1);
+                refetch();
             }
         } catch (error) {
             console.error(error);

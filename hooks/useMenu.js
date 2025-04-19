@@ -8,6 +8,7 @@ export default function useMenu(type, params = {}) {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const refetch = () => {
+        console.log('Actualizando...')
         setRefreshTrigger(prev => prev + 1);
     };
 
