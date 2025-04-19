@@ -289,23 +289,23 @@ export default function RecompensasAdminScreen() {
                     <Modal visible={recompensaModalShow == true} animationType="slide" transparent={true} onRequestClose={() => setRecompensaModal(null)}>
                         {recompensaModal !== null ? null : <Loader />}
                         <View style={styles.modalContainer}>
-                            <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setRecompensaModalShow(false)}>
-                                <View >
-                                    <Ionicons name="close" size={24} color="black" />
-                                </View>
-                            </TouchableOpacity>
                             <View style={styles.modalContenidoU}>
+                                <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setRecompensaModalShow(false)}>
+                                    <View >
+                                        <Ionicons name="close" size={24} color="black" />
+                                    </View>
+                                </TouchableOpacity>
                                 <Card style={styles.cardModal}>
                                     <Image source={{ uri: recompensaModal?.recomp_foto }} style={styles.imgModal} />
-                                    <View style={styles.cardContent}>
+                                    <View style={globalStyles.cardContent}>
                                         <View>
-                                            <Text style={[styles.modalTitulo, { textAlign: 'center' }]}>{recompensaModal?.recompensa_nombre}</Text>
+                                            <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.modalTitulo, { textAlign: 'center', }]}>{recompensaModal?.recompensa_nombre}</Text>
                                             <Text style={[styles.modalTitulo, { textAlign: 'center', color: 'white' }]}>{recompensaModal?.recomp_num_puntos} puntos</Text>
                                             <Text style={styles.modalLabel}>{recompensaModal?.recompensa_descripcion}</Text>
                                         </View>
-                                    </View>
-                                    <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
-                                        <Text style={recompensaModal?.recomp_estado === 1 ? styles.positive : styles.negative}>{recompensaModal?.recomp_estado === 1 ? 'Activo' : 'Inactivo'}</Text>
+                                        <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+                                            <Text style={recompensaModal?.recomp_estado === 1 ? globalStyles.positive : globalStyles.negative}>{recompensaModal?.recomp_estado === 1 ? 'Activo' : 'Inactivo'}</Text>
+                                        </View>
                                     </View>
                                 </Card>
                             </View>

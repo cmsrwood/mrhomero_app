@@ -53,8 +53,8 @@ const globalStyles = StyleSheet.create({
         zIndex: 10,
         padding: 5,
         position: "absolute",
-        top: 80,
-        right: 12,
+        top: '-3%',
+        right: '-4%',
         display: "flex",
         flexDirection: "row",
         gap: 5
