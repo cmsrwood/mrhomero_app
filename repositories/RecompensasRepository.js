@@ -17,6 +17,10 @@ class RecompensasRepository {
         const response = await API.put(`/tienda/recompensas/actualizar/${id}`, data);
         return response
     }
+    static async restaurarRecompensa(id) {
+        const response = await API.put(`/tienda/recompensas/restaurar/${id}`);
+        return response
+    }
     static async eliminarRecompensa(id) {
         const response = await API.put(`/tienda/recompensas/eliminar/${id}`);
         return response

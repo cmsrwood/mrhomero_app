@@ -37,6 +37,15 @@ class RecompensasService {
             return [];
         }
     }
+    static async restaurarRecompensa(id) {
+        try {
+            const response = await RecompensasRepository.restaurarRecompensa(id);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
     static async eliminarRecompensa(id) {
         try {
             const response = await RecompensasRepository.eliminarRecompensa(id);

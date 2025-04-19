@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import RecompensasService from '../../services/RecompensasService';
 import ImagenesService from '../../services/ImagenesService';
 import { showMessage } from 'react-native-flash-message';
+import Loader from '../../components/Loader';
 
 export default function RecompensasAdminScreen() {
 
@@ -152,6 +153,53 @@ export default function RecompensasAdminScreen() {
         }
     }
 
+    const restaurarRecompensa = async (id) => {
+        try {
+            Alert.alert(
+                "Restaurar recompensa",
+                "¿Deseas restaurar esta recompensa?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Restaurar",
+                        onPress: async () => {
+                            try {
+                                const response = await RecompensasService.restaurarRecompensa(id);
+                                if (response.status == 200) {
+                                    showMessage({
+                                        message: 'Recompensa restaurada con éxito',
+                                        type: 'success',
+                                        duration: 3000,
+                                        icon: 'success',
+                                    })
+                                }
+                                refetch();
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al restaurar la recompensa',
+                                    type: 'danger',
+                                    duration: 3000
+                                });
+                                refetch();
+                            }
+                        }
+                    },
+                ]
+            );
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const [recompensaModal, setRecompensaModal] = useState(null);
+
+    const [recompensaModalShow, setRecompensaModalShow] = useState(false);
+
     return (
         <AdminLayout>
             <View style={styles.general}>
@@ -164,8 +212,15 @@ export default function RecompensasAdminScreen() {
                             }
                         }>
                         <Ionicons name="add-circle-outline" size={24} color="white" />
-                        <Text style={styles.botonTexto} >Añadir recompensa</Text>
+                        <Text style={styles.botonTexto} >Añadir</Text>
                     </TouchableOpacity>
+
+                    <Picker style={styles.picker} mode="dropdown" selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarRecompensasPorEstado(itemValue)}>
+                        <Picker.Item label="Activos" value={'1'} />
+                        <Picker.Item label="Inactivos" value={'0'} />
+                        <Picker.Item label="Todos" value={'-1'} />
+                    </Picker>
+
                     <Modal
                         visible={modalVisible}
                         animationType="slide"
@@ -227,49 +282,85 @@ export default function RecompensasAdminScreen() {
                                         <Text style={styles.botonTexto}>Guardar</Text>
                                     </TouchableOpacity>
                                 </View>
-
                             </View>
                         </View>
                     </Modal>
 
-                    <Picker style={styles.picker} selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarRecompensasPorEstado(itemValue)}>
-                        <Picker.Item label="Activos" value={'1'} />
-                        <Picker.Item label="Inactivos" value={'0'} />
-                        <Picker.Item label="Todos" value={'-1'} />
-                    </Picker>
+                    <Modal visible={recompensaModalShow == true} animationType="slide" transparent={true} onRequestClose={() => setRecompensaModal(null)}>
+                        {recompensaModal !== null ? null : <Loader />}
+                        <View style={styles.modalContainer}>
+                            <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setRecompensaModalShow(false)}>
+                                <View >
+                                    <Ionicons name="close" size={24} color="black" />
+                                </View>
+                            </TouchableOpacity>
+                            <View style={styles.modalContenidoU}>
+                                <Card style={styles.cardModal}>
+                                    <Image source={{ uri: recompensaModal?.recomp_foto }} style={styles.imgModal} />
+                                    <View style={styles.cardContent}>
+                                        <View>
+                                            <Text style={[styles.modalTitulo, { textAlign: 'center' }]}>{recompensaModal?.recompensa_nombre}</Text>
+                                            <Text style={[styles.modalTitulo, { textAlign: 'center', color: 'white' }]}>{recompensaModal?.recomp_num_puntos} puntos</Text>
+                                            <Text style={styles.modalLabel}>{recompensaModal?.recompensa_descripcion}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+                                        <Text style={recompensaModal?.recomp_estado === 1 ? styles.positive : styles.negative}>{recompensaModal?.recomp_estado === 1 ? 'Activo' : 'Inactivo'}</Text>
+                                    </View>
+                                </Card>
+                            </View>
+                        </View>
+                    </Modal>
+
                 </View>
 
-                <View style={styles.type}>
-                    {recompensasFiltradas.length === 0 && <Text style={styles.modalTitle}>No hay recompensas disponibles</Text>}
+                {/* CARTAS PARA RECOMPENSAS */}
+                <View style={globalStyles.row}>
+                    {recompensasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20 }}>No hay recompensas disponibles</Text>}
                     {recompensasFiltradas.map((recompensa) => (
-                        <Card key={recompensa.id_recomp} style={styles.card}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Recompensa', { id_recompensa: recompensa.id_recomp, recompensa_nombre: recompensa.recompensa_nombre })}>
-                                <Image source={{ uri: recompensa.recomp_foto }} style={styles.img} />
+                        <Card key={recompensa.id_recomp} style={globalStyles.card}>
+                            <TouchableOpacity onPress={() => { setRecompensaModal(recompensa); setRecompensaModalShow(true) }}>
+                                <Image source={{ uri: recompensa.recomp_foto }} style={globalStyles.img} />
                             </TouchableOpacity>
-                            <View style={styles.cardContent}>
-                                <Text style={styles.cardText}>{recompensa.recompensa_nombre}</Text>
-                            </View>
-                            <View style={styles.cardActions}>
-                                <TouchableOpacity style={styles.cardEdit}>
-                                    <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => eliminarRecompensa(recompensa.id_recomp)} style={styles.cardDelete}>
-                                    <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
-                                </TouchableOpacity>
+                            <View style={globalStyles.cardContent}>
+                                <View>
+                                    <Text style={globalStyles.cardText} numberOfLines={1} ellipsizeMode="tail">
+                                        {recompensa.recompensa_nombre}
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text numberOfLines={1} ellipsizeMode="tail" style={recompensa.recomp_estado === 1 ? [globalStyles.cardText, globalStyles.positive] : [globalStyles.cardText, globalStyles.negative]}>
+                                        {recompensa.recomp_estado === 1 ? 'Activo' : 'Inactivo'}
+                                    </Text>
+                                </View>
+                                <View style={globalStyles.cardActions}>
+                                    <TouchableOpacity style={globalStyles.cardEdit}>
+                                        <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
+                                    </TouchableOpacity>
+                                    {recompensa.recomp_estado == 1 ?
+                                        <TouchableOpacity onPress={() => eliminarRecompensa(recompensa.id_recomp)} style={globalStyles.cardDelete}>
+                                            <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity onPress={() => restaurarRecompensa(recompensa.id_recomp)} style={globalStyles.cardRestore}>
+                                            <Ionicons name="reload-outline" size={20} color="white" ></Ionicons>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
                             </View>
                         </Card>
                     ))}
                 </View>
 
-            </View>
-        </AdminLayout>
+            </View >
+        </AdminLayout >
     )
 }
 
 
 const styles = StyleSheet.create({
     general: {
-        padding: 10,
+        padding: 0,
     },
     up: {
         display: 'flex',
@@ -286,20 +377,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         backgroundColor: '#157347',
-        borderRadius: 10,
     },
     picker: {
+        backgroundColor: '#5C636A',
         color: '#fff',
         height: 50,
         width: 170,
         fontSize: 16,
-        borderRadius: 10,
     },
-    itemPicker: {
-        color: '#fff',
-        fontSize: 16,
-        width: 100,
-    },
+
+    // Modal para añadir
     modalContainer: {
         flex: 1,
         height: '100%',
@@ -318,7 +405,6 @@ const styles = StyleSheet.create({
         height: 200,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-
     },
     modalLabel: {
         marginTop: 10,
@@ -331,7 +417,6 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#2B3035',
         borderRadius: 15,
-
     },
     textoModal: {
         fontSize: 16,
@@ -365,67 +450,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16
     },
-    type: {
-        padding: 20,
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 2,
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-        alignContent: 'space-between',
-    },
-    card: {
-        display: 'flex',
-        alignSelf: 'center',
-        height: 260,
-        width: 160,
-        marginVertical: 10,
-        backgroundColor: '#2B3035',
-        shadowColor: '#fff',
-        padding: 0,
-    },
-    cardContent: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    img: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        width: '100%',
-        height: 150,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        overflow: 'hidden',
-    },
-    cardText: {
-        fontSize: 15,
-        color: '#ccc',
-        marginVertical: 5,
-        fontWeight: 'bold',
-    },
-    cardActions: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 5,
-        justifyContent: 'center'
-    },
-    cardEdit: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#FFCA2C',
-        borderRadius: 10,
-        padding: 10
-    },
-    cardDelete: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#BB2D3B',
-        borderRadius: 10,
-        padding: 10
-    },
+
+    // Modal para añadir
     modalInput: {
         borderWidth: 1,
         borderColor: "#ccc",
@@ -534,5 +560,27 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginRight: 5,
         color: '#fff',
+    },
+
+    // Modal para cada recompensa
+    cardModal: {
+        display: 'flex',
+        alignSelf: 'center',
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#2B3035',
+    },
+    imgModal: {
+        width: '100%',
+        height: '70%',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        overflow: 'hidden',
+    },
+    modalContenidoU: {
+        width: 330,
+        height: 600,
+        backgroundColor: '#2B3035',
+        borderRadius: 15,
     },
 })
