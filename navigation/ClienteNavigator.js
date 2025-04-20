@@ -17,7 +17,7 @@ const Stack = createStackNavigator();
 const MenuStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MenuScreen" component={MenuDefaultScreen} />
-        <Stack.Screen name="CategoriatScreen" component={CategoriaScreen} />
+        <Stack.Screen name="CategoriaScreen" component={CategoriaScreen} />
         <Stack.Screen name="ProductoScreen" component={ProductoScreen} />
     </Stack.Navigator>
 );
