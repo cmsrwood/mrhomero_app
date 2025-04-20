@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import DefaultLayout from '../../components/DefaultLayout'
+import ClienteLayout from '../../components/ClienteLayout'
 import { useNavigation } from '@react-navigation/native'
 import foto from '../../assets/img/indexCliente/inicio9.jpg';
 import Swiper from 'react-native-swiper';
-import useMenu from '../../hooks/useMenu'
 import useVentas from '../../hooks/useVentas'
 import useClientes from '../../hooks/useClientes'
 import { Ionicons } from '@expo/vector-icons'
+import Loader from '../../components/Loader';
 
 const { width, height } = Dimensions.get('window');
 
 export default function IndexCliente() {
     const navigation = useNavigation();
 
-    const { data: cliente, refetch: refetchCliente } = useClientes("clienteConToken");
-    const { data: productosMasVendidos, refetch: refetchProductos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
+    const { data: cliente, isLoading: isLoadingCliente, refetch: refetchCliente } = useClientes("clienteConToken");
+    const { data: productosMasVendidos, isLoading: isLoadingProductosMasVendidos, refetch: refetchProductos } = useVentas("productosMasVendidos", { year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
+
     const { data: productosMasCompradosPorCliente, refetch: refetchProductosMasCompradosPorCliente } = useVentas("productosMasCompradosPorCliente");
 
     const handleNavigateToProducto = (id_producto, pro_nom) => {
@@ -30,7 +30,7 @@ export default function IndexCliente() {
     };
 
     return (
-        <DefaultLayout>
+        <ClienteLayout>
             <View style={[styles.backgroundContainer, { width: width, height: height * 0.4 }]}>
                 <Image
                     source={foto}
@@ -85,9 +85,10 @@ export default function IndexCliente() {
                             {productosMasCompradosPorCliente[0]?.pro_nom ? (
                                 <TouchableOpacity
                                     style={styles.button}
-                                    onPress={() => navigation.navigate('MisCompras')}
+                                    onPress={() => navigation.navigate('Historial')}
                                 >
-                                    <Text style={styles.buttonText}>Mis compras</Text>
+                                    <Ionicons name="time-outline" size={20} color="black"></Ionicons>
+                                    <Text style={styles.buttonText}>Historial</Text>
                                 </TouchableOpacity>
                             ) : (
                                 <TouchableOpacity
@@ -106,24 +107,32 @@ export default function IndexCliente() {
                 <View style={styles.line} />
             </View>
             <View>
-                <FlatList
-                    data={productosMasVendidos}
-                    keyExtractor={(item) => item.id_producto}
-                    horizontal={true}
-                    renderItem={({ item: producto }) => (
-                        <TouchableOpacity style={styles.cartasContainer} onPress={() => handleNavigateToProducto(producto.id_producto, producto.pro_nom)}>
-                            <View>
-                                <View style={styles.cartas}>
-                                    <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
-                                    <Text style={styles.textCartas}>{producto.pro_nom}</Text>
+                {isLoadingProductosMasVendidos || !productosMasVendidos ? (
+                    <View>
+                        <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>Cargando productos mas vendidos...</Text>
+                        <Loader />
+                    </View>
+                ) : (
+                    < FlatList
+                        data={productosMasVendidos}
+                        keyExtractor={(item) => item.id_producto}
+                        horizontal={true}
+                        renderItem={({ item: producto }) => (
+                            <TouchableOpacity style={styles.cartasContainer} onPress={() => handleNavigateToProducto(producto.id_producto, producto.pro_nom)}>
+                                <View>
+                                    <View style={styles.cartas}>
+                                        <Image source={{ uri: producto.pro_foto }} style={styles.imgCartas} />
+                                        <Text style={styles.textCartas}>{producto.pro_nom}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                            <View style={styles.flame}>
-                                <Ionicons name="flame" size={24} color="black" style={{ color: "orange" }} />
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                />
+                                <View style={styles.flame}>
+                                    <Ionicons name="flame" size={24} color="black" style={{ color: "orange" }} />
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                    />
+                )
+                }
             </View>
             <View>
                 <View >
@@ -158,7 +167,7 @@ export default function IndexCliente() {
                 )}
 
             </View>
-        </DefaultLayout >
+        </ClienteLayout >
     )
 }
 
@@ -270,5 +279,17 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         gap: 5
-    }
+    },
+    emptyText: {
+        color: "#ccc",
+        fontSize: 18,
+        textAlign: "center",
+        paddingVertical: 50
+    },
+    errorText: {
+        color: "red",
+        fontSize: 18,
+        textAlign: "center",
+        paddingVertical: 50
+    },
 })

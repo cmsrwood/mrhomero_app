@@ -7,7 +7,11 @@ import useMenu from "../hooks/useMenu";
 export default function Menu() {
 
     const navigation = useNavigation();
-    const { data: categorias, loading, error } = useMenu("categorias")
+    const { data: categorias, refetch, loading, error } = useMenu("categorias")
+
+    useEffect(() => {
+        refetch()
+    }, []);
 
     return (
 

@@ -3,22 +3,24 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import MenuDefaultScreen from '../screens/default/MenuDefaultScreen';
-import CategoriaScreen from '../screens/default/CategoriaScreen';
-import ProductoScreen from '../screens/default/ProductoScreen';
-import IndexCliente from '../screens/cliente/IndexCliente';
-import RecompensasCliente from '../screens/cliente/RecompensasCliente';
-import PerfilCliente from '../screens/cliente/PerfilCliente';
-import HistorialCliente from '../screens/cliente/HistorialCliente';
+import IndexCliente from '../screens/cliente/IndexClienteScreen';
+
+import MenuCliente from '../screens/cliente/MenuClienteScreen';
+import CategoriaCliente from '../screens/cliente/CategoriaClienteScreen';
+import ProductoCliente from '../screens/cliente/ProductoClienteScreen';
+
+import RecompensasCliente from '../screens/cliente/RecompensasClienteScreen';
+import PerfilCliente from '../screens/cliente/PerfilClienteScreen';
+import HistorialCliente from '../screens/cliente/HistorialClienteScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const MenuStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MenuScreen" component={MenuDefaultScreen} />
-        <Stack.Screen name="CategoriaScreen" component={CategoriaScreen} />
-        <Stack.Screen name="ProductoScreen" component={ProductoScreen} />
+        <Stack.Screen name="MenuScreen" component={MenuCliente} />
+        <Stack.Screen name="CategoriaScreen" component={CategoriaCliente} />
+        <Stack.Screen name="ProductoScreen" component={ProductoCliente} />
     </Stack.Navigator>
 );
 

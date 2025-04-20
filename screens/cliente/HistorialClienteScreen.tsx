@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Dimensions } from 'react-native'
-import DefaultLayout from '../../components/DefaultLayout'
 import globalStyles from '../../styles/globalStyles';
+import ClienteLayout from '../../components/ClienteLayout';
 const { width, height } = Dimensions.get('window');
 
 export default function HistorialCliente() {
     return (
-        <DefaultLayout>
+        <ClienteLayout>
             <View>
                 <Text style={globalStyles.title}>Historial</Text>
             </View>
-        </DefaultLayout >
+        </ClienteLayout >
     )
 }

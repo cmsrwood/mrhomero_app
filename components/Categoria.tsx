@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-paper';
 import globalStyles from '../styles/globalStyles';
@@ -10,7 +10,11 @@ export default function Categoria() {
     const route = useRoute();
     const { id_categoria, cat_nom } = route.params || {};
     const navigation = useNavigation();
-    const { data: productos, loading, error } = useMenu("productos", { id_categoria })
+    const { data: productos, refetch, loading, error } = useMenu("productos", { id_categoria })
+
+    useEffect(() => {
+        refetch()
+    }, [id_categoria]);
 
     return (
         <View >
