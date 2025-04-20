@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet } from "react-native";
 import globalStyles from "../styles/globalStyles";
 import Footer from "./Footer";
 
-export default function DefaultLayout({ children }) {
+export default function ClienteLayout({ children }) {
     return (
         <View style={globalStyles.containerfluid}>
             <ScrollView contentContainerStyle={styles.content}>

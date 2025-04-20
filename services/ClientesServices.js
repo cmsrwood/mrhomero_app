@@ -30,6 +30,15 @@ class ClientesService {
             return [];
         }
     }
+    static async getCliente(id) {
+        try {
+            const data = await ClientesRepository.getCliente(id);
+            return data || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default ClientesService;

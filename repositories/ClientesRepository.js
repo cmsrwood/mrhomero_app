@@ -11,8 +11,13 @@ class ClientesRepository {
         return response.data
     }
 
-    static async getResenasUsuarios() { 
+    static async getResenasUsuarios() {
         const response = await API.get('personas/clientes/resenas/datos/rating')
+        return response.data
+    }
+
+    static async getCliente(id) {
+        const response = await API.get(`personas/clientes/${id}`)
         return response.data
     }
 

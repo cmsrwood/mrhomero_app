@@ -47,6 +47,10 @@ class VentasRepository {
         const response = await API.get(endpoint);
         return response.data;
     }
+    static async getProductosMasCompradosPorCliente(id) {
+        const response = await API.get(`/tienda/ventas/productosMasCompradosPorCliente/${id}`);
+        return response.data;
+    }
 }
 
 export default VentasRepository;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import VentasService from "../services/VentasService";
+import AuthService from "../services/AuthService";
 
 export default function useVentas(type, params = {}) {
     const [data, setData] = useState([]);
@@ -54,6 +55,13 @@ export default function useVentas(type, params = {}) {
                 if (type === "IA") {
                     const { tipo, ano, mes } = stableParams;
                     results = await VentasService.getIA(tipo, ano, mes);
+                }
+
+                if (type === "productosMasCompradosPorCliente") {
+                    const token = await AuthService.getToken();
+                    const tokenData = JSON.parse(atob(token.split(".")[1]));
+                    const id = tokenData.id;
+                    results = await VentasService.getProductosMasCompradosPorCliente(id);
                 }
 
                 if (isMounted) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import DefaultLayout from '../../components/DefaultLayout'
 import { useNavigation } from '@react-navigation/native'
-import foto from '../../assets/slider/hamburguesa.jpg'
+import foto from '../../assets/img/slider/hamburguesa.jpg'
 import Swiper from 'react-native-swiper';
 import useMenu from '../../hooks/useMenu'
 import useVentas from '../../hooks/useVentas'

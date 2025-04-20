@@ -128,6 +128,16 @@ class VentasService {
             return [];
         }
     }
+    static async getProductosMasCompradosPorCliente(id) {
+        try {
+            const data = await VentasRepository.getProductosMasCompradosPorCliente(id);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default VentasService;   

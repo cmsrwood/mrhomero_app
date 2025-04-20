@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ClientesService from "../services/ClientesServices";
+import AuthService from "../services/AuthService";
 
 export default function useClientes(type, params = {}) {
 
@@ -23,6 +24,12 @@ export default function useClientes(type, params = {}) {
                 }
                 else if (type === "resenasUsuarios") {
                     results = await ClientesService.getResenasUsuarios();
+                }
+                else if (type === "clienteConToken") {
+                    const token = await AuthService.getToken();
+                    const tokenData = JSON.parse(atob(token.split(".")[1]));
+                    const id = tokenData.id;
+                    results = await ClientesService.getCliente(id);
                 }
 
                 if (isMounted) {

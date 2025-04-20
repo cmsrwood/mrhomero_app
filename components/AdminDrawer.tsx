@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import globalStyles from '../styles/globalStyles';
 import Constants from 'expo-constants';
 import homeroImg from '../assets/favicon.png';
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 export default function CustomDrawerContent({ navigation }) {
     const { user, logout } = useAuth();
