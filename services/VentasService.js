@@ -14,6 +14,16 @@ class VentasService {
         }
     }
 
+    static async getVenta(id) { 
+        try {
+            const data = await VentasRepository.getVenta(id);
+            return data || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
     static async getProductosMasVendidos(year, month) {
         try {
             const data = await VentasRepository.getProductosMasVendidos(year, month);
@@ -131,6 +141,17 @@ class VentasService {
     static async getProductosMasCompradosPorCliente(id) {
         try {
             const data = await VentasRepository.getProductosMasCompradosPorCliente(id);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async getDetalleVenta(id) {
+        try {
+            const data = await VentasRepository.getDetalleVenta(id);
             if (!data) return [];
             return data;
         } catch (error) {

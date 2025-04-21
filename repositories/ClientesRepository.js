@@ -21,6 +21,11 @@ class ClientesRepository {
         return response.data
     }
 
+    static async getClientes() {
+        const response = await API.get('personas/clientes')
+        return response.data
+    }
+
 }
 
 export default ClientesRepository;

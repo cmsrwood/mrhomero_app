@@ -22,6 +22,10 @@ export default function useVentas(type, params = {}) {
                     results = await VentasService.getVentas();
                 }
 
+                if (type === "venta") {
+                    results = await VentasService.getVenta(stableParams.id);
+                }
+
                 if (type === "productosMasVendidos") {
                     const { year, month } = stableParams;
                     results = await VentasService.getProductosMasVendidos(year, month);
@@ -62,6 +66,11 @@ export default function useVentas(type, params = {}) {
                     const tokenData = JSON.parse(atob(token.split(".")[1]));
                     const id = tokenData.id;
                     results = await VentasService.getProductosMasCompradosPorCliente(id);
+                }
+
+                if (type === "detalleVenta") {
+                    const { id } = stableParams.id;
+                    results = await VentasService.getDetalleVenta(id);
                 }
 
                 if (isMounted) {

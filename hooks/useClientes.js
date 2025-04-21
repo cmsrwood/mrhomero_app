@@ -31,6 +31,12 @@ export default function useClientes(type, params = {}) {
                     const id = tokenData.id;
                     results = await ClientesService.getCliente(id);
                 }
+                else if (type === "cliente") {
+                    results = await ClientesService.getCliente(params.id);
+                }
+                else if (type === "clientes") {
+                    results = await ClientesService.getClientes();
+                }
 
                 if (isMounted) {
                     setData(results);

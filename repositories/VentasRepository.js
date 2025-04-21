@@ -2,7 +2,12 @@ import API from "../config/api";
 
 class VentasRepository {
     static async getVentas() {
-        const response = await API.get("/api/ventas")
+        const response = await API.get("/tienda/ventas")
+        return response.data
+    }
+
+    static async getVenta(id) {
+        const response = await API.get(`/tienda/ventas/${id}`);
         return response.data
     }
 
@@ -51,6 +56,13 @@ class VentasRepository {
         const response = await API.get(`/tienda/ventas/productosMasCompradosPorCliente/${id}`);
         return response.data;
     }
+
+    static async getDetalleVenta(id) {
+        const response = await API.get(`/tienda/ventas/detalle/${id}`);
+        return response.data;
+    }
+
+
 }
 
 export default VentasRepository;
