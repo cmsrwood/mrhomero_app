@@ -139,13 +139,18 @@ export default function RecompensasAdminScreen() {
                 const url = cloudinaryResponse.data.url;
 
                 // 3. Actualizar la recompensa con la URL de la imagen
-                await RecompensasService.actualizarRecompensa(id_unico, { foto: url });
 
-                // Éxito
-                showMessage({ message: "Recompensa creada con éxito", type: "success", duration: 3000, icon: "success" });
-                setRecompensa({ nombre: '', descripcion: '', puntos: 0, foto: null });
-                setImagePreview(null);
-                refetch();
+                const response = await RecompensasService.actualizarRecompensa(id_unico, { foto: url });
+
+                if (response.status == 200) {
+                    setIsLoading(false);
+                    showMessage({ message: "Recompensa creada con éxito", type: "success", duration: 3000, icon: "success" });
+                    setRecompensa({ nombre: '', descripcion: '', puntos: 0, foto: null });
+                    setImagePreview(null);
+                    refetch();
+                }
+
+
             }
             setIsLoading(false);
         } catch (error) {
@@ -169,7 +174,6 @@ export default function RecompensasAdminScreen() {
 
         try {
             setIsLoading(true);
-
             const recompensaData = {
                 nombre: recompensaEditar.nombre,
                 descripcion: recompensaEditar.descripcion,
@@ -198,6 +202,9 @@ export default function RecompensasAdminScreen() {
             const response = await RecompensasService.actualizarRecompensa(id, recompensaData);
 
             if (response.status == 200) {
+                setIsLoading(false);
+                setImagePreviewEditar(null);
+                setRecompensaEditar({ id: '', nombre: '', descripcion: '', puntos: 0, foto: null });
                 showMessage({
                     message: "Recompensa actualizada con éxito",
                     type: "success",
@@ -217,7 +224,6 @@ export default function RecompensasAdminScreen() {
         } catch (error) {
             console.error(error);
         } finally {
-            setIsLoading(false);
             setRecompensaEditarModalShow(false);
         }
     };
