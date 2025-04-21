@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 import useMenu from '../../hooks/useMenu';
-import { Card } from 'react-native-paper';
+import { ActivityIndicator, Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import MenuService from '../../services/MenuServices';
@@ -18,9 +18,10 @@ export default function MenuAdminScreen() {
     const navigation = useNavigation();
 
     const { data: categorias, loading, error, refetch } = useMenu("categorias");
+    
     const [estadoFiltro, setEstadoFiltro] = useState(1);
-
-
+    const [isLoading, setIsLoading] = useState(false);
+    
     function filtrarCategoriasPorEstado(estado) {
         refetch();
         setEstadoFiltro(Number(estado));
@@ -31,12 +32,27 @@ export default function MenuAdminScreen() {
     );
 
     const [modalVisible, setModalVisible] = useState(false);
-
-    const [imagePreview, setImagePreview] = useState(null);;
+    const [modalEdit, setModalEdit] = useState(false);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreviewEditar, setImagePreviewEditar] = useState(null);
     const [categoria, setCategoria] = useState({
         categoria: '',
         foto: null,
     });
+    const [categoriaEditar, setCategoriaEditar] = useState({
+        id: '',
+        categoria: '',
+        foto: null,
+    })
+    const editarModal = (categoria)=>{
+        setCategoriaEditar({
+            id: categoria.id_categoria,
+            categoria: categoria.cat_nom,
+            foto: categoria.cat_foto,
+        });
+        setImagePreviewEditar(categoria.cat_foto);
+        setModalEdit(true);
+    }
 
     const handleSeleccionarImagen = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,11 +73,32 @@ export default function MenuAdminScreen() {
             setImagePreview(asset.uri);
         }
     };
+    // Función para manejar la selección de una imagen para editar
+    const handleSeleccionarImagenEditar = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
 
+        if (!result.canceled) {
+            const asset = result.assets[0];
+            const foto = {
+                uri: asset.uri,
+                type: 'image/jpeg',
+                name: `foto_${Date.now()}.jpg`,
+            }
+            setCategoriaEditar({ ...categoriaEditar, foto });
+            setImagePreviewEditar(asset.uri);
+        }
+    }
     const handleChange = (data) => (value) => {
         setCategoria({ ...categoria, [data]: value });
     };
-
+    const handleChangeEditar = (data) => (value) => {
+        setCategoriaEditar({ ...categoriaEditar, [data]: value });
+    }
     const handleSubmit = async () => {
         if (!categoria.categoria || !categoria.foto) {
             alert("Por favor, ingresa un nombre y selecciona una imagen.");
@@ -88,7 +125,7 @@ export default function MenuAdminScreen() {
                     name: categoria.foto.name,
                 });
                 formData.append('upload_preset', 'categorias');
-                formData.append('public_id', `categoria_${categoria.categoria}_${id_unico}`);
+                formData.append('public_id', `${id_unico}`);
 
                 const cloudinaryResponse = await ImagenesService.subirImagen(formData);
                 const url = cloudinaryResponse.data.url;
@@ -109,6 +146,75 @@ export default function MenuAdminScreen() {
         setModalVisible(false);
     };
 
+    const handleSubmitEditar = async (id) => {
+        if (!categoriaEditar.categoria || !categoriaEditar.foto) {
+            alert("Por favor, ingresa un nombre y selecciona una imagen.");
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const categoriaData = {
+                categoria: categoriaEditar.categoria,
+                foto: ''
+            };
+            if (categoriaEditar.foto && categoriaEditar.foto.uri) {
+                const formData = new FormData();
+                formData.append('foto', {
+                    uri: categoriaEditar.foto.uri,
+                    type: categoriaEditar.foto.type,
+                    name: categoriaEditar.foto.name,
+                });
+                formData.append('upload_preset', 'categorias');
+                formData.append('public_id', id);
+                console.log(categoriaData);
+
+                const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                if (cloudinaryResponse.status == 200) {
+                    categoriaData.foto = cloudinaryResponse.data.url;
+                }
+            } else {
+                categoriaData.foto = categoriaEditar.foto;
+            }
+            const response = await MenuService.actualizarCategoria(id, categoriaData);
+            if (response.status == 200) {
+                setImagePreviewEditar(null);
+                setCategoriaEditar({ id: '', categoria: '', foto: null });
+                showMessage({
+                    message: "Categoria actualizada con exito",
+                    type: "success",
+                    duration: 3000,
+                    icon: "sucess",
+                });
+                console.log(categoriaData);
+                refetch();
+            }
+            else {
+                showMessage({
+                    message: "Error al actualizar la categoria",
+                    type: "danger",
+                    duration: 3000,
+                    icon: "danger",
+                })
+            }
+        }catch (error) {
+            console.error(error);
+        }finally{
+            setIsLoading(false);
+        }
+    };
+    useEffect(() => {
+        const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando recompensa..."];
+
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        if (isLoading) {
+            showMessage({
+                color: "black",
+                message: randomMessage,
+                icon: props => <ActivityIndicator size="small" color="black" style={{ height: 20, width: 20, marginRight: 10 }} />,
+                type: "warning",
+            });
+        }
+    }, [isLoading]);
     return (
         <AdminLayout>
             <View style={styles.general}>
@@ -192,14 +298,88 @@ export default function MenuAdminScreen() {
                         </View>
                     </Modal>
 
+                    {/* Modal para editar */}
+                    <Modal
+                        visible={modalEdit}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={() => {
+                            setModalEdit(false);
+                        }}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContenido}>
+                                <Text style={styles.modalTitulo}>Editar categoria</Text>
+                                <Text style={styles.modalLabel}>Imagen</Text>
+                                <View style={styles.imageSection}>
+                                    <Text style={styles.sectionLabel}>Imagen de la categoría</Text>
+                                    <TouchableOpacity
+                                        onPress={handleSeleccionarImagenEditar}
+                                        style={styles.imageUploadButton}
+                                    >
+                                        {imagePreviewEditar ? (
+                                            <Image
+                                                source={{ uri: imagePreviewEditar }}
+                                                style={styles.imagePreview}
+                                                resizeMode="cover"
+                                            />
+                                        ) : (
+                                            <View style={styles.imagePlaceholder}>
+                                                <Ionicons name="image-outline" size={40} color="#aaa" />
+                                                <Text style={styles.placeholderText}>Seleccionar imagen</Text>
+                                            </View>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
+
+                                <Text style={styles.modalLabel} >Nombre</Text>
+                                <TextInput
+                                    style={[styles.modalInput]}
+                                    placeholder="Ingrese el nombre de la categoria"
+                                    placeholderTextColor="#aaa"
+                                    value={categoriaEditar.categoria}
+                                    onChangeText={handleChangeEditar('categoria')}
+                                />
+                                <View style={styles.Botones}>
+                                    <TouchableOpacity
+                                        style={styles.cancelar}
+                                        onPress={() => {
+                                            setCategoriaEditar({
+                                                id:'',
+                                                categoria: '',
+                                                foto: null,
+                                            });
+                                            setImagePreviewEditar(null);
+                                            setModalEdit(false);
+                                        }}
+                                    >
+                                        <Text style={styles.botonTexto}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.guardar}
+                                        onPress={() => {
+                                            handleSubmitEditar(categoriaEditar?.id);
+                                            setModalEdit(false);
+
+                                        }}
+                                    >
+                                        <Text style={styles.botonTexto}>Guardar</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                            </View>
+                        </View>
+                    </Modal>
+
                     <Picker style={styles.picker}
-                        selectedValue={estadoFiltro} onValueChange={(itemValue)=>filtrarCategoriasPorEstado(itemValue)}>
+                        selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarCategoriasPorEstado(itemValue)}>
                         <Picker.Item label="Activos" value={'1'} />
                         <Picker.Item label="Inactivos" value={'0'} />
                         <Picker.Item label="Todos" value={'-1'} />
                     </Picker>
                 </View>
 
+                {/*Contenido */}
                 <View style={globalStyles.row}>
                     {categoriasFiltradas.map((categoria) => (
                         <Card key={categoria.id_categoria} style={globalStyles.card}>
@@ -211,7 +391,7 @@ export default function MenuAdminScreen() {
                                 <Text style={globalStyles.cardText}>{categoria.cat_nom}</Text>
                             </View>
                             <View style={globalStyles.cardActions}>
-                                <TouchableOpacity style={globalStyles.cardEdit}>
+                                <TouchableOpacity onPress={() => editarModal(categoria)} style={globalStyles.cardEdit}>
                                     <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={globalStyles.cardDelete}>
@@ -336,7 +516,8 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 15,
         padding: 10,
-        margin: 10
+        margin: 10,
+        color: '#fff'
     },
     //Estilos para las acciones del modal
     Botones: {
@@ -371,5 +552,5 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
 
-    
+
 })
