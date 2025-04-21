@@ -109,8 +109,7 @@ export default function IndexCliente() {
             <View>
                 {isLoadingProductosMasVendidos || !productosMasVendidos ? (
                     <View>
-                        <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>Cargando productos mas vendidos...</Text>
-                        <Loader />
+                        <Loader text="Cargando productos mas vendidos..." />
                     </View>
                 ) : (
                     < FlatList
