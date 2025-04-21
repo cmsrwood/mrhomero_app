@@ -12,6 +12,7 @@ import MenuService from '../../services/MenuServices';
 import ImagenesService from '../../services/ImagenesService';
 import { showMessage } from 'react-native-flash-message';
 
+
 export default function MenuAdminScreen() {
 
     const navigation = useNavigation();

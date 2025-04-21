@@ -5,12 +5,13 @@ import globalStyles from '../styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import useMenu from "../hooks/useMenu"
 import { useRoute } from '@react-navigation/native';
+import Loader from './Loader';
 
 export default function Categoria() {
     const route = useRoute();
     const { id_categoria, cat_nom } = route.params || {};
     const navigation = useNavigation();
-    const { data: productos, refetch, loading, error } = useMenu("productos", { id_categoria })
+    const { data: productos, refetch, isLoading: isProductosloading, error } = useMenu("productos", { id_categoria })
 
     useEffect(() => {
         refetch()
@@ -18,19 +19,29 @@ export default function Categoria() {
 
     return (
         <View >
-            <Text style={globalStyles.title}>{cat_nom}</Text>
-            <View style={styles.type}>
-                {productos.map((producto) => (
-                    <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
-                        <Card style={styles.card}>
-                            <Image style={styles.img} source={{ uri: producto.pro_foto }} />
-                            <Card.Content style={styles.cardContent}>
-                                <Text style={styles.cardText}>{producto.pro_nom}</Text>
-                            </Card.Content>
-                        </Card>
-                    </TouchableOpacity>
-                ))}
-            </View>
+            {isProductosloading || !productos ? (
+                <View>
+                    <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>Cargando productos...</Text>
+                    <Loader />
+                </View>
+            ) : (
+                <View>
+                    <Text style={globalStyles.title}>{cat_nom}</Text>
+                    <View style={styles.type}>
+                        {productos.map((producto) => (
+                            <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
+                                <Card style={styles.card}>
+                                    <Image style={styles.img} source={{ uri: producto.pro_foto }} />
+                                    <Card.Content style={styles.cardContent}>
+                                        <Text style={styles.cardText}>{producto.pro_nom}</Text>
+                                    </Card.Content>
+                                </Card>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            )
+            }
         </View>
     )
 }
