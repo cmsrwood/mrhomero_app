@@ -110,6 +110,7 @@ export default function RecompensasAdminScreen() {
         }
 
         try {
+            setModalVisible(false);
             setIsLoading(true);
             // 1. Crear la recompensa sin imagen
             const nombre_sin_espacios = recompensa.nombre.replace(/\s+/g, '_');
@@ -143,36 +144,35 @@ export default function RecompensasAdminScreen() {
                 const response = await RecompensasService.actualizarRecompensa(id_unico, { foto: url });
 
                 if (response.status == 200) {
-                    setIsLoading(false);
-                    showMessage({ message: "Recompensa creada con éxito", type: "success", duration: 3000, icon: "success" });
+                    showMessage({ message: "Recompensa creada con éxito", type: "success", duration: 2000, icon: "success" });
                     setRecompensa({ nombre: '', descripcion: '', puntos: 0, foto: null });
                     setImagePreview(null);
                     refetch();
                 }
-
-
             }
-            setIsLoading(false);
         } catch (error) {
             console.error(error);
             showMessage({
                 message: "Error al crear la recompensa",
                 type: "danger",
-                duration: 3000,
+                duration: 2000,
                 icon: "danger",
             });
 
         }
-        setModalVisible(false);
+        finally {
+            setIsLoading(false);
+        }
     };
 
     const handleSubmitEdit = async (id) => {
         if (!recompensaEditar.nombre || !recompensaEditar.puntos || !recompensaEditar.descripcion) {
-            alert("Nombre, descripción y puntos son obligatorios.");
+            alert("Todos los campos son obligatorios.");
             return;
         }
 
         try {
+            setRecompensaEditarModalShow(false);
             setIsLoading(true);
             const recompensaData = {
                 nombre: recompensaEditar.nombre,
@@ -202,13 +202,12 @@ export default function RecompensasAdminScreen() {
             const response = await RecompensasService.actualizarRecompensa(id, recompensaData);
 
             if (response.status == 200) {
-                setIsLoading(false);
                 setImagePreviewEditar(null);
                 setRecompensaEditar({ id: '', nombre: '', descripcion: '', puntos: 0, foto: null });
                 showMessage({
                     message: "Recompensa actualizada con éxito",
                     type: "success",
-                    duration: 3000,
+                    duration: 2000,
                     icon: "success",
                 });
                 refetch();
@@ -217,14 +216,14 @@ export default function RecompensasAdminScreen() {
                 showMessage({
                     message: "Error al actualizar la recompensa",
                     type: "danger",
-                    duration: 3000,
+                    duration: 2000,
                     icon: "danger",
                 })
             }
         } catch (error) {
             console.error(error);
         } finally {
-            setRecompensaEditarModalShow(false);
+            setIsLoading(false);
         }
     };
 
@@ -249,7 +248,7 @@ export default function RecompensasAdminScreen() {
                                     showMessage({
                                         message: 'Recompensa eliminada con éxito',
                                         type: 'success',
-                                        duration: 3000,
+                                        duration: 2000,
                                         icon: 'success',
                                     })
                                 }
@@ -260,7 +259,7 @@ export default function RecompensasAdminScreen() {
                                 showMessage({
                                     message: 'Error al eliminar la recompensa',
                                     type: 'danger',
-                                    duration: 3000,
+                                    duration: 2000,
                                     icon: 'danger',
                                 });
                                 refetch();
@@ -295,7 +294,7 @@ export default function RecompensasAdminScreen() {
                                     showMessage({
                                         message: 'Recompensa restaurada con éxito',
                                         type: 'success',
-                                        duration: 3000,
+                                        duration: 2000,
                                         icon: 'success',
                                     })
                                 }
@@ -306,7 +305,7 @@ export default function RecompensasAdminScreen() {
                                 showMessage({
                                     message: 'Error al restaurar la recompensa',
                                     type: 'danger',
-                                    duration: 3000
+                                    duration: 2000,
                                 });
                                 refetch();
                             }
@@ -345,12 +344,10 @@ export default function RecompensasAdminScreen() {
         setRecompensaEditarModalShow(true);
     }
 
-    const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando recompensa..."];
-
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-
-    // Dentro de tu componente:
     useEffect(() => {
+        const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando recompensa..."];
+
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         if (isLoading) {
             showMessage({
                 color: "black",
@@ -359,7 +356,7 @@ export default function RecompensasAdminScreen() {
                 type: "warning",
             });
         }
-    }, [isLoading, randomMessage]);
+    }, [isLoading]);
     return (
         <AdminLayout>
             <View style={styles.general}>
@@ -585,7 +582,6 @@ export default function RecompensasAdminScreen() {
                                             style={styles.editar}
                                             onPress={() => {
                                                 handleSubmitEdit(recompensaEditar?.id);
-                                                setRecompensaEditarModalShow(false);
                                             }}
                                         >
                                             <Text style={styles.botonTextoEditar}>Editar</Text>
