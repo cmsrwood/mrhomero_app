@@ -62,6 +62,16 @@ class VentasRepository {
         return response.data;
     }
 
+    static async eliminarVenta(id) {
+        const response = await API.put(`/tienda/ventas/eliminar/${id}`);
+        return response
+    }
+
+    static async getComprasCliente(id) {
+        const response = await API.get(`/tienda/ventas/cliente/${id}`);
+        return response.data;
+    }
+
 
 }
 

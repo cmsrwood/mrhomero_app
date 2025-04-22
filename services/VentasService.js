@@ -1,4 +1,5 @@
 import VentasRepository from "../repositories/VentasRepository";
+import AuthService from "./AuthService";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { showMessage } from "react-native-flash-message";
@@ -14,7 +15,7 @@ class VentasService {
         }
     }
 
-    static async getVenta(id) { 
+    static async getVenta(id) {
         try {
             const data = await VentasRepository.getVenta(id);
             return data || null;
@@ -152,6 +153,32 @@ class VentasService {
     static async getDetalleVenta(id) {
         try {
             const data = await VentasRepository.getDetalleVenta(id);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async eliminarVenta(id) {
+        try {
+            const data = await VentasRepository.eliminarVenta(id);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            const errorMessage = error?.response?.data?.message || "Error al eliminar la venta.";
+            throw new Error(errorMessage);
+        }
+    }
+
+    static async getComprasCliente() {
+        try {
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id = tokenData.id;
+            const data = await VentasRepository.getComprasCliente(id);
             if (!data) return [];
             return data;
         } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform, TextInput } from 'react-native'
 import globalStyles from '../../styles/globalStyles'
 import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,9 @@ import useVentas from '../../hooks/useVentas'
 import useClientes from '../../hooks/useClientes';
 import VentaService from '../../services/VentasService';
 import MenuService from '../../services/MenuServices';
+import { showMessage } from 'react-native-flash-message';
+import { Picker } from '@react-native-picker/picker';
+
 
 
 export default function VentasScreen() {
@@ -15,9 +18,13 @@ export default function VentasScreen() {
     const { data: ventas } = useVentas("ventas");
     const { data: clientes } = useClientes("clientes");
 
-    const [detalleVentas, setDetalleVentas] = useState([]);
 
+    const [detalleVentas, setDetalleVentas] = useState([]);
     const [ventaExpanded, setVentaExpanded] = useState([]);
+    const [ventaEstado, setVentaEstado] = useState(1);
+    const [busqueda, setBusqueda] = useState('');
+
+
 
     const handleDetalleVenta = async (id_venta) => {
         if (detalleVentas[id_venta]) {
@@ -49,7 +56,42 @@ export default function VentasScreen() {
         }));
     }
 
+    const eliminarVenta = async (id_venta) => {
+        try {
+            const response = await VentaService.eliminarVenta(id_venta);
+            showMessage({
+                message: 'Venta eliminada',
+                type: 'success',
+                icon: 'success',
+                duration: 3000
+            })
+            console.log(response);
+        } catch (error) {
+            showMessage({
+                message: error.message || 'Error al eliminar la venta',
+                type: 'danger',
+                icon: 'danger',
+                duration: 3000
+            })
+            console.log(error);
+        }
+    };
 
+    const ventasFiltradas = (ventas || [])
+        .filter(venta => Number(venta.venta_estado) === ventaEstado || ventaEstado === -1)
+        .filter(venta => {
+            const cliente = clientes.find(c => c.id_user === venta.id_user);
+            const nombreCliente = cliente ? `${cliente.user_nom} ${cliente.user_apels}` : '';
+            const valorVenta = venta.venta_total.toString();
+            return (
+                nombreCliente.toLowerCase().includes(busqueda.toLowerCase()) ||
+                valorVenta.includes(busqueda)
+            );
+        });
+
+    function filtrarVentaPorEstado(estado) {
+        setVentaEstado(estado);
+    }
 
     const formatNumber = (value) => {
         const formattedValue = value.toString().replace(/\D/g, '');
@@ -60,7 +102,23 @@ export default function VentasScreen() {
         <AdminLayout>
             <View style={styles.container}>
                 <Text style={[globalStyles.title, { maxWidth: 250, fontSize: 50 }]}>Gestion de ventas</Text>
-                {ventas.map((venta) => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TextInput placeholder="Buscar..." placeholderTextColor="#BDC3C7" value={busqueda} onChangeText={setBusqueda} style={styles.input}></TextInput>
+                    <Picker
+                        style={Platform.OS === 'ios' ? styles.pickerIOS : styles.picker}
+                        mode="dialog"
+                        itemStyle={Platform.OS === 'ios' ? styles.colorLetterIOS : {}}
+                        selectedValue={ventaEstado}
+                        onValueChange={(itemValue) => filtrarVentaPorEstado(Number(itemValue))}
+                    >
+                        <Picker.Item label="Activos" value={1} />
+                        <Picker.Item label="Inactivos" value={0} />
+                        <Picker.Item label="Todos" value={-1} />
+                    </Picker>
+                </View>
+
+                {ventasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20 }}>No hay recompensas disponibles</Text>}
+                {ventasFiltradas.map((venta) => (
                     <View key={venta.id_venta}>
                         <TouchableOpacity onPress={() => { handleDetalleVenta(venta.id_venta); toggleVentaExpanded(venta) }} style={styles.card}>
                             <View>
@@ -76,11 +134,17 @@ export default function VentasScreen() {
                             </View>
                             <View style={styles.cardPrice}>
                                 <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>${formatNumber(venta.venta_total)}</Text>
-                                <Text style={{ color: '#4CD964', fontSize: 12, fontWeight: 'bold' }}>realizada</Text>
+                                <Text style={[{ fontSize: 12, fontWeight: 'bold', }, { color: venta.venta_estado === 1 ? '#4CD964' : '#ff3b30' }]}>{venta.venta_estado === 1 ? "Realizada" : "Eliminada"}</Text>
                                 <View style={styles.button}>
-                                    <TouchableOpacity style={{ backgroundColor: '#FF3B30', borderRadius: 10, height: 30, width: 30, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Ionicons name="trash" size={24} color="#fff" />
-                                    </TouchableOpacity>
+                                    {venta.venta_estado == 1 ?
+                                        <TouchableOpacity onPress={() => eliminarVenta(venta.id_venta)} style={{ backgroundColor: '#FF3B30', borderRadius: 10, height: 30, width: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                            <Ionicons name="trash" size={24} color="#fff" />
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity onPress={() => eliminarVenta(venta.id_venta)} style={{ backgroundColor: 'green', borderRadius: 10, height: 30, width: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                            <Ionicons name="refresh-outline" size={24} color="#fff" />
+                                        </TouchableOpacity>
+                                    }
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -128,11 +192,11 @@ const styles = StyleSheet.create({
     },
     table: {
         alignItems: 'center',
-        width: '90%',
+        maxWidth: '90%',
         backgroundColor: '#3A4149',
         borderEndEndRadius: 10,
         borderEndStartRadius: 10,
-        padding: 8,
+        paddingHorizontal: 30,
         top: -25,
         paddingTop: 18,
     },
@@ -180,7 +244,7 @@ const styles = StyleSheet.create({
     },
     bottomTable: {
         flexDirection: 'row',
-        gap: '14%',
+        gap: '13%',
         borderBottomWidth: 1,
         borderColor: '#BDC3C7',
         paddingTop: 5,
@@ -198,6 +262,33 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 12,
         textAlign: 'center'
-    }
+    },
+    pickerIOS: {
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: 50,
+        width: '40%',
+        marginVertical: 10
 
+    },
+    colorLetterIOS: {
+        color: '#fff'
+
+    },
+    picker: {
+        color: '#fff',
+        backgroundColor: '#2B3035',
+        height: Platform.OS === 'ios' ? 50 : 54,
+        justifyContent: 'center',
+        width: '100%',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#FFC107",
+        height: 40,
+        width: '50%',
+        borderRadius: 15,
+        padding: 10,
+        color: "#fff"
+    }
 })
