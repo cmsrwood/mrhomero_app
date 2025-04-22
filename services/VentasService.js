@@ -25,6 +25,20 @@ class VentasService {
         }
     }
 
+    static async getComprasCliente() {
+        try {
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id = tokenData.id;
+            const data = await VentasRepository.getComprasCliente(id);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
     static async getProductosMasVendidos(year, month) {
         try {
             const data = await VentasRepository.getProductosMasVendidos(year, month);
@@ -173,19 +187,19 @@ class VentasService {
         }
     }
 
-    static async getComprasCliente() {
+    static async restaurarVenta(id) {
         try {
-            const token = await AuthService.getToken();
-            const tokenData = JSON.parse(atob(token.split(".")[1]));
-            const id = tokenData.id;
-            const data = await VentasRepository.getComprasCliente(id);
+            const data = await VentasRepository.restaurarVenta(id);
             if (!data) return [];
             return data;
         } catch (error) {
             console.log(error);
-            return [];
+            const errorMessage = error?.response?.data?.message || "Error al restaurar la venta.";
+            throw new Error(errorMessage);
         }
     }
+
+
 }
 
 export default VentasService;   

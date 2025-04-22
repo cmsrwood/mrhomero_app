@@ -11,6 +11,11 @@ class VentasRepository {
         return response.data
     }
 
+    static async getComprasCliente(id) {
+        const response = await API.get(`/tienda/ventas/cliente/${id}`);
+        return response.data;
+    }
+
     static async getProductosMasVendidos(year, month) {
         const response = await API.get(`/tienda/ventas/productosMasVendidos/${year}/${month}`);
         return response.data
@@ -67,11 +72,10 @@ class VentasRepository {
         return response
     }
 
-    static async getComprasCliente(id) {
-        const response = await API.get(`/tienda/ventas/cliente/${id}`);
-        return response.data;
+    static async restaurarVenta(id) { 
+        const response = await API.put(`tienda/ventas/restaurar/${id}`);
+        return response
     }
-
 
 }
 
