@@ -63,8 +63,8 @@ export default function IndexCliente() {
                     </View>
                     {/* Slide 2 - Solo contenido */}
                     <View style={styles.slideContent}>
-                        <Text style={styles.tituloPrincipal}>Tienes {cliente.user_puntos} puntos</Text>
-                        <Text style={styles.subtitulo}>¡Reclama alguna recompensa!</Text>
+                        <Text style={styles.tituloPrincipal}>{cliente.user_puntos > 0 ? `Tienes ${cliente.user_puntos} puntos` : 'Aún no tienes puntos'}</Text>
+                        <Text style={styles.subtitulo}>{cliente.user_puntos > 0 ? '¡Reclama alguna recompensa!' : '¡Compra algo para ganar puntos!'}</Text>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Recompensas')}>
                                 <Ionicons name="gift-outline" size={20} color="black"></Ionicons>
