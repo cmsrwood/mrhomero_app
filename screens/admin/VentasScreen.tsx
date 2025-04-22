@@ -148,8 +148,12 @@ export default function VentasScreen() {
                             <View>
                                 <Text style={{ color: '#BDC3C7', marginBottom: 5 }}>{venta.venta_fecha}</Text>
                                 <View style={{ flexDirection: 'row', marginTop: 14, alignItems: 'center', marginBottom: 5 }}>
-                                    <View style={{ backgroundColor: '#4CD964', borderRadius: 10, height: 20, width: 20, alignItems: 'center', justifyContent: 'center', marginRight: 5, }}>
-                                        <Ionicons name="cash" size={15} color="#fff"></Ionicons>
+                                    <View style={{ borderRadius: 10, height: 20, width: 20, alignItems: 'center', justifyContent: 'center', marginRight: 5, }}>
+                                        {venta.venta_metodo_pago === "Efectivo" ?
+                                            <Ionicons name="cash" size={15} color="#4CD137"></Ionicons>
+                                            :
+                                            <Ionicons name="phone-portrait-outline" size={15} color="#4CD137"></Ionicons>
+                                            }
                                     </View>
                                     <Text style={{ color: '#fff', fontSize: 14 }}>{venta.venta_metodo_pago}</Text>
                                 </View>
