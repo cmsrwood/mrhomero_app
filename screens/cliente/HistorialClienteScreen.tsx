@@ -64,8 +64,8 @@ export default function HistorialCliente() {
                         <TouchableOpacity onPress={() => { handleDetalleVenta(venta.id_venta); toggleVentaExpanded(venta) }} style={styles.card}>
                             <View>
                                 <View style={{ flexDirection: 'row', marginTop: 14, alignItems: 'center', marginBottom: 5 }}>
-                                    <View style={{ backgroundColor: venta.venta_metodo_pago === 'Efectivo' ? '#4CD964' : venta.venta_metodo_pago === 'Tarjeta' ? '#61AFFE' : '#FFC107', borderRadius: 10, height: 20, width: 20, alignItems: 'center', justifyContent: 'center', marginRight: 5, }}>
-                                        <Ionicons name={venta.venta_metodo_pago === 'Efectivo' ? 'cash-outline' : venta.venta_metodo_pago === 'Tarjeta' ? 'card-outline' : 'wallet-outline'} size={15} color="#fff"></Ionicons>
+                                    <View style={{ borderRadius: 10, height: 20, width: 20, alignItems: 'center', justifyContent: 'center', marginRight: 5, }}>
+                                        <Ionicons name={venta.venta_metodo_pago === 'Efectivo' ? 'cash-outline' : venta.venta_metodo_pago === 'Tarjeta' ? 'card-outline' : 'phone-portrait-outline'} size={15} color={venta.venta_metodo_pago === 'Efectivo' ? '#4CD964' : venta.venta_metodo_pago === 'Tarjeta' ? '#61AFFE' : '#dc3545'}></Ionicons>
                                     </View>
                                     <Text style={{ color: '#fff', fontSize: 14 }}>{venta.venta_metodo_pago}</Text>
                                 </View>

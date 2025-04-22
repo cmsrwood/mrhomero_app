@@ -136,7 +136,7 @@ export default function VentasScreen() {
                         onValueChange={(itemValue) => filtrarVentaPorEstado(Number(itemValue))}
                     >
                         <Picker.Item label="Activos" value={1} />
-                        <Picker.Item label="Inactivos" value={0} />
+                        <Picker.Item label="Inactivos" value={'0'} />
                         <Picker.Item label="Todos" value={-1} />
                     </Picker>
                 </View>
@@ -153,7 +153,7 @@ export default function VentasScreen() {
                                             <Ionicons name="cash" size={15} color="#4CD137"></Ionicons>
                                             :
                                             <Ionicons name="phone-portrait-outline" size={15} color="#4CD137"></Ionicons>
-                                            }
+                                        }
                                     </View>
                                     <Text style={{ color: '#fff', fontSize: 14 }}>{venta.venta_metodo_pago}</Text>
                                 </View>
@@ -305,10 +305,12 @@ const styles = StyleSheet.create({
     },
     picker: {
         color: '#fff',
-        backgroundColor: '#2B3035',
+        backgroundColor: '#565E64',
         height: Platform.OS === 'ios' ? 50 : 54,
         justifyContent: 'center',
-        width: '100%',
+        width: "30%",
+        marginLeft: 15,
+        marginBottom: 20
     },
     input: {
         borderWidth: 1,

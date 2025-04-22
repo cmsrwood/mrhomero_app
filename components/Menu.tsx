@@ -17,7 +17,7 @@ export default function Menu() {
     return (
 
         <View >
-            {isCategoriasloading  || !categorias ? (
+            {isCategoriasloading || !categorias ? (
                 <View>
                     <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>Cargando categorias...</Text>
                     <Loader />
@@ -26,6 +26,7 @@ export default function Menu() {
                 <View>
                     <Text style={globalStyles.title}>Categorias</Text>
                     <View style={styles.type}>
+                        {categorias.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay categorias</Text>}
                         {categorias.map((categoria) => (
                             <Card key={categoria.id_categoria} style={styles.card}>
                                 <TouchableOpacity onPress={() => navigation.navigate('CategoriaScreen', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>

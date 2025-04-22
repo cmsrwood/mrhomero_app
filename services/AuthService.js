@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthRepository from "../repositories/AuthRepository";
-import { useNavigation } from "@react-navigation/native";
 
 class AuthService {
     static async login(email, password) {

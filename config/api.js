@@ -1,5 +1,5 @@
 import axios from "axios";
-import AuthService from "../services/AuthService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
@@ -26,11 +26,16 @@ const API = axios.create({
 });
 
 API.interceptors.request.use(async (config) => {
-    const token = await AuthService.getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    } catch (error) {
+        return null;
     }
-    return config;
+
 });
 
 export default API;

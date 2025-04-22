@@ -28,6 +28,7 @@ export default function Categoria() {
                 <View>
                     <Text style={globalStyles.title}>{cat_nom}</Text>
                     <View style={styles.type}>
+                        {productos.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en esta categoria</Text>}
                         {productos.map((producto) => (
                             <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
                                 <Card style={styles.card}>

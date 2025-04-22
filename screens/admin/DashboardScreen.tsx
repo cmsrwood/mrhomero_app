@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
 import { View, Dimensions, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, ActivityIndicator, Platform } from 'react-native';
 import AdminLayout from '../../components/AdminLayout';
@@ -43,8 +43,8 @@ export default function DashboardScreen() {
     };
 
     // Información de ventas
-    const { data: productos } = useVentas("productosMasVendidos", { year: ano, month: mes });
-    const { data: ventasMensuales } = useVentas("ventasMensuales", { ano: ano, mes: mes });
+    const { data: productos, loading, error, refetch: refetchVentas } = useVentas("productosMasVendidos", { year: ano, month: mes });
+    const { data: ventasMensuales, refetch: refetchVentasMensuales } = useVentas("ventasMensuales", { ano: ano, mes: mes });
 
     // Información de productos vendidos por mes
 
@@ -53,17 +53,17 @@ export default function DashboardScreen() {
     const mesAnterior = mesInt - 1 <= 0 ? 12 : mesInt - 1;
     const anoAnterior = mesInt - 1 <= 0 ? anoInt - 1 : anoInt;
 
-    const { data: cuentaProductosVendidosPorMes } = useVentas("cuentaProductosVendidosPorMes", { ano: anoInt, mes: mesInt });
+    const { data: cuentaProductosVendidosPorMes, loading: loadingCuentaProductosVendidosPorMes, error: errorCuentaProductosVendidosPorMes, refetch: refetchCuentaProductosVendidosPorMes } = useVentas("cuentaProductosVendidosPorMes", { ano: anoInt, mes: mesInt });
 
-    const { data: cuentaProductosVendidosPorMesAnterior } = useVentas("cuentaProductosVendidosPorMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
+    const { data: cuentaProductosVendidosPorMesAnterior, loading: loadingCuentaProductosVendidosPorMesAnterior, error: errorCuentaProductosVendidosPorMesAnterior, refetch: refetchCuentaProductosVendidosPorMesAnterior } = useVentas("cuentaProductosVendidosPorMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
 
     const porcentajeProductos = (Math.floor(((cuentaProductosVendidosPorMes - cuentaProductosVendidosPorMesAnterior) / cuentaProductosVendidosPorMes) * 100));
 
     // Información total de ventas por mes
 
-    const { data: cuentaVentasMes } = useVentas("cuentaVentasMes", { ano: anoInt, mes: mesInt });
+    const { data: cuentaVentasMes, loading: loadingCuentaVentasMes, error: errorCuentaVentasMes, refetch: refetchCuentaVentasMes } = useVentas("cuentaVentasMes", { ano: anoInt, mes: mesInt });
 
-    const { data: cuentaVentasMesAnterior } = useVentas("cuentaVentasMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
+    const { data: cuentaVentasMesAnterior, loading: loadingCuentaVentasMesAnterior, error: errorCuentaVentasMesAnterior, refetch: refetchCuentaVentasMesAnterior } = useVentas("cuentaVentasMes", { ano: `${anoAnterior}`, mes: `${mesAnterior}` });
 
     const porcentajeVentas = (Math.floor(((cuentaVentasMes - cuentaVentasMesAnterior) / cuentaVentasMes) * 100));
 
@@ -176,6 +176,23 @@ export default function DashboardScreen() {
         }
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await refetchVentas();
+                await refetchVentasMensuales();
+                await refetchCuentaProductosVendidosPorMes();
+                await refetchCuentaVentasMes();
+                await refetchCuentaProductosVendidosPorMesAnterior();
+                await refetchCuentaVentasMesAnterior();
+            }
+            catch (error) {
+                console.error('Error al obtener datos:', error);
+            }
+        }
+        fetchData();
+    }, [ano, mes]);
+
     return (
         <AdminLayout>
             <View>
@@ -276,7 +293,7 @@ export default function DashboardScreen() {
                                 :
                                 <View style={{ alignItems: "center" }}>
                                     <Text style={styles.titulo_col}>{cuentaProductosVendidosPorMes}</Text>
-                                    <Text style={styles.porcentaje_positivo}>{porcentajeProductos}% este mes</Text>
+                                    <Text style={[porcentajeProductos < 0 ? styles.porcentaje_negativo : styles.porcentaje_positivo]}>{porcentajeProductos}% este mes</Text>
                                 </View>
                         }
                     </View>
@@ -291,7 +308,7 @@ export default function DashboardScreen() {
                                 :
                                 <View style={{ alignItems: "center" }}>
                                     <Text style={styles.titulo_col}>{formatCurrency(cuentaVentasMes)}</Text>
-                                    <Text style={styles.porcentaje_positivo}>{porcentajeVentas}% este mes</Text>
+                                    <Text style={[porcentajeVentas < 0 ? styles.porcentaje_negativo : styles.porcentaje_positivo]}>{porcentajeVentas}% este mes</Text>
                                 </View>
                         }
                     </View>
@@ -421,7 +438,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         overflow: 'hidden',
     },
-    
+
     pickerItem: {
         color: '#fff',
         fontSize: Platform.OS === 'ios' ? 16 : 14,

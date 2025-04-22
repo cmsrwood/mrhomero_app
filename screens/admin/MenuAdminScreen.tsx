@@ -166,8 +166,6 @@ export default function MenuAdminScreen() {
                 });
                 formData.append('upload_preset', 'categorias');
                 formData.append('public_id', id);
-                console.log(categoriaData);
-
                 const cloudinaryResponse = await ImagenesService.subirImagen(formData);
                 if (cloudinaryResponse.status == 200) {
                     categoriaData.foto = cloudinaryResponse.data.url;
@@ -185,7 +183,6 @@ export default function MenuAdminScreen() {
                     duration: 3000,
                     icon: "sucess",
                 });
-                console.log(categoriaData);
                 refetch();
             }
             else {
@@ -203,7 +200,7 @@ export default function MenuAdminScreen() {
         }
     };
     useEffect(() => {
-        const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando recompensa..."];
+        const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando categoria..."];
 
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         if (isLoading) {
@@ -381,6 +378,7 @@ export default function MenuAdminScreen() {
 
                 {/*Contenido */}
                 <View style={globalStyles.row}>
+                    {categoriasFiltradas.length === 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en esta categoria</Text>}
                     {categoriasFiltradas.map((categoria) => (
                         <Card key={categoria.id_categoria} style={globalStyles.card}>
                             <TouchableOpacity onPress={() => navigation.navigate('Categoria', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
