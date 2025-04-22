@@ -6,9 +6,14 @@ export default function useVentas(type, params = {}) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     // Memoriza los params para que no cambien en cada render
     const stableParams = useMemo(() => params, [JSON.stringify(params)]);
+
+    const refetch = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
 
     useEffect(() => {
         let isMounted = true;
@@ -73,6 +78,10 @@ export default function useVentas(type, params = {}) {
                     results = await VentasService.getDetalleVenta(id);
                 }
 
+                if (type === "comprasCliente") {
+                    results = await VentasService.getComprasCliente();
+                }
+
                 if (isMounted) {
                     setData(results);
                 }
@@ -92,7 +101,7 @@ export default function useVentas(type, params = {}) {
         return () => {
             isMounted = false;
         };
-    }, [type, stableParams]);
+    }, [refreshTrigger]);
 
-    return { data, loading, error };
+    return { data, loading, error, refetch };
 }
