@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 export default function VentasScreen() {
 
 
-    const { data: ventas } = useVentas("ventas");
+    const { data: ventas, loading: loadingVentas, error: errorVentas, refetch: refetchVentas } = useVentas("ventas");
     const { data: clientes } = useClientes("clientes");
 
 
@@ -58,14 +58,14 @@ export default function VentasScreen() {
 
     const eliminarVenta = async (id_venta) => {
         try {
-            const response = await VentaService.eliminarVenta(id_venta);
+            await VentaService.eliminarVenta(id_venta);
             showMessage({
                 message: 'Venta eliminada',
                 type: 'success',
                 icon: 'success',
                 duration: 3000
             })
-            console.log(response);
+            refetchVentas();
         } catch (error) {
             showMessage({
                 message: error.message || 'Error al eliminar la venta',
@@ -74,8 +74,32 @@ export default function VentasScreen() {
                 duration: 3000
             })
             console.log(error);
+            refetchVentas();
         }
     };
+
+
+    const restaurarVenta = async (id_venta) => {
+        try {
+            await VentaService.restaurarVenta(id_venta);
+            showMessage({
+                message: 'Venta restaurada',
+                type: 'success',
+                icon: 'success',
+                duration: 3000
+            })
+            refetchVentas();
+        } catch (error) {
+            console.log(error);
+            showMessage({
+                message: error.message || 'Error al restaurar la venta',
+                type: 'danger',
+                icon: 'danger',
+                duration: 3000
+            })
+            refetchVentas();
+        }
+    }
 
     const ventasFiltradas = (ventas || [])
         .filter(venta => Number(venta.venta_estado) === ventaEstado || ventaEstado === -1)
@@ -141,7 +165,7 @@ export default function VentasScreen() {
                                             <Ionicons name="trash" size={24} color="#fff" />
                                         </TouchableOpacity>
                                         :
-                                        <TouchableOpacity onPress={() => eliminarVenta(venta.id_venta)} style={{ backgroundColor: 'green', borderRadius: 10, height: 30, width: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                        <TouchableOpacity onPress={() => restaurarVenta(venta.id_venta)} style={{ backgroundColor: '#28a745', borderRadius: 10, height: 30, width: 30, alignItems: 'center', justifyContent: 'center' }}>
                                             <Ionicons name="refresh-outline" size={24} color="#fff" />
                                         </TouchableOpacity>
                                     }
