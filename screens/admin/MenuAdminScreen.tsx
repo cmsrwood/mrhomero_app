@@ -18,10 +18,10 @@ export default function MenuAdminScreen() {
     const navigation = useNavigation();
 
     const { data: categorias, loading, error, refetch } = useMenu("categorias");
-    
+
     const [estadoFiltro, setEstadoFiltro] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    
+
     function filtrarCategoriasPorEstado(estado) {
         refetch();
         setEstadoFiltro(Number(estado));
@@ -44,7 +44,7 @@ export default function MenuAdminScreen() {
         categoria: '',
         foto: null,
     })
-    const editarModal = (categoria)=>{
+    const editarModal = (categoria) => {
         setCategoriaEditar({
             id: categoria.id_categoria,
             categoria: categoria.cat_nom,
@@ -196,9 +196,9 @@ export default function MenuAdminScreen() {
                     icon: "danger",
                 })
             }
-        }catch (error) {
+        } catch (error) {
             console.error(error);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
     };
@@ -345,7 +345,7 @@ export default function MenuAdminScreen() {
                                         style={styles.cancelar}
                                         onPress={() => {
                                             setCategoriaEditar({
-                                                id:'',
+                                                id: '',
                                                 categoria: '',
                                                 foto: null,
                                             });
@@ -394,9 +394,16 @@ export default function MenuAdminScreen() {
                                 <TouchableOpacity onPress={() => editarModal(categoria)} style={globalStyles.cardEdit}>
                                     <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={globalStyles.cardDelete}>
-                                    <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
-                                </TouchableOpacity>
+                                {categoria.cat_estado == 1 ? (
+                                    <TouchableOpacity style={globalStyles.cardDelete}>
+                                        <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity style={globalStyles.cardRestore}>
+                                        <Ionicons name="refresh-outline" size={20} color="white" ></Ionicons>
+                                    </TouchableOpacity>
+                                )}
+
                             </View>
                         </Card>
                     ))}
