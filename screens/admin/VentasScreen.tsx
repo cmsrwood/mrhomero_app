@@ -9,6 +9,8 @@ import VentaService from '../../services/VentasService';
 import MenuService from '../../services/MenuServices';
 import { showMessage } from 'react-native-flash-message';
 import { Picker } from '@react-native-picker/picker';
+import Constants from "expo-constants";
+
 
 
 
@@ -141,7 +143,7 @@ export default function VentasScreen() {
                     </Picker>
                 </View>
 
-                {ventasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20 }}>No hay recompensas disponibles</Text>}
+                {ventasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20, marginTop: Constants.statusBarHeight }}>No hay ventas inactivas para mostrar</Text>}
                 {ventasFiltradas.map((venta) => (
                     <View key={venta.id_venta}>
                         <TouchableOpacity onPress={() => { handleDetalleVenta(venta.id_venta); toggleVentaExpanded(venta) }} style={styles.card}>

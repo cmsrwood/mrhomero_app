@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert, FlatList } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert, FlatList, Platform } from 'react-native'
 import AdminLayout from '../../components/AdminLayout'
 import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
@@ -368,7 +368,8 @@ export default function MenuAdminScreen() {
                         </View>
                     </Modal>
 
-                    <Picker style={styles.picker}
+                    <Picker style={Platform.OS === 'ios' ? styles.pickerIOS : styles.picker}
+                        itemStyle={Platform.OS === 'ios' ? styles.colorLetterIOS : {}}
                         selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarCategoriasPorEstado(itemValue)}>
                         <Picker.Item label="Activos" value={'1'} />
                         <Picker.Item label="Inactivos" value={'0'} />
@@ -434,15 +435,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         backgroundColor: '#157347',
+        marginRight: 10
     },
     //Estilos para el select de estado
     picker: {
         color: '#fff',
         backgroundColor: '#565E64',
-        height: 50,
+        height: 54,
         width: 170,
         fontSize: 16,
         borderRadius: 10,
+    },
+    pickerIOS: {
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: 53,
+        width: 170,
+        backgroundColor: '#565E64',
+        borderRadius: 10
+
+    },
+    colorLetterIOS: {
+        color: '#fff',
     },
     //Estilos para el modal de agregar 
     // Estilos para el fondo del modal
