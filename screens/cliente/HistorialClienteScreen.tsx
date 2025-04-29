@@ -59,6 +59,9 @@ export default function HistorialCliente() {
         <ClienteLayout>
             <View style={styles.container}>
                 <Text style={[globalStyles.title, { maxWidth: 250 }]}>Historial</Text>
+                {compras.length === 0 && (
+                    <Text style={{ color: '#ccc', fontSize: 18, textAlign: 'center', paddingVertical: 50 }}>No hay compras, realiza una compra para verla aqui</Text>
+                )}
                 {compras.map((venta) => (
                     <View key={venta.id_venta}>
                         <TouchableOpacity onPress={() => { handleDetalleVenta(venta.id_venta); toggleVentaExpanded(venta) }} style={styles.card}>

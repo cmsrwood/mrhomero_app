@@ -26,6 +26,14 @@ export default function useRecompensas(type, params = {}) {
                     results = await RecompensasService.getRecompensa(params.id_recompensa);
                 }
 
+                else if (type === "recompensasObtenidas") {
+                    results = await RecompensasService.getRecompensasObtenidasUsuario();
+                }
+
+                else if (type === "puntosUsuario") {
+                    results = await RecompensasService.getPuntosUsuario();
+                }
+
                 if (isMounted) {
                     setData(results);
                     setError(null);

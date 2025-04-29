@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#FEBA17'
     },
-    estado:{
+    estado: {
         display: 'flex',
         flexDirection: 'row',
     },
-    textEstado:{
+    textEstado: {
         color: '#ccc',
         fontSize: 20
     },

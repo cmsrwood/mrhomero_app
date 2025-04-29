@@ -149,6 +149,9 @@ const globalStyles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
     },
+    naranja: {
+        color: '#FFC107'
+    }
 });
 
 export default globalStyles;

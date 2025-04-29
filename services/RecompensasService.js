@@ -19,6 +19,33 @@ class RecompensasService {
             return [];
         }
     }
+    static async getRecompensasObtenidasUsuario() {
+        try {
+            const response = await RecompensasRepository.getRecompensasObtenidasUsuario();
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async getPuntosUsuario() {
+        try {
+            const response = await RecompensasRepository.getPuntosUsuario();
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async reclamar (id) {
+        try {
+            const response = await RecompensasRepository.reclamar(id);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
     static async crearRecompensa(data) {
         try {
             const response = await RecompensasRepository.crearRecompensa(data);
