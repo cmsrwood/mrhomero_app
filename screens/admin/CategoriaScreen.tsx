@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../../components/AdminLayout'
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 import globalStyles from '../../styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import useMenu from "../../hooks/useMenu";
@@ -13,14 +13,16 @@ import ProductosService from '../../services/ProductosServices';
 import ImagenesService from '../../services/ImagenesService';
 import { ActivityIndicator, Card } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function CategoriaScreen() {
     const route = useRoute();
+    const [isUploading, setIsUploading] = useState(false);
     const { id_categoria, cat_nom } = route.params || {};
     const navigation = useNavigation();
     const { data: productos, refetch, isLoading: isProductosloading, error } = useMenu("productos", { id_categoria })
     const [estadoFiltro, setEstadoFiltro] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
     function filtrarProductosPorEstado(estado) {
         refetch();
         setEstadoFiltro(Number(estado));
@@ -28,9 +30,7 @@ export default function CategoriaScreen() {
     const productosFiltrados = productos.filter(producto =>
         estadoFiltro === -1 || producto.pro_estado === estadoFiltro
     );
-    useEffect(() => {
-        refetch()
-    }, [id_categoria]);
+
     // Crear producto //
     const [imagePreview, setImagePreview] = useState(null);
     const [modalAgregar, setModalAgregar] = useState(false);
@@ -74,6 +74,7 @@ export default function CategoriaScreen() {
             return;
         }
         try {
+            setIsUploading(true);
             const id_unico = `producto_${producto.nombre.replace(/\s+/g, '_')}_${Date.now()}`;
             const productoData = {
                 id: id_unico,
@@ -106,8 +107,11 @@ export default function CategoriaScreen() {
         } catch (error) {
             console.log(error);
             showMessage({ message: "Error al crear el producto", type: "danger" });
+        } finally {
+            setModalAgregar(false);
+            setIsUploading(false);
         }
-        setModalAgregar(false);
+
     }
 
     // Editar producto //
@@ -129,7 +133,7 @@ export default function CategoriaScreen() {
             precio: producto.pro_precio,
             foto: producto.pro_foto,
             puntos: producto.pro_puntos,
-            
+
         });
         setImagePreviewEditar(producto.pro_foto);
         setModalEditar(true);
@@ -157,7 +161,7 @@ export default function CategoriaScreen() {
         setProductoEditar({ ...productoEditar, [data]: value });
     }
     const handleSubmitEditar = async (id) => {
-        if(!productoEditar.nombre || !productoEditar.descripcion || !productoEditar.precio || !productoEditar.puntos || !productoEditar.foto){
+        if (!productoEditar.nombre || !productoEditar.descripcion || !productoEditar.precio || !productoEditar.puntos || !productoEditar.foto) {
             const msg = "Todos los campos son obligatorios";
             showMessage({
                 message: msg,
@@ -185,29 +189,141 @@ export default function CategoriaScreen() {
                 formData.append('upload_preset', 'productos');
                 formData.append('public_id', `${id}`);
                 const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                if(cloudinaryResponse.status == 200){
+                if (cloudinaryResponse.status == 200) {
                     productoData.foto = cloudinaryResponse.data.url;
                 }
-            }else{
+            } else {
                 productoData.foto = productoEditar.foto;
             }
             const response = await ProductosService.actualizarProducto(id, productoData);
-            if(response.status == 200){
+            if (response.status == 200) {
                 showMessage({ message: "Producto actualizado con exito", type: "success" });
-                setProductoEditar({id: '', nombre: '', descripcion: '', precio: '', puntos: '', foto: null, categoria_id: id_categoria });
+                setProductoEditar({ id: '', nombre: '', descripcion: '', precio: '', puntos: '', foto: null, categoria_id: id_categoria });
                 setImagePreviewEditar(null);
                 refetch();
-            }else{
+            } else {
                 showMessage({ message: "Error al actualizar el producto", type: "danger", duration: 3000 });
             }
-            
+
         } catch (error) {
             console.log(error);
-        }finally{
-            setIsLoading(false);
+        } finally {
+            setModalEditar(false);
+            setIsUploading(false);
         }
-    
+
     }
+    // Eliminar producto //
+    const eliminarProducto = async (id) => {
+        try {
+            
+            Alert.alert(
+                "Eliminar producto",
+                "¿Deseas eliminar este producto?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Eliminar",
+                        onPress: async () => {
+                            try {
+                                setIsUploading(true);
+                                const response = await ProductosService.eliminarProducto(id);
+                                if (response.status == 200) {
+                                    showMessage({
+                                        message: 'Producto eliminado con éxito',
+                                        type: 'success',
+                                        duration: 2000,
+                                        icon: 'success',
+                                    })
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al eliminar el producto',
+                                    type: 'danger',
+                                    duration: 2000,
+                                    icon: 'danger',
+                                });
+                            }
+                        }
+                    },
+                ]
+            );
+        }
+        catch (error) {
+            console.log(error);
+        }finally{
+            setIsUploading(false)
+            refetch();
+        }
+    }
+    const restaurarProducto = async (id) => {
+        try {
+            Alert.alert(
+                "Restaurar producto",
+                "¿Deseas eliminar este producto?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Restaurar",
+                        onPress: async () => {
+                            try {
+                                setIsUploading(true);
+                                const response = await ProductosService.restaurarProducto(id);
+                                if (response.status == 200) {
+                                    showMessage({
+                                        message: 'Producto restaurado con éxito',
+                                        type: 'success',
+                                        duration: 2000,
+                                        icon: 'success',
+                                    })
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al restaurar el producto',
+                                    type: 'danger',
+                                    duration: 2000,
+                                    icon: 'danger',
+                                });
+                            }
+                        }
+                    },
+                ]
+            );
+        }
+        catch (error) {
+            console.log(error);
+        }finally{
+            setIsUploading(false);
+            refetch();
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            refetch();
+        }, [id_categoria])
+    );
+
+    useEffect(() => {
+        const messages = ["Espera...", "Cargando...", "Esto puede tardar un poco...", "Por favor, espera...", "Enviando producto..."];
+
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        if (isUploading) {
+            showMessage({
+                color: "black",
+                message: randomMessage,
+                icon: props => <ActivityIndicator size="small" color="black" style={{ height: 20, width: 20, marginRight: 10 }} />,
+                type: "warning",
+            });
+        }
+    }, [isUploading]);
     return (
         <AdminLayout>
             <View style={styles.general && styles.container}>
@@ -397,7 +513,7 @@ export default function CategoriaScreen() {
                                     <TouchableOpacity
                                         style={styles.guardar}
                                         onPress={() => {
-                                            handleSubmitEditar(productoEditar?.id );
+                                            handleSubmitEditar(productoEditar?.id);
                                             setModalEditar(false);
 
                                         }}
@@ -432,7 +548,7 @@ export default function CategoriaScreen() {
                         <View style={globalStyles.row}>
                             {productosFiltrados.map((producto) => (
                                 <Card key={producto.id_producto} style={globalStyles.card}>
-                                    <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('Productos', { id_producto: producto.id_producto, pro_nom: producto.pro_nom, pro_foto: producto.pro_foto, pro_desp: producto.pro_desp, pro_puntos: producto.pro_puntos, pro_precio: producto.pro_precio })}>
+                                    <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('Producto', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
                                         <Image style={globalStyles.img} source={{ uri: producto.pro_foto }} />
                                     </TouchableOpacity>
                                     <View style={globalStyles.cardContent}>
@@ -443,11 +559,12 @@ export default function CategoriaScreen() {
                                             <Ionicons name="create-outline" size={20} color="black" />
                                         </TouchableOpacity>
                                         {producto.pro_estado == 1 ? (
-                                            <TouchableOpacity style={globalStyles.cardDelete}>
+                                            <TouchableOpacity style={globalStyles.cardDelete}
+                                                onPress={() => eliminarProducto(producto.id_producto)}>
                                                 <Ionicons name="trash-outline" size={20} color="white" />
                                             </TouchableOpacity>
                                         ) : (
-                                            <TouchableOpacity style={globalStyles.cardRestore}>
+                                            <TouchableOpacity onPress={() => restaurarProducto(producto.id_producto)} style={globalStyles.cardRestore} >
                                                 <Ionicons name="refresh-outline" size={20} color="white" />
                                             </TouchableOpacity>
                                         )}

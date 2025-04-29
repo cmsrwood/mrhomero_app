@@ -5,13 +5,14 @@ import { useRoute } from '@react-navigation/native';
 import Loader from '../../components/Loader';
 import globalStyles from '../../styles/globalStyles';
 import useMenu from '../../hooks/useMenu';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
-export default function ProductosAdminScreen() {
+export default function ProductoAdminScreen() {
     const route = useRoute();
-    const { id_producto, pro_nom, pro_foto, pro_desp, pro_puntos, pro_precio } = route.params || {};
-    const { data: producto, refetch, isLoading: isProductoloading, error } = useMenu("producto", { id_producto })
+    const { id_producto, pro_nom } = route.params || {};
+    const { data: producto, refetch: refetchProducto, isLoading: isProductoloading, error } = useMenu("producto", { id_producto: id_producto })
 
-    //Funcion para convertir numeros a formato de moneda Colombiana COP
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -20,9 +21,11 @@ export default function ProductosAdminScreen() {
         }).format(value);
     }
 
-    useEffect(() => {
-        refetch()
-    }, [id_producto]);
+    useFocusEffect(
+        useCallback(() => {
+            refetchProducto();
+        }, [id_producto])
+    );
 
     return (
         <AdminLayout>
@@ -36,17 +39,17 @@ export default function ProductosAdminScreen() {
                     <View>
                         <Text style={globalStyles.title}>{pro_nom}</Text>
                         <View >
-                            <Image source={{ uri: pro_foto }} style={styles.image} />
+                            <Image source={{ uri: producto.pro_foto }} style={styles.image} />
                         </View>
                         <View style={styles.desp}>
-                            <Text style={styles.desc}>{pro_desp}</Text>
-                            <Text style={styles.puntos}>Puntos: {pro_puntos}</Text>
+                            <Text style={styles.desc}>{producto.pro_desp}</Text>
+                            <Text style={styles.puntos}>Puntos: {producto.pro_puntos}</Text>
                             <Text style={styles.precio}>
-                                {formatCurrency(pro_precio)}
+                                {formatCurrency(producto.pro_precio)}
                             </Text>
                             <View style={styles.estado}>
                                 <Text style={styles.textEstado}>Estado: </Text>
-                                {producto.pro_estado === 1 ? (
+                                {producto.pro_estado == 1 ? (
                                     <Text style={styles.activo}>Activo</Text>
                                 ) : (
                                     <Text style={styles.inactivo}>Inactivo</Text>

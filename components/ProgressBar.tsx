@@ -6,8 +6,8 @@ export default function ProgressBar({ progress, meta }) {
     return (
         <View style={{ alignItems: 'center' }}>
             <Progress.Bar color='#FFC107' progress={progress / meta} width={null} height={10} style={styles.progressBar} />
-            <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: '#000', fontSize: 12, fontWeight: 'bold' }}>{progress} / {meta}</Text>
+            <View style={{ position: 'absolute', top: -1.7, left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>{progress} / {meta}</Text>
             </View>
         </View>
     );

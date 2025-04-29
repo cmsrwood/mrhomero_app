@@ -55,6 +55,15 @@ class MenuService {
             return [];
         }
     }
+    static async restaurarCategoria(id) {
+        try {
+            const response = await MenuRepository.restaurarCategoria(id);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default MenuService;

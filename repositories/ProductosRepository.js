@@ -9,6 +9,14 @@ class ProductosRepository {
         const response = await API.put(`/tienda/productos/actualizar/${id}`,data);
         return response;
     }
+    static async eliminarProducto(id) {
+        const response = await API.put(`/tienda/productos/eliminar/${id}`); 
+        return response;
+    }
+    static async restaurarProducto(id) {
+        const response = await API.put(`/tienda/productos/restaurar/${id}`); 
+        return response;
+    }
 }
 
 export default ProductosRepository;

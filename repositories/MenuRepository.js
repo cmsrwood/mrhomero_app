@@ -25,6 +25,10 @@ class MenuRepository {
         const response = await API.delete(`/tienda/categorias/eliminar/${id}`);
         return response.data
     }
+    static async restaurarCategoria(id) {
+        const response = await API.put(`/tienda/categorias/restaurar/${id}`);
+        return response.data
+    }
 }
 
 export default MenuRepository;

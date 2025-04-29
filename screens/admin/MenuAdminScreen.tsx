@@ -211,6 +211,96 @@ export default function MenuAdminScreen() {
             });
         }
     }, [isLoading]);
+    const eliminarCategoria = async (id) => {
+        try {
+            Alert.alert(
+                "Eliminar categoria",
+                "¿Deseas eliminar esta categoria?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Eliminar",
+                        onPress: async () => {
+                            try {
+                                setIsLoading(true);
+                                const response = await MenuService.eliminarCategoria(id);
+                                if (response.status == 200) {
+                                    showMessage({
+                                        message: 'Categoria eliminada con éxito',
+                                        type: 'success',
+                                        duration: 2000,
+                                        icon: 'success',
+                                    })
+                                }
+                                setIsLoading(false);
+                                refetch();
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al eliminar la categoria',
+                                    type: 'danger',
+                                    duration: 2000,
+                                    icon: 'danger',
+                                });
+                                refetch();
+                            }
+                        }
+                    },
+                ]
+            );
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    const restaurarCategoria = async (id) => {
+        try {
+            Alert.alert(
+                "Restaurar categoria",
+                "¿Deseas restaurar esta categoria?",
+                [
+                    {
+                        text: "Cancelar",
+                        style: "cancel"
+                    },
+                    {
+                        text: "Restaurar",
+                        onPress: async () => {
+                            try {
+                                setIsLoading(true);
+                                const response = await MenuService.restaurarCategoria(id);
+                                if (response.status == 200) {
+                                    showMessage({
+                                        message: 'Categoria restaurada con éxito',
+                                        type: 'success',
+                                        duration: 2000,
+                                        icon: 'success',
+                                    })
+                                }
+                                setIsLoading(false);
+                                refetch();
+                            } catch (error) {
+                                console.error('Error:', error);
+                                showMessage({
+                                    message: 'Error al restaurar la categoria',
+                                    type: 'danger',
+                                    duration: 2000,
+                                    icon: 'danger',
+                                });
+                                refetch();
+                            }
+                        }
+                    },
+                ]
+            );
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <AdminLayout>
             <View style={styles.general}>
@@ -393,11 +483,11 @@ export default function MenuAdminScreen() {
                                     <Ionicons name="create-outline" size={20} color="black" ></Ionicons>
                                 </TouchableOpacity>
                                 {categoria.cat_estado == 1 ? (
-                                    <TouchableOpacity style={globalStyles.cardDelete}>
+                                    <TouchableOpacity onPress={() => eliminarCategoria(categoria.id_categoria)} style={globalStyles.cardDelete}>
                                         <Ionicons name="trash-outline" size={20} color="white" ></Ionicons>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity style={globalStyles.cardRestore}>
+                                    <TouchableOpacity onPress={() => restaurarCategoria(categoria.id_categoria)} style={globalStyles.cardRestore}>
                                         <Ionicons name="refresh-outline" size={20} color="white" ></Ionicons>
                                     </TouchableOpacity>
                                 )}
