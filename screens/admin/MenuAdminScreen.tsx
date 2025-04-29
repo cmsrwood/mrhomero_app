@@ -181,7 +181,6 @@ export default function MenuAdminScreen() {
                     message: "Categoria actualizada con exito",
                     type: "success",
                     duration: 3000,
-                    icon: "sucess",
                 });
                 refetch();
             }

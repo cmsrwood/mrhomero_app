@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../../components/AdminLayout'
-import { View, Text, Image, StyleSheet, TouchableOpacity,Modal,TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
 import globalStyles from '../../styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import useMenu from "../../hooks/useMenu";
@@ -20,6 +20,7 @@ export default function CategoriaScreen() {
     const navigation = useNavigation();
     const { data: productos, refetch, isLoading: isProductosloading, error } = useMenu("productos", { id_categoria })
     const [estadoFiltro, setEstadoFiltro] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
     function filtrarProductosPorEstado(estado) {
         refetch();
         setEstadoFiltro(Number(estado));
@@ -30,84 +31,183 @@ export default function CategoriaScreen() {
     useEffect(() => {
         refetch()
     }, [id_categoria]);
-    const [imagePreview,setImagePreview] = useState(null);
     // Crear producto //
+    const [imagePreview, setImagePreview] = useState(null);
     const [modalAgregar, setModalAgregar] = useState(false);
-    const [producto,setProducto] = useState({
-        nombre:'',
-        descripcion:'',
-        precio:'',
-        foto:null,
-        puntos:'',
-        categoria_id:id_categoria
+    const [producto, setProducto] = useState({
+        nombre: '',
+        descripcion: '',
+        precio: '',
+        foto: null,
+        puntos: '',
+        categoria_id: id_categoria
     })
     const handleSeleccionarImagen = async () => {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ['images'],
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const asset = result.assets[0];
+            const foto = {
+                uri: asset.uri,
+                type: 'image/jpeg',
+                name: `foto_${Date.now()}.jpg`,
+            }
+            setProducto({ ...producto, foto });
+            setImagePreview(asset.uri);
+        }
+    };
+    const handleChange = (data) => (value) => {
+        setProducto({ ...producto, [data]: value });
+    }
+    const handleSubmit = async () => {
+        if (!producto.nombre || !producto.descripcion || !producto.precio || !producto.puntos || !producto.foto) {
+            const msg = "Todos los campos son obligatorios";
+            showMessage({
+                message: msg,
+                type: "warning"
             });
-    
-            if (!result.canceled) {
-                const asset = result.assets[0];
-                const foto = {
-                    uri: asset.uri,
-                    type: 'image/jpeg',
-                    name: `foto_${Date.now()}.jpg`,
-                }
-                setProducto({ ...producto, foto });
-                setImagePreview(asset.uri);
-            }
-        };
-        const handleChange = (data) => (value) => {
-            setProducto({ ...producto, [data]: value });
+            return;
         }
-        const handleSubmit = async () => {
-            if (!producto.nombre || !producto.descripcion || !producto.precio || !producto.puntos || !producto.foto) {
-                const msg = "Todos los campos son obligatorios";
-                showMessage({
-                    message: msg,
-                    type: "warning"
+        try {
+            const id_unico = `producto_${producto.nombre.replace(/\s+/g, '_')}_${Date.now()}`;
+            const productoData = {
+                id: id_unico,
+                nombre: producto.nombre,
+                descripcion: producto.descripcion,
+                precio: producto.precio,
+                puntos: producto.puntos,
+                foto: '',
+                id_categoria: id_categoria
+            };
+            const response = await ProductosService.crearProducto(productoData);
+            if (response.status === 200) {
+                const formData = new FormData();
+                formData.append('foto', {
+                    uri: producto.foto.uri,
+                    type: producto.foto.type,
+                    name: producto.foto.name,
                 });
-                return;
+                formData.append('upload_preset', 'productos');
+                formData.append('public_id', `${id_unico}`);
+                const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                const url = cloudinaryResponse.data.url;
+
+                await ProductosService.actualizarProducto(id_unico, { foto: url });
+                showMessage({ message: "Producto creado con exito", type: "success" });
+                setProducto({ nombre: '', descripcion: '', precio: '', puntos: '', foto: null, categoria_id: id_categoria });
+                setImagePreview(null);
+                refetch();
             }
-            try {
-                const id_unico = `producto_${producto.nombre.replace(/\s+/g, '_')}_${Date.now()}`;
-                const productoData = {
-                    id:id_unico,
-                    nombre:producto.nombre,
-                    descripcion:producto.descripcion,
-                    precio:producto.precio,
-                    puntos:producto.puntos,
-                    foto:'',
-                    id_categoria:id_categoria
-                };
-                const response = await ProductosService.crearProducto(productoData);
-                if(response.status === 200){
-                    const formData = new FormData();
-                    formData.append('foto', {
-                        uri: producto.foto.uri,
-                        type: producto.foto.type,
-                        name: producto.foto.name,
-                    });
-                    formData.append('upload_preset', 'productos');
-                    formData.append('public_id', `${id_unico}`);
-                    const cloudinaryResponse = await ImagenesService.subirImagen(formData);
-                    const url = cloudinaryResponse.data.url;
-                    
-                    await ProductosService.actualizarProducto(id_unico, { foto: url });
-                    showMessage({message:"Producto creado con exito",type:"success"});
-                    setProducto({nombre:'',descripcion:'',precio:'',puntos:'',foto:null,categoria_id:id_categoria});
-                    setImagePreview(null);
-                    refetch();
-                }   
-            } catch (error) {
-                console.log(error);
-                showMessage({message:"Error al crear el producto",type:"danger"});
-            }
-            setModalAgregar(false);
+        } catch (error) {
+            console.log(error);
+            showMessage({ message: "Error al crear el producto", type: "danger" });
         }
+        setModalAgregar(false);
+    }
+
+    // Editar producto //
+    const [modalEditar, setModalEditar] = useState(false);
+    const [imagePreviewEditar, setImagePreviewEditar] = useState(null);
+    const [productoEditar, setProductoEditar] = useState({
+        id: '',
+        nombre: '',
+        descripcion: '',
+        precio: '',
+        foto: null,
+        puntos: '',
+    });
+    const editarProducto = (producto) => {
+        setProductoEditar({
+            id: producto.id_producto,
+            nombre: producto.pro_nom,
+            descripcion: producto.pro_desp,
+            precio: producto.pro_precio,
+            foto: producto.pro_foto,
+            puntos: producto.pro_puntos,
+            
+        });
+        setImagePreviewEditar(producto.pro_foto);
+        setModalEditar(true);
+    }
+    const handleSeleccionarImagenEditar = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const asset = result.assets[0];
+            const foto = {
+                uri: asset.uri,
+                type: 'image/jpeg',
+                name: `foto_${Date.now()}.jpg`,
+            }
+            setProductoEditar({ ...productoEditar, foto });
+            setImagePreviewEditar(asset.uri);
+        }
+    };
+    const handleChangeEditar = (data) => (value) => {
+        setProductoEditar({ ...productoEditar, [data]: value });
+    }
+    const handleSubmitEditar = async (id) => {
+        if(!productoEditar.nombre || !productoEditar.descripcion || !productoEditar.precio || !productoEditar.puntos || !productoEditar.foto){
+            const msg = "Todos los campos son obligatorios";
+            showMessage({
+                message: msg,
+                type: "warning"
+            });
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const productoData = {
+                nombre: productoEditar.nombre,
+                descripcion: productoEditar.descripcion,
+                precio: productoEditar.precio,
+                puntos: productoEditar.puntos,
+                foto: '',
+            };
+            console.log(productoData);
+            if (productoEditar.foto && productoEditar.foto.uri) {
+                const formData = new FormData();
+                formData.append('foto', {
+                    uri: productoEditar.foto.uri,
+                    type: productoEditar.foto.type,
+                    name: productoEditar.foto.name,
+                });
+                formData.append('upload_preset', 'productos');
+                formData.append('public_id', `${id}`);
+                const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                if(cloudinaryResponse.status == 200){
+                    productoData.foto = cloudinaryResponse.data.url;
+                }
+            }else{
+                productoData.foto = productoEditar.foto;
+            }
+            const response = await ProductosService.actualizarProducto(id, productoData);
+            if(response.status == 200){
+                showMessage({ message: "Producto actualizado con exito", type: "success" });
+                setProductoEditar({id: '', nombre: '', descripcion: '', precio: '', puntos: '', foto: null, categoria_id: id_categoria });
+                setImagePreviewEditar(null);
+                refetch();
+            }else{
+                showMessage({ message: "Error al actualizar el producto", type: "danger", duration: 3000 });
+            }
+            
+        } catch (error) {
+            console.log(error);
+        }finally{
+            setIsLoading(false);
+        }
+    
+    }
     return (
         <AdminLayout>
             <View style={styles.general && styles.container}>
@@ -217,7 +317,101 @@ export default function CategoriaScreen() {
                         </View>
                     </Modal>
 
+                    {/* Modal para editar */}
+                    <Modal
+                        visible={modalEditar}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={() => {
+                            setModalEditar(false);
+                        }}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContenido}>
+                                <Text style={styles.modalTitulo}>Editar producto</Text>
+                                <Text style={styles.modalLabel}>Imagen</Text>
+                                <View style={styles.imageSection}>
+                                    <Text style={styles.sectionLabel}>Imagen de la categoría</Text>
+                                    <TouchableOpacity
+                                        onPress={handleSeleccionarImagenEditar}
+                                        style={styles.imageUploadButton}
+                                    >
+                                        {imagePreviewEditar ? (
+                                            <Image
+                                                source={{ uri: imagePreviewEditar }}
+                                                style={styles.imagePreview}
+                                                resizeMode="cover"
+                                            />
+                                        ) : (
+                                            <View style={styles.imagePlaceholder}>
+                                                <Ionicons name="image-outline" size={40} color="#aaa" />
+                                                <Text style={styles.placeholderText}>Seleccionar imagen</Text>
+                                            </View>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
 
+                                <Text style={styles.modalLabel} >Nombre</Text>
+                                <TextInput
+                                    style={[styles.modalInput]}
+                                    placeholder="Ingrese el nombre del producto"
+                                    placeholderTextColor="#aaa"
+                                    value={productoEditar.nombre}
+                                    onChangeText={handleChangeEditar('nombre')}
+                                />
+                                <Text style={styles.modalLabel} >Descripción</Text>
+                                <TextInput
+                                    style={[styles.modalInput]}
+                                    placeholder="Ingrese la descripción del producto"
+                                    placeholderTextColor="#aaa"
+                                    value={productoEditar.descripcion}
+                                    onChangeText={handleChangeEditar('descripcion')}
+                                />
+                                <Text style={styles.modalLabel} >Precio</Text>
+                                <TextInput
+                                    keyboardType="numeric"
+                                    style={[styles.modalInput]}
+                                    placeholder="Ingrese el precio del producto"
+                                    placeholderTextColor="#aaa"
+                                    value={productoEditar.precio.toString()}
+                                    onChangeText={handleChangeEditar('precio')}
+                                />
+                                <Text style={styles.modalLabel} >Puntos</Text>
+                                <TextInput
+                                    keyboardType="numeric"
+                                    style={[styles.modalInput]}
+                                    placeholder="Ingrese el precio del producto"
+                                    placeholderTextColor="#aaa"
+                                    value={productoEditar.puntos.toString()}
+                                    onChangeText={handleChangeEditar('puntos')}
+                                />
+                                <View style={styles.Botones}>
+                                    <TouchableOpacity
+                                        style={styles.cancelar}
+                                        onPress={() => {
+                                            setModalEditar(false);
+                                        }}
+                                    >
+                                        <Text style={styles.botonTexto}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.guardar}
+                                        onPress={() => {
+                                            handleSubmitEditar(productoEditar?.id );
+                                            setModalEditar(false);
+
+                                        }}
+                                    >
+                                        <Text style={styles.botonTexto}>Guardar</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                            </View>
+                        </View>
+                    </Modal>
+
+
+                    {/* Filtro */}
 
                     <Picker style={styles.picker}
                         selectedValue={estadoFiltro} onValueChange={(itemValue) => filtrarProductosPorEstado(itemValue)}>
@@ -238,14 +432,14 @@ export default function CategoriaScreen() {
                         <View style={globalStyles.row}>
                             {productosFiltrados.map((producto) => (
                                 <Card key={producto.id_producto} style={globalStyles.card}>
-                                    <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('Productos', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
+                                    <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('Productos', { id_producto: producto.id_producto, pro_nom: producto.pro_nom, pro_foto: producto.pro_foto, pro_desp: producto.pro_desp, pro_puntos: producto.pro_puntos, pro_precio: producto.pro_precio })}>
                                         <Image style={globalStyles.img} source={{ uri: producto.pro_foto }} />
                                     </TouchableOpacity>
                                     <View style={globalStyles.cardContent}>
                                         <Text style={globalStyles.cardText}>{producto.pro_nom}</Text >
                                     </View>
                                     <View style={globalStyles.cardActions}>
-                                        <TouchableOpacity style={globalStyles.cardEdit}>
+                                        <TouchableOpacity onPress={() => editarProducto(producto)} style={globalStyles.cardEdit}>
                                             <Ionicons name="create-outline" size={20} color="black" />
                                         </TouchableOpacity>
                                         {producto.pro_estado == 1 ? (

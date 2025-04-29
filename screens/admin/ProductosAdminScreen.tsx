@@ -8,7 +8,7 @@ import useMenu from '../../hooks/useMenu';
 
 export default function ProductosAdminScreen() {
     const route = useRoute();
-    const { id_producto, pro_nom } = route.params || {};
+    const { id_producto, pro_nom, pro_foto, pro_desp, pro_puntos, pro_precio } = route.params || {};
     const { data: producto, refetch, isLoading: isProductoloading, error } = useMenu("producto", { id_producto })
 
     //Funcion para convertir numeros a formato de moneda Colombiana COP
@@ -33,16 +33,16 @@ export default function ProductosAdminScreen() {
                         <Loader />
                     </View>
                 ) : (
-                    <View key={producto.id_producto}>
+                    <View>
                         <Text style={globalStyles.title}>{pro_nom}</Text>
                         <View >
-                            <Image source={{ uri: producto.pro_foto }} style={styles.image} />
+                            <Image source={{ uri: pro_foto }} style={styles.image} />
                         </View>
                         <View style={styles.desp}>
-                            <Text style={styles.desc}>{producto.pro_desp}</Text>
-                            <Text style={styles.puntos}>Puntos: {producto.pro_puntos}</Text>
+                            <Text style={styles.desc}>{pro_desp}</Text>
+                            <Text style={styles.puntos}>Puntos: {pro_puntos}</Text>
                             <Text style={styles.precio}>
-                                {formatCurrency(producto.pro_precio)}
+                                {formatCurrency(pro_precio)}
                             </Text>
                             <View style={styles.estado}>
                                 <Text style={styles.textEstado}>Estado: </Text>
