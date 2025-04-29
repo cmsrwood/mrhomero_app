@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import ClienteLayout from '../../components/ClienteLayout'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import foto from '../../assets/img/indexCliente/inicio9.jpg';
 import Swiper from 'react-native-swiper';
 import useVentas from '../../hooks/useVentas'
@@ -29,8 +29,29 @@ export default function IndexCliente() {
         });
     };
 
+    const [refreshing, setRefreshing] = useState(false)
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        Promise.all([
+            refetchProductosMasCompradosPorCliente(),
+            refetchProductos(),
+            refetchCliente()
+        ]).then(() => {
+            setRefreshing(false)
+        })
+    }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            refetchProductosMasCompradosPorCliente()
+            refetchProductos()
+            refetchCliente()
+        }, [])
+    )
+
     return (
-        <ClienteLayout>
+        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh}>
             <View style={[styles.backgroundContainer, { width: width, height: height * 0.4 }]}>
                 <Image
                     source={foto}
