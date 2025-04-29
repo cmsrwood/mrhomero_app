@@ -21,6 +21,26 @@ class ProductosServices {
         }
         
     }
+    static async eliminarProducto(id) {
+        try {
+            const response = await ProductosRepository.eliminarProducto(id);
+            return response || null
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+        
+    }
+    static async restaurarProducto(id) {
+        try {
+            const response = await ProductosRepository.restaurarProducto(id);
+            return response || null
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+        
+    }
 }
 
 export default ProductosServices

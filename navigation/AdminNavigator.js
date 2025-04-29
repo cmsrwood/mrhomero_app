@@ -11,7 +11,7 @@ import IndexAdmin from '../screens/admin/IndexAdminScreen';
 import Inventario from '../screens/admin/InventarioScreen';
 import Menu from '../screens/admin/MenuAdminScreen';
 import Pedidos from '../screens/admin/PedidosScreen';
-import Productos from '../screens/admin/ProductosAdminScreen';
+import Producto from '../screens/admin/ProductoAdminScreen';
 import Proveedores from '../screens/admin/ProveedoresScreen';
 import Recompensas from '../screens/admin/RecompensasAdminScreen';
 import RecompensasObtenidas from '../screens/admin/RecompensasObtenidasScreen';
@@ -44,7 +44,7 @@ export default function AdminNavigator() {
             <Drawer.Screen name="Inventario" component={Inventario} />
             <Drawer.Screen name="Menu" component={Menu} />
             <Drawer.Screen name="Pedidos" component={Pedidos} />
-            <Drawer.Screen name="Productos" component={Productos} />
+            <Drawer.Screen name="Producto" component={Producto} />
             <Drawer.Screen name="Proveedores" component={Proveedores} />
             <Drawer.Screen name="Recompensas" component={Recompensas} />
             <Drawer.Screen name="RecompensasObtenidas" component={RecompensasObtenidas} />
