@@ -1,12 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ClientesService from "../services/ClientesServices";
 import AuthService from "../services/AuthService";
 
 export default function useClientes(type, params = {}) {
-
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    // Memoriza los params para que no cambien en cada render
+    const stableParams = useMemo(() => params, [JSON.stringify(params)]);
+
+    const refetch = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
 
     useEffect(() => {
         let isMounted = true;
@@ -32,7 +39,7 @@ export default function useClientes(type, params = {}) {
                     results = await ClientesService.getCliente(id);
                 }
                 else if (type === "cliente") {
-                    results = await ClientesService.getCliente(params.id);
+                    results = await ClientesService.getCliente(stableParams.id);
                 }
                 else if (type === "clientes") {
                     results = await ClientesService.getClientes();
@@ -57,7 +64,7 @@ export default function useClientes(type, params = {}) {
         return () => {
             isMounted = false;
         };
-    }, [type, JSON.stringify(params)]);
+    }, [refreshTrigger]);
 
-    return { data, loading, error };
+    return { data, loading, error, refetch };
 }
