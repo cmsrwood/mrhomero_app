@@ -23,10 +23,11 @@ export default function VentasScreen() {
 
     const [detalleVentas, setDetalleVentas] = useState([]);
     const [ventaExpanded, setVentaExpanded] = useState([]);
+    const [paginaActual, setPaginaActual] = useState(1);
     const [ventaEstado, setVentaEstado] = useState(1);
     const [busqueda, setBusqueda] = useState('');
 
-
+    const ventaPorPagina = 10;
 
     const handleDetalleVenta = async (id_venta) => {
         if (detalleVentas[id_venta]) {
@@ -115,8 +116,16 @@ export default function VentasScreen() {
             );
         });
 
+    const totalPaginas = Math.ceil(ventasFiltradas.length / ventaPorPagina);
+    const indexInicio = (paginaActual - 1) * ventaPorPagina;
+    const indexFin = indexInicio + ventaPorPagina;
+    const ventasPaginadas = ventasFiltradas.slice(indexInicio, indexFin);
+
+
+
     function filtrarVentaPorEstado(estado) {
         setVentaEstado(estado);
+        setPaginaActual(1);
     }
 
     const formatNumber = (value) => {
@@ -143,8 +152,9 @@ export default function VentasScreen() {
                     </Picker>
                 </View>
 
-                {ventasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20, marginTop: Constants.statusBarHeight }}>No hay ventas inactivas para mostrar</Text>}
-                {ventasFiltradas.map((venta) => (
+                {ventasPaginadas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20, marginTop: Constants.statusBarHeight }}>No hay ventas para mostrar</Text>}
+
+                {ventasPaginadas.map((venta) => (
                     <View key={venta.id_venta}>
                         <TouchableOpacity onPress={() => { handleDetalleVenta(venta.id_venta); toggleVentaExpanded(venta) }} style={styles.card}>
                             <View>
@@ -210,6 +220,29 @@ export default function VentasScreen() {
                         )}
                     </View>
                 ))}
+                {ventasFiltradas.length > ventaPorPagina && (
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20, alignItems: 'center' }}>
+                        <TouchableOpacity
+                            disabled={paginaActual === 1}
+                            onPress={() => setPaginaActual(p => p - 1)}
+                            style={{ marginHorizontal: 10, opacity: paginaActual === 1 ? 0.5 : 1 }}
+                        >
+                            <Ionicons name="arrow-back" size={24} color="#fff"></Ionicons>
+                        </TouchableOpacity>
+
+                        <Text style={{ color: '#fff', fontSize: 16 }}>
+                            {paginaActual} de {totalPaginas}
+                        </Text>
+
+                        <TouchableOpacity
+                            disabled={paginaActual === totalPaginas}
+                            onPress={() => setPaginaActual(p => p + 1)}
+                            style={{ marginHorizontal: 10, opacity: paginaActual === totalPaginas ? 0.5 : 1 }}
+                        >
+                            <Ionicons name="arrow-forward" size={24} color="#fff"></Ionicons>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
         </AdminLayout>
     )
