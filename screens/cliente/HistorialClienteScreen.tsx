@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import globalStyles from '../../styles/globalStyles';
 import useVentas from '../../hooks/useVentas';
@@ -7,6 +7,7 @@ import MenuService from '../../services/MenuServices';
 import ClienteLayout from '../../components/ClienteLayout';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HistorialCliente() {
 
@@ -51,12 +52,25 @@ export default function HistorialCliente() {
         return formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     };
 
-    useEffect(() => {
-        refetchCompras();
-    }, []);
+    const [refreshing, setRefreshing] = useState(false)
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        Promise.all([
+            refetchCompras(),
+        ]).then(() => {
+            setRefreshing(false)
+        })
+    }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            refetchCompras()
+        }, [])
+    )
 
     return (
-        <ClienteLayout>
+        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh}>
             <View style={styles.container}>
                 <Text style={[globalStyles.title, { maxWidth: 250 }]}>Historial</Text>
                 {compras.length === 0 && (

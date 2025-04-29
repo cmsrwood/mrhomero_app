@@ -1,33 +1,48 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import ClienteLayout from '../../components/ClienteLayout'
-import globalStyles from '../../styles/globalStyles';
-import useRecompensas from '../../hooks/useRecompensas';
-import { Card } from 'react-native-paper';
-import moment from 'moment';
-import ProgressBar from '../../components/ProgressBar';
+import globalStyles from '../../styles/globalStyles'
+import useRecompensas from '../../hooks/useRecompensas'
+import { Card } from 'react-native-paper'
+import moment from 'moment'
+import ProgressBar from '../../components/ProgressBar'
+import { useFocusEffect } from '@react-navigation/native'
 
 export default function RecompensasCliente() {
-
     const [filtro, setFiltro] = useState("disponibles")
+    const [refreshing, setRefreshing] = useState(false)
 
     const { data: recompensas, refetch: refetchRecompensas, isLoading: isRecompensasLoading } = useRecompensas("recompensas")
     const { data: recompensasObtenidas, refetch: refetchRecompensasObtenidas, isLoading: isRecompensasObtenidasLoading } = useRecompensas("recompensasObtenidas")
     const { data: puntos, refetch: refetchPuntos, isLoading: isPuntosLoading } = useRecompensas("puntosUsuario")
 
-    useEffect(() => {
-        refetchRecompensas()
-        refetchRecompensasObtenidas()
-        refetchPuntos()
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        Promise.all([
+            refetchRecompensas(),
+            refetchRecompensasObtenidas(),
+            refetchPuntos()
+        ]).then(() => {
+            setRefreshing(false)
+        })
     }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            refetchRecompensas()
+            refetchRecompensasObtenidas()
+            refetchPuntos()
+        }, [])
+    )
+
     return (
-        <ClienteLayout>
+        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh}>
             <View style={globalStyles.container}>
                 {isRecompensasLoading || isRecompensasObtenidasLoading && (
                     <Text style={globalStyles.title}>Cargando...</Text>
                 )}
                 <View>
-                    {filtro == "disponibles" ?
+                    {filtro == "disponibles" ? (
                         <View>
                             <Text style={globalStyles.title}>Recompensas Disponibles</Text>
                             <Text style={styles.puntos}>Puntos: {puntos}</Text>
@@ -44,10 +59,9 @@ export default function RecompensasCliente() {
                                         </View>
                                     </View>
                                 </Card>
-                            ))
-                            }
+                            ))}
                         </View>
-                        :
+                    ) : (
                         <View>
                             <Text style={globalStyles.title}>Recompensas Obtenidas</Text>
                             {recompensasObtenidas.map((recompensa) => (
@@ -63,23 +77,21 @@ export default function RecompensasCliente() {
                                         <Text>{recompensa.codigo}</Text>
                                     </View>
                                 </Card>
-                            ))
-                            }
+                            ))}
                         </View>
-                    }
+                    )}
                 </View>
             </View>
-        </ClienteLayout >
+        </ClienteLayout>
     )
 }
 
 const styles = StyleSheet.create({
     card: {
         marginBottom: 10,
-        backgroundColor: '#2B3035',
-        shadowColor: '#fff',
         borderRadius: 10,
         marginVertical: 5,
+        backgroundColor: '#3A4149'
     },
     cardContent: {
         display: 'flex',
