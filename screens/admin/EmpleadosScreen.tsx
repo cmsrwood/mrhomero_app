@@ -6,12 +6,78 @@ import { Ionicons } from '@expo/vector-icons'
 import useEmpleados from '../../hooks/useEmpleados'
 import EmpleadosService from '../../services/EmpleadosService'
 import { showMessage } from 'react-native-flash-message'
+import moment from 'moment';
 
 export default function EmpleadosScreen() {
 
     const { data: empleados, loading: loadingEmpleados, error: errorEmpleados, refetch: refetchEmpleados } = useEmpleados('Empleados');
     const [isLoading, setIsLoading] = useState(false);
     const [empleadoEditarModal, setEmpleadoEditarModal] = useState(false)
+    const [empleadoModal, setEmpleadoModal] = useState(false)
+
+
+
+    const [empleado, setEmpleado] = useState({
+        nombre: '',
+        apellidos: '',
+        telefono: '',
+        email: '',
+        registro: ""
+    })
+
+    const handleSubmit = async () => {
+        if (!empleado.nombre || !empleado.apellidos || !empleado.telefono || !empleado.email) {
+            alert("Todos los campos son obligatorios.");
+            return
+        }
+
+        const payload = {
+            nombre: empleado.nombre,
+            apellidos: empleado.apellidos,
+            telefono: empleado.telefono,
+            email: empleado.email,
+            registro: moment().format('YYYY-MM-DD HH:mm:ss'), 
+        };
+
+        try {
+            setEmpleadoModal(false);
+            setIsLoading(true);
+
+            const response = await EmpleadosService.crearEmpleado(payload);
+            if (response.status == 200) {
+                showMessage({
+                    message: 'Empleado creado con éxito.',
+                    type: 'success',
+                    duration: 2000,
+                    icon: 'success'
+                })
+                setEmpleado({
+                    nombre: '',
+                    apellidos: '',
+                    telefono: '',
+                    email: '',
+                    registro: ""
+                })
+                setIsLoading(false);
+                refetchEmpleados();
+            }
+
+        } catch (error) {
+            console.error(error);
+            showMessage({
+                message: 'Error al crear al empleado',
+                type: 'danger',
+                duration: 2000,
+                icon: 'danger'
+            })
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleChange = (data) => (value) => {
+        setEmpleado({ ...empleado, [data]: value });
+    }
 
     const eliminarEmpleado = async (id) => {
         try {
@@ -117,6 +183,12 @@ export default function EmpleadosScreen() {
         <AdminLayout>
             <View style={styles.container}>
                 <Text style={[globalStyles.fontHomero, styles.fontHomero]}>Empleados</Text>
+                <View style={{ alignSelf: 'flex-end', marginRight: 20, marginTop: 10 }} >
+                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#28a745', padding: 10, borderRadius: 10 }} onPress={() => setEmpleadoModal(true)}>
+                        <Ionicons name='person-add-outline' style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}></Ionicons>
+                        <Text style={{ color: '#fff', fontWeight: 'bold', marginLeft: 5 }}>Crear empleado</Text>
+                    </TouchableOpacity>
+                </View>
                 {empleados?.length === 0 && !loadingEmpleados && <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginVertical: 100 }}>No hay empleados</Text>}
                 {empleados.map((empleado) => (
                     <View style={styles.containerEmpleado} key={empleado.id_user}>
@@ -136,7 +208,78 @@ export default function EmpleadosScreen() {
                         </View>
                     </View>
                 ))}
+                {/*Modal para agregar empleados */}
 
+                <Modal
+                    visible={empleadoModal}
+                    animationType='slide'
+                    transparent={true}
+                    onRequestClose={() => {
+                        setEmpleadoModal(false)
+                    }}
+                >
+                    <View style={styles.containerModal}>
+                        <View style={styles.contentModalAgregar}>
+                            <Text style={[styles.tituloModal, globalStyles.fontHomero]}>Crear Empleado</Text>
+                            <View>
+                                <Text style={styles.inputsTitle}>Nombres</Text>
+                                <TextInput
+                                    placeholder='Nombres' style={styles.input}
+                                    placeholderTextColor={'#fff'}
+                                    value={empleado.nombre}
+                                    onChangeText={handleChange('nombre')}
+                                />
+
+                                <Text style={styles.inputsTitle}>Apellidos</Text>
+                                <TextInput
+                                    placeholder='Apellidos'
+                                    style={styles.input}
+                                    placeholderTextColor={'#fff'}
+                                    value={empleado.apellidos}
+                                    onChangeText={handleChange('apellidos')}
+                                />
+
+                                <Text style={styles.inputsTitle}>Telefono</Text>
+                                <TextInput
+                                    placeholder='Telefono'
+                                    keyboardType='numeric'
+                                    style={styles.input}
+                                    placeholderTextColor={'#fff'}
+                                    value={empleado.telefono}
+                                    onChangeText={handleChange('telefono')}
+
+                                />
+
+                                <Text style={styles.inputsTitle}>Correo</Text>
+                                <TextInput
+                                    placeholder='Correo'
+                                    style={styles.input}
+                                    placeholderTextColor={'#fff'}
+                                    value={empleado.email}
+                                    onChangeText={handleChange('email')}
+                                />
+                            </View>
+
+                        </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginRight: 35, marginTop: 8, gap: 8 }}>
+                            <TouchableOpacity style={styles.buttonAccept} onPress={() => {
+                                handleSubmit();
+                                setEmpleadoModal(false);
+                            }}>
+                                <Text style={{ fontSize: 15, color: '#000' }}>Aceptar</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.buttonCancel} onPress={() => {
+                                setEmpleadoModal(false);
+                            }}>
+                                <Text style={{ fontSize: 14, color: '#fff' }}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                </Modal>
+
+                {/*Modal para editar empleados */}
                 <Modal
                     visible={empleadoEditarModal}
                     animationType='slide'
@@ -229,6 +372,13 @@ const styles = StyleSheet.create({
     contentModal: {
         width: 330,
         height: 620,
+        backgroundColor: '#2B3035',
+        borderRadius: 15,
+        padding: 20,
+    },
+    contentModalAgregar: {
+        width: 330,
+        height: 450,
         backgroundColor: '#2B3035',
         borderRadius: 15,
         padding: 20,
