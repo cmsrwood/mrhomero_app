@@ -11,6 +11,16 @@ class EmpleadosService {
         }
     }
 
+    static async crearEmpleado(empleado) { 
+        try { 
+            const response = await EmpleadosRepository.crearEmpleado(empleado);
+            return response || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
     static async editarEmpleado(empleado) { 
         try {
             const response = await EmpleadosRepository.editarEmpleado(empleado);
