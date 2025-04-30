@@ -614,10 +614,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderRadius: 10,
     },
-    botonTexto: {
-        color: '#fff',
-        fontSize: 16
-    },
     container: {
         marginTop: 50
     },
