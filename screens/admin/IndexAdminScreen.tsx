@@ -79,7 +79,7 @@ export default function IndexAdmin() {
 
                     <TouchableOpacity style={styles.cardInfo} onPress={() => handlePress("Clientes")}>
                         <View style={[styles.iconContainer, { backgroundColor: '#4FC1E9' }]}>
-                            <Ionicons style={styles.icon} name="cash"></Ionicons>
+                            <Ionicons style={styles.icon} name="people"></Ionicons>
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={[styles.textTitle, { color: '#4FC1E9' }]}>Gestion de usuarios</Text>
