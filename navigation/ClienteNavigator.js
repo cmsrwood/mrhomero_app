@@ -36,7 +36,7 @@ export default function ClienteNavigator() {
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: "#2B3035",
+                    backgroundColor: "#212327",
                     height: 60,
                     paddingBottom: 5,
                     borderTopColor: "#444",

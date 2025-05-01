@@ -23,7 +23,7 @@ export default function HeaderCliente() {
             <View style={styles.rightSection}>
                 <TouchableOpacity onPress={() => { navigation.navigate('Recompensas') }} style={styles.puntosContainer}>
                     <Ionicons name="star" style={styles.puntosIcon} />
-                    <Text style={styles.puntosText}>{isPuntosLoading ? '...' : puntos}</Text>
+                    <Text style={styles.puntosText}>{isPuntosLoading ? '...' : `${puntos} pts`}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => { navigation.navigate('Perfil') }} style={styles.perfilBtn}>
