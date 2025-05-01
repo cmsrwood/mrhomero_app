@@ -7,6 +7,7 @@ import Swiper from 'react-native-swiper';
 import useMenu from '../../hooks/useMenu'
 import useVentas from '../../hooks/useVentas'
 import { Ionicons } from '@expo/vector-icons'
+import Footer from "../../components/Footer";
 
 const { width } = Dimensions.get('window');
 
@@ -109,8 +110,8 @@ export default function IndexDefault() {
                         )}
                     />
                 )}
-
             </View>
+            <Footer />
         </DefaultLayout >
     )
 }

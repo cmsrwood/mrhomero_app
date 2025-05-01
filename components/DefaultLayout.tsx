@@ -1,16 +1,20 @@
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import globalStyles from "../styles/globalStyles";
-import Footer from "./Footer";
 
 export default function DefaultLayout({ children }) {
     return (
-        <View style={globalStyles.containerfluid}>
+        <LinearGradient
+            colors={['#2D3036', '#1C1D20']}
+            style={globalStyles.containerfluid}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+        >
             <ScrollView contentContainerStyle={styles.content}>
                 {children}
-                <Footer />
             </ScrollView>
-        </View>
+        </LinearGradient>
     );
 }
 

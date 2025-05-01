@@ -5,7 +5,7 @@ const globalStyles = StyleSheet.create({
     containerfluid: {
         flex: 1,
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: "#2B3035",
+        // backgroundColor: "#2B3035",
         color: "#ffffff",
         alignContent: "center",
     },

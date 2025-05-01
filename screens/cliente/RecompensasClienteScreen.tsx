@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import ClienteLayout from '../../components/ClienteLayout'
 import globalStyles from '../../styles/globalStyles'
 import useRecompensas from '../../hooks/useRecompensas'
@@ -15,6 +15,11 @@ export default function RecompensasCliente() {
     const { data: recompensas, refetch: refetchRecompensas, isLoading: isRecompensasLoading } = useRecompensas("recompensas")
     const { data: recompensasObtenidas, refetch: refetchRecompensasObtenidas, isLoading: isRecompensasObtenidasLoading } = useRecompensas("recompensasObtenidas")
     const { data: puntos, refetch: refetchPuntos, isLoading: isPuntosLoading } = useRecompensas("puntosUsuario")
+
+    function mesANombre(mes) {
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        return meses[mes - 1];
+    }
 
     const onRefresh = useCallback(() => {
         setRefreshing(true)
@@ -42,10 +47,13 @@ export default function RecompensasCliente() {
                     <Text style={globalStyles.title}>Cargando...</Text>
                 )}
                 <View>
+                    <Text style={globalStyles.title}>Recompensas</Text>
                     {filtro == "disponibles" ? (
                         <View>
-                            <Text style={globalStyles.title}>Recompensas Disponibles</Text>
-                            <Text style={styles.puntos}>Puntos: {puntos}</Text>
+                            <TouchableOpacity onPress={() => setFiltro("obtenidas")}>
+                                <Text style={styles.filtro}>Ver Recompensas Obtenidas</Text>
+                            </TouchableOpacity>
+                            {recompensas.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay recompensas disponibles</Text>}
                             {recompensas.map((recompensa) => (
                                 <Card key={recompensa.id_recomp} style={[styles.card]}>
                                     <View style={styles.cardContent}>
@@ -55,7 +63,15 @@ export default function RecompensasCliente() {
                                         <View style={{ padding: 10, flex: 1 }}>
                                             <Text style={{ color: "#fff", marginBottom: 10 }}>{recompensa.recompensa_nombre}</Text>
                                             <Text>{recompensa.recomp_descripcion}</Text>
-                                            <ProgressBar progress={puntos} meta={recompensa.recomp_num_puntos} />
+                                            {
+                                                puntos >= recompensa.recomp_num_puntos ? (
+                                                    <TouchableOpacity style={styles.button} onPress={() => console.log("Reclamar")}>
+                                                        <Text style={styles.buttonText}>Reclamar</Text>
+                                                    </TouchableOpacity>
+                                                )
+                                                    :
+                                                    <ProgressBar progress={puntos} meta={recompensa.recomp_num_puntos} />
+                                            }
                                         </View>
                                     </View>
                                 </Card>
@@ -63,18 +79,23 @@ export default function RecompensasCliente() {
                         </View>
                     ) : (
                         <View>
-                            <Text style={globalStyles.title}>Recompensas Obtenidas</Text>
+                            <TouchableOpacity onPress={() => setFiltro("disponibles")}>
+                                <Text style={styles.filtro}>Ver Recompensas Disponibles</Text>
+                            </TouchableOpacity>
+                            {recompensasObtenidas.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No has reclamado ninguna recompensa aún</Text>}
                             {recompensasObtenidas.map((recompensa) => (
-                                <Card key={recompensa.id_recomp_obt} style={styles.card}>
-                                    <View style={{ padding: 10 }}>
-                                        <Image source={{ uri: recompensa.recomp_foto }} />
-                                    </View>
-                                    <View style={{ padding: 10 }}>
-                                        <Text>{recompensas.find(recomp => recomp.id_recomp == recompensa._obt).recompensa_nombre}</Text>
-                                        <Text>{recompensas.find(recomp => recomp.id_recomp == recompensa._obt).recomp_descripcion}</Text>
-                                        <Text>{recompensas.find(recomp => recomp.id_recomp == recompensa._obt).recomp_num_puntos}</Text>
-                                        <Text>{moment(recompensa.fecha_reclamo).format("DD/MM/YYYY")}</Text>
-                                        <Text>{recompensa.codigo}</Text>
+                                <Card key={recompensa.id_recomp_obt} style={[styles.card]}>
+                                    <View style={styles.cardContent}>
+                                        <View>
+                                            <Image style={styles.img} source={{ uri: recompensas.find(recomp => recomp.id_recomp == recompensa.id_recomp).recomp_foto }} />
+                                        </View>
+                                        <View style={{ padding: 10, flex: 1 }}>
+                                            <Text style={{ color: "#fff", marginBottom: 10 }}>{recompensas.find(recomp => recomp.id_recomp == recompensa.id_recomp).recompensa_nombre}</Text>
+                                            <Text style={{ marginBottom: 10, color: "#fff" }}>
+                                                Codigo: <Text style={{ color: "#FFC107", marginBottom: 10 }}>{recompensa.codigo}</Text>
+                                            </Text>
+                                            <Text style={{ color: "#fff", marginBottom: 10 }}>Lo reclamaste el dia {moment(recompensa.fecha_reclamo).format('DD')} de {mesANombre(moment(recompensa.fecha_reclamo).format('MM'))}</Text>
+                                        </View>
                                     </View>
                                 </Card>
                             ))}
@@ -107,7 +128,16 @@ const styles = StyleSheet.create({
     },
     puntos: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 25,
         marginBottom: 10,
+    },
+    filtro: {
+        color: '#000',
+        backgroundColor: '#FFC107',
+        fontSize: 16,
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 10,
+        textAlign: 'center'
     }
 })

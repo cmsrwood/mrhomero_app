@@ -73,7 +73,6 @@ export default function Footer() {
 
 const styles = StyleSheet.create({
     footer: {
-        backgroundColor: "#2B3035",
         width: "100%",
         position: "relative",
     },
