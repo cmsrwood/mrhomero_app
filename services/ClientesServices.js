@@ -62,6 +62,26 @@ class ClientesService {
             return [];
         }
     }
+
+    static async eliminarCliente(id) {
+        try {
+            const response = await ClientesRepository.eliminarCliente(id)
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async restaurarCliente(id) {
+        try {
+            const response = await ClientesRepository.restaurarCliente(id)
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
 }
 
 export default ClientesService;

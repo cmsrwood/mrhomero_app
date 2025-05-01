@@ -45,6 +45,10 @@ export default function useClientes(type, params = {}) {
                     results = await ClientesService.getClientes();
                 }
 
+                else if (type === "EliminarCliente") {
+                    results = await ClientesService.eliminarCliente(stableParams.id);
+                }
+
                 if (isMounted) {
                     setData(results);
                 }
