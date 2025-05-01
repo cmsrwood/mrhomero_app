@@ -128,6 +128,7 @@ export default function IndexCliente() {
                 <View style={styles.line} />
             </View>
             <View>
+                {productosMasVendidos.length === 0 && <Text style={{ textAlign: 'center', fontSize: 20, color: '#ccc', paddingTop: 50 }}>Actualmente no hay productos mas vendidos</Text>}
                 {isLoadingProductosMasVendidos || !productosMasVendidos ? (
                     <View>
                         <Loader text="Cargando productos mas vendidos..." />

@@ -1,17 +1,23 @@
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useRecompensas from '../hooks/useRecompensas'
 import useClientes from '../hooks/useClientes'
 import { ActivityIndicator } from 'react-native-paper'
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function HeaderCliente() {
 
     const { data: puntos, isLoading: isPuntosLoading } = useRecompensas("puntosUsuario")
-    const { data: cliente, isLoading: isLoadingCliente } = useClientes("clienteConToken")
+    const { data: cliente, isLoading: isLoadingCliente, refetch: refetchCliente } = useClientes("clienteConToken")
 
     const navigation = useNavigation();
+
+    useFocusEffect(
+        useCallback(() => {
+            refetchCliente();
+        }, [])
+    );
 
     return (
         <View style={styles.headerContainer}>
