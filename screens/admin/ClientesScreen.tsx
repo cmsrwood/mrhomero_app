@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ffc107',
         height: 50,
-        width: Platform.OS === 'ios' ? '58%' : '70%',
+        width: Platform.OS === 'ios' ? '58%' : '60%',
         borderRadius: 15,
         padding: 10,
         marginRight: 15,
@@ -258,4 +258,11 @@ const styles = StyleSheet.create({
         color: '#fff'
 
     },
+    pickerAndroid: {
+        color: '#fff',
+        backgroundColor: '#2B3035',
+        height: 50,
+        justifyContent: 'center',
+        width: 120,
+    }
 })
