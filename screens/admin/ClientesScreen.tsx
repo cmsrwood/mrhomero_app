@@ -199,7 +199,8 @@ const styles = StyleSheet.create({
         width: Platform.OS === 'ios' ? '58%' : '70%',
         borderRadius: 15,
         padding: 10,
-        marginRight: 15
+        marginRight: 15,
+        color: '#fff'
     },
     buttonEstado: {
         width: 100,
