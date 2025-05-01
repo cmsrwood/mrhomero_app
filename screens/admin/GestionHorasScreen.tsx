@@ -74,7 +74,7 @@ export default function GestionHorasScreen({ route }) {
 
     return (
         <AdminLayout>
-            <View style={styles.container}>
+            <View style={styles.container} >
                 <Text style={[globalStyles.title, { fontSize: 42, marginTop: 20, maxWidth: 300 }]}> Horas de {empleado.user_nom}</Text>
                 <View>
                     <Image style={styles.imageEmpleado} source={{ uri: empleado.user_foto }}></Image>
@@ -138,7 +138,7 @@ export default function GestionHorasScreen({ route }) {
                             
                             {diasTrabajados.length === 0 ? <Text style={{ color: '#fff', marginBottom: 5, fontSize: 15, fontWeight: 'bold', margin: 10, textAlign: 'center' }}>No hay horas registradas en el mes seleccionado</Text> : null}
                             {diasTrabajados.map((dia) => (
-                                <View style={styles.row}>
+                                <View style={styles.row} key={dia.fecha}>
                                     <Text style={{ color: '#fff' }}>{diaEspanol(moment(dia.fecha).format('dddd'))}</Text>
                                     <Text style={{ color: '#fff' }}>{moment(dia.fecha).format('DD-MM-YYYY')}</Text>
                                     <Text style={{ color: '#fff' }}>{moment(dia.hora_inicio).format('hh:mm:ss A')}</Text>

@@ -17,7 +17,7 @@ export default function HorasEmpleadosScreen() {
             <View style={styles.container}>
                 <Text style={[globalStyles.title, { fontSize: 40, marginTop: 30, marginBottom: 30 }]}>Horas de empleados</Text>
                 {empleados.map((empleado) => (
-                    <View style={styles.containerInfo}>
+                    <View style={styles.containerInfo} key={empleado.id_user}>
                         <Image style={styles.image} source={{ uri: empleado.user_foto }}></Image>
                         <View style={styles.containerData}>
                             <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 16, maxWidth: 150, marginBottom: 6 }}>{empleado.user_nom} {empleado.user_apels}</Text>
