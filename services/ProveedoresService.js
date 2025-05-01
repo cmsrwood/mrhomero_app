@@ -1,8 +1,8 @@
 import ProveedoresRepository from "../repositories/ProveedoresRepository";
 class ProveedoresService {
-    static async getProveedores(id) {
+    static async getProveedores() {
         try{
-            const data = await ProveedoresRepository.getProveedores(id)
+            const data = await ProveedoresRepository.getProveedores()
             return data || [];
         }catch(error){
             console.log(error);

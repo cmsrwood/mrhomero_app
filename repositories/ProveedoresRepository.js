@@ -1,7 +1,7 @@
 import API from "../config/api";
 class ProveedoresRepository {
-    static async getProveedores(id) {
-        const response = await API.get(`tienda/proveedores/${id}`)
+    static async getProveedores() {
+        const response = await API.get(`/tienda/proveedores`)
         return response.data
     }
     static async getAll() {

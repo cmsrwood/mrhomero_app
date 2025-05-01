@@ -2,36 +2,49 @@ import ProveedoresService from "../services/ProveedoresService";
 import { useState, useEffect } from "react";
 
 export default function useProveedores(type = "proveedores", params = {}) {
-    const [proveedores, setProveedores] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            let results = [];
+    const refetch = () => {
+        setRefreshTrigger(prev => prev + 1);
+    }
+    useEffect(() => {
+        let isMounted = true;
 
-            if (type === "proveedores") {
-                if (params.id_proveedor) {
-                    results = await ProveedoresService.getProveedores(params.id_proveedor);
-                } else {
-                    results = await ProveedoresService.getAll();
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                let results = [];
+
+                if (type === "proveedores") {
+                    results = await ProveedoresService.getProveedores();
+                }
+
+                if (isMounted) {
+                    setData(results);
+                    setError(null);
+
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setError(error);
+                    setData([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
                 }
             }
+        };
 
-            setProveedores(results);
-            setError(null);
-        } catch (error) {
-            setError(error);
-            setProveedores([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
         fetchData();
-    }, [type, JSON.stringify(params)]);
 
-    return { data: proveedores, loading, error, refetch: fetchData };
+        return () => {
+            isMounted = false;
+        };
+    }, [refreshTrigger]);
+
+    return { data, loading, error, refetch };
 }
