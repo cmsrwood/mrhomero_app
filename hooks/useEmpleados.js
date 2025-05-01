@@ -24,6 +24,25 @@ export default function useEmpleados(type, params = {}) {
                     results = await EmpleadosService.getEmpleados();
                 }
 
+                if (type === 'Empleado') {
+                    results = await EmpleadosService.getEmpleado(params.id_empleado);
+                }
+
+                if (type === 'HorasTrabajadasPorMes') {
+                    const { id_empleado, mes, ano } = params
+                    results = await EmpleadosService.mostrarHoraMes(id_empleado, mes, ano);
+                }
+
+                if (type === 'DiasTrabajados') {
+                    const { id_empleado, mes, ano } = params
+                    results = await EmpleadosService.mostrarDiasTrabajados(id_empleado, mes, ano);
+                }
+
+                if (type === 'HorasPorDia') {
+                    const { id_empleado, fecha } = params
+                    results = await EmpleadosService.mostrarHorasPorDia(id_empleado, fecha);
+                }
+
                 if (isMounted) {
                     setData(results);
                     setError(null);
