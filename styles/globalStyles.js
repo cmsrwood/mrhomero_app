@@ -77,7 +77,9 @@ const globalStyles = StyleSheet.create({
         width: 170,
         marginVertical: 10,
         backgroundColor: '#2B3035',
-        shadowColor: '#fff',
+        shadowColor: '#ccc',
+        borderRadius: 20,
+        
     },
     cardContent: {
         display: 'flex',
