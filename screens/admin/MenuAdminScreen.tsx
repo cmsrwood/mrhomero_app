@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 import useMenu from '../../hooks/useMenu';
-import { ActivityIndicator, Card } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import MenuService from '../../services/MenuServices';
@@ -470,7 +470,7 @@ export default function MenuAdminScreen() {
                 <View style={globalStyles.row}>
                     {categoriasFiltradas.length === 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en esta categoria</Text>}
                     {categoriasFiltradas.map((categoria) => (
-                        <Card key={categoria.id_categoria} style={globalStyles.card}>
+                        <View key={categoria.id_categoria} style={globalStyles.card}>
                             <TouchableOpacity onPress={() => navigation.navigate('Categoria', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
                                 <Image source={{ uri: categoria.cat_foto }} style={globalStyles.img} />
                             </TouchableOpacity>
@@ -493,7 +493,7 @@ export default function MenuAdminScreen() {
                                 )}
 
                             </View>
-                        </Card>
+                        </View>
                     ))}
                 </View>
 

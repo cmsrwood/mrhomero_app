@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card } from 'react-native-paper';
 import globalStyles from '../styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import useMenu from "../hooks/useMenu"
@@ -31,12 +30,12 @@ export default function Categoria() {
                         {productos.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en esta categoria</Text>}
                         {productos.map((producto) => (
                             <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('ProductoScreen', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
-                                <Card style={styles.card}>
+                                <View style={styles.card}>
                                     <Image style={styles.img} source={{ uri: producto.pro_foto }} />
-                                    <Card.Content style={styles.cardContent}>
+                                    <View style={styles.cardContent}>
                                         <Text style={styles.cardText}>{producto.pro_nom}</Text>
-                                    </Card.Content>
-                                </Card>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
                         ))}
                     </View>

@@ -11,7 +11,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { Ionicons } from '@expo/vector-icons'
 import ProductosService from '../../services/ProductosServices';
 import ImagenesService from '../../services/ImagenesService';
-import { ActivityIndicator, Card } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
@@ -216,7 +216,7 @@ export default function CategoriaScreen() {
     // Eliminar producto //
     const eliminarProducto = async (id) => {
         try {
-            
+
             Alert.alert(
                 "Eliminar producto",
                 "¿Deseas eliminar este producto?",
@@ -255,7 +255,7 @@ export default function CategoriaScreen() {
         }
         catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setIsUploading(false)
             refetch();
         }
@@ -300,7 +300,7 @@ export default function CategoriaScreen() {
         }
         catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setIsUploading(false);
             refetch();
         }
@@ -547,7 +547,7 @@ export default function CategoriaScreen() {
 
                         <View style={globalStyles.row}>
                             {productosFiltrados.map((producto) => (
-                                <Card key={producto.id_producto} style={globalStyles.card}>
+                                <View key={producto.id_producto} style={globalStyles.card}>
                                     <TouchableOpacity key={producto.id_producto} onPress={() => navigation.navigate('Producto', { id_producto: producto.id_producto, pro_nom: producto.pro_nom })}>
                                         <Image style={globalStyles.img} source={{ uri: producto.pro_foto }} />
                                     </TouchableOpacity>
@@ -570,7 +570,7 @@ export default function CategoriaScreen() {
                                         )}
 
                                     </View>
-                                </Card>
+                                </View>
 
 
 

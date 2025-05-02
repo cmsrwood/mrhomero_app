@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import globalStyles from '../styles/globalStyles';
 import useMenu from "../hooks/useMenu";
@@ -28,14 +27,14 @@ export default function Menu() {
                     <View style={styles.type}>
                         {categorias.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay categorias</Text>}
                         {categorias.map((categoria) => (
-                            <Card key={categoria.id_categoria} style={styles.card}>
+                            <View key={categoria.id_categoria} style={styles.card}>
                                 <TouchableOpacity onPress={() => navigation.navigate('CategoriaScreen', { id_categoria: categoria.id_categoria, cat_nom: categoria.cat_nom })}>
                                     <Image source={{ uri: categoria.cat_foto }} style={styles.img} />
-                                    <View style={styles.cardContent}>
+                                    <View style={styles.ViewContent}>
                                         <Text style={styles.cardText}>{categoria.cat_nom}</Text>
                                     </View>
                                 </TouchableOpacity>
-                            </Card>
+                            </View>
                         ))}
                     </View>
                 </View>

@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import globalStyles from '../../styles/globalStyles';
 import { Picker } from '@react-native-picker/picker';
 import useRecompensas from '../../hooks/useRecompensas';
-import { ActivityIndicator, Card } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import RecompensasService from '../../services/RecompensasService';
@@ -479,7 +479,7 @@ export default function RecompensasAdminScreen() {
                                         <Ionicons name="close" size={24} color="black" />
                                     </View>
                                 </TouchableOpacity>
-                                <Card style={styles.cardModal}>
+                                <View style={styles.cardModal}>
                                     <Image source={{ uri: recompensaModal?.recomp_foto }} style={styles.imgModal} />
                                     <View style={globalStyles.cardContent}>
                                         <View>
@@ -491,7 +491,7 @@ export default function RecompensasAdminScreen() {
                                             <Text style={recompensaModal?.recomp_estado === 1 ? globalStyles.positive : globalStyles.negative}>{recompensaModal?.recomp_estado === 1 ? 'Activo' : 'Inactivo'}</Text>
                                         </View>
                                     </View>
-                                </Card>
+                                </View>
                             </View>
                         </View>
                     </Modal>
@@ -597,7 +597,7 @@ export default function RecompensasAdminScreen() {
                 <View style={globalStyles.row}>
                     {recompensasFiltradas.length === 0 && <Text style={{ textAlign: 'center', color: 'white', fontSize: 20 }}>No hay recompensas disponibles</Text>}
                     {recompensasFiltradas.map((recompensa) => (
-                        <Card key={recompensa.id_recomp} style={globalStyles.card}>
+                        <View key={recompensa.id_recomp} style={globalStyles.card}>
                             <TouchableOpacity onPress={() => { setRecompensaModal(recompensa); setRecompensaModalShow(true) }}>
                                 <Image source={{ uri: recompensa.recomp_foto }} style={globalStyles.img} />
                             </TouchableOpacity>
@@ -631,7 +631,7 @@ export default function RecompensasAdminScreen() {
                                     }
                                 </View>
                             </View>
-                        </Card>
+                        </View>
                     ))}
                 </View>
 
