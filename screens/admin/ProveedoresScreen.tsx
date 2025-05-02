@@ -17,7 +17,30 @@ export default function ProveedoresScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const { id_proveedor } = route.params || {};
     const { data: proveedores, refetch } = useProveedores("proveedores", { id_proveedor });
-    const { data: proveedorUnico, refetch: refetchProveedorUnico } = useProveedores("proveedor", { id_proveedor: id_proveedor });
+    const [proveedorSelected, setProveedorSelected] = useState({
+        id_proveedor: "",
+        prov_nombre: "",
+        prov_contacto_nombre: "",
+        prov_contacto_telefono: "",
+        prov_direccion: "",
+        prov_contacto_email: "",
+    });
+    const openModal = (proveedor) => {
+        setModalMostrar(true);
+        setProveedorSelected(proveedor);
+    }
+    const closeModal = () => {
+        setModalMostrar(false);
+        setProveedorSelected({
+            id_proveedor: "",
+            prov_nombre: "",
+            prov_contacto_nombre: "",
+            prov_contacto_telefono: "",
+            prov_direccion: "",
+            prov_contacto_email: "",
+        });
+    }
+
     //Crear proveedor//
     const [proveedor, setProveedor] = useState({
         prov_nombre: "",
@@ -46,8 +69,8 @@ export default function ProveedoresScreen() {
                 prov_direccion: proveedor.prov_direccion,
                 prov_contacto_email: proveedor.prov_contacto_email,
             };
-          
-            
+
+
             const response = await ProveedoresService.crearProveedor(proveedorData);
             if (response.status == 200) {
                 showMessage({
@@ -337,7 +360,7 @@ export default function ProveedoresScreen() {
                                 />
                                 <Text style={styles.modalLabel} >Direccion</Text>
                                 <TextInput
-                                    
+
                                     style={[styles.modalInput]}
                                     placeholder="Ingrese la direccion de la empresa"
                                     placeholderTextColor="#aaa"
@@ -374,18 +397,21 @@ export default function ProveedoresScreen() {
                     {proveedores ? (
                         proveedores.map((proveedor) => (
                             <View key={proveedor.id_proveedor} style={styles.prov} >
-                                <TouchableOpacity onPress={() => setModalMostrar(true)}>
+                                <TouchableOpacity onPress={() => openModal(proveedor)}>
                                     <View>
                                         <Text style={styles.text}>{proveedor.prov_nombre}</Text>
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => editarProveedor(proveedor)} style={globalStyles.cardEdit}  >
-                                    <Ionicons name="create-outline" size={20} color="black" />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={globalStyles.cardDelete}
-                                    onPress={() => EliminarProveedor(proveedor.id_proveedor)}>
-                                    <Ionicons name="trash-outline" size={20} color="white" />
-                                </TouchableOpacity>
+                                <View style={styles.actions}>
+                                    <TouchableOpacity onPress={() => editarProveedor(proveedor)} style={globalStyles.cardEdit}  >
+                                        <Ionicons name="create-outline" size={20} color="black" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={globalStyles.cardDelete}
+                                        onPress={() => EliminarProveedor(proveedor.id_proveedor)}>
+                                        <Ionicons name="trash-outline" size={20} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+
                             </View>
 
                         ))
@@ -404,28 +430,32 @@ export default function ProveedoresScreen() {
                     animationType="slide"
                     transparent={true}
                     visible={modalMostrar}
-                    id="${proveedores.id_proveedor}"
-                    >
+                    onRequestClose={() => {
+                        setModalMostrar(false);
+                    }}
+                >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContenido}>
 
-                            <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setModalMostrar(false)}>
-                                <Ionicons name="close-circle" size={24} color="white" />
+                            <TouchableOpacity style={globalStyles.botonCerrar} onPress={closeModal}>
+                                <Ionicons name="close" size={24} color="black" />
                             </TouchableOpacity>
                             <Text style={styles.modalTitle}>Detalles del proveedor</Text>
-                            {proveedores.map((proveedor) => (
-                                <View>
-                                    <View key={proveedor.id_proveedor}>
-                                        <Text style={styles.modalText}>ID: {proveedor.id_proveedor}</Text>
-                                        <Text style={styles.modalText}>Empresa: {proveedor.prov_nombre}</Text>
-                                        <Text style={styles.modalText}>Contacto: {proveedor.prov_contacto_nombre}</Text>
-                                        <Text style={styles.modalText}>Telefono: {proveedor.prov_contacto_telefono}</Text>
-                                        <Text style={styles.modalText}>Direccion: {proveedor.prov_direccion}</Text>
-                                        <Text style={styles.modalText}>Email: {proveedor.prov_contacto_email}</Text>
-                                    </View>
-                                    
+                            {proveedorSelected ? (
+
+                                <View >
+                                    <Text style={styles.modalText}>ID:{proveedorSelected.id_proveedor} </Text>
+                                    <Text style={styles.modalText}>Empresa:{proveedorSelected.prov_nombre} </Text>
+                                    <Text style={styles.modalText}>Contacto:{proveedorSelected.prov_contacto_nombre} </Text>
+                                    <Text style={styles.modalText}>Telefono:{proveedorSelected.prov_contacto_telefono} </Text>
+                                    <Text style={styles.modalText}>Direccion:{proveedorSelected.prov_direccion} </Text>
+                                    <Text style={styles.modalText}>Email:{proveedorSelected.prov_contacto_email} </Text>
                                 </View>
-                            ))}
+
+
+                            ) : (
+                                <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>Cargando proveedores...</Text>
+                            )}
 
                         </View>
                     </View>
@@ -475,16 +505,21 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         height: 100,
         alignItems: 'center',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         display: 'flex',
         flexDirection: 'row',
 
     },
     row: {
-
         justifyContent: 'center',
         width: 100,
-
+    },
+    actions: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 10
     },
     text: {
         fontFamily: "Homer-Simpson",
