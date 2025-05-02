@@ -125,6 +125,7 @@ export default function CategoriaScreen() {
         foto: null,
         puntos: '',
     });
+
     const editarProducto = (producto) => {
         setProductoEditar({
             id: producto.id_producto,

@@ -18,6 +18,7 @@ class ProveedoresService {
                 return [];
             }
         }
+        
         static async crearProveedor(data) {
             try{
                 const response = await ProveedoresRepository.crearProveedor(data)
