@@ -147,7 +147,7 @@ export default function VentasScreen() {
                         onValueChange={(itemValue) => filtrarVentaPorEstado(Number(itemValue))}
                     >
                         <Picker.Item label="Activos" value={1} />
-                        <Picker.Item label="Inactivos" value={'0'} />
+                        <Picker.Item label="Inactivos" value={0} />
                         <Picker.Item label="Todos" value={-1} />
                     </Picker>
                 </View>

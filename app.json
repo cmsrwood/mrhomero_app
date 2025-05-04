@@ -29,6 +29,9 @@
         "projectId": "330117ee-8b94-4c5b-9a18-c72837d7d84a"
       }
     },
-    "owner": "cmsrwood"
+    "owner": "cmsrwood",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

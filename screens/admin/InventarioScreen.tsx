@@ -264,8 +264,7 @@ export default function PedidosScreen() {
                         </View>
                     </ScrollView>
                 </ScrollView>
-                { /*Modal para Agregar ingrediente*/}
-
+                { /* MODAL PARA AGREGAR Y EDITAR INGREDIENTES*/}
                 <Modal
                     animationType='slide'
                     transparent={true}

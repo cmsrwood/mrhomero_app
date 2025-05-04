@@ -18,92 +18,6 @@ export default function ClientesScreen() {
         refetchClientes();
     }, [busqueda]);
 
-    const handleDelete = async (id_empleado) => {
-        try {
-            Alert.alert(
-                "Eliminar cliente",
-                "¿Deseas eliminar este cliente?",
-                [
-                    {
-                        text: "Cancelar",
-                        style: "cancel"
-                    },
-                    {
-                        text: "Eliminar",
-                        onPress: async () => {
-                            try {
-                                const response = await ClientesService.eliminarCliente(id_empleado);
-                                if (response.status === 200) {
-                                    showMessage({
-                                        message: 'Cliente eliminado con éxito.',
-                                        type: 'success',
-                                        duration: 2000,
-                                        icon: 'success'
-                                    })
-                                }
-                                refetchClientes();
-                            } catch (error) {
-                                console.log('Error: ', error);
-                                showMessage({
-                                    message: 'Error al eliminar al cliente',
-                                    type: 'danger',
-                                    duration: 2000,
-                                    icon: 'danger'
-                                })
-                                refetchClientes();
-                            }
-                        }
-                    }
-                ]
-            )
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const handleRestore = async (id_empleado) => {
-        try {
-            Alert.alert(
-                "Restaurar cliente",
-                "¿Deseas restaurar este cliente?",
-                [
-                    {
-                        text: "Cancelar",
-                        style: "cancel"
-                    },
-                    {
-                        text: "Restaurar",
-                        onPress: async () => {
-                            try {
-                                const response = await ClientesService.restaurarCliente(id_empleado);
-                                if (response.status === 200) {
-                                    showMessage({
-                                        message: 'Cliente restaurado con éxito.',
-                                        type: 'success',
-                                        duration: 2000,
-                                        icon: 'success'
-                                    })
-                                }
-                                refetchClientes();
-                            } catch (error) {
-                                console.log('Error: ', error);
-                                showMessage({
-                                    message: 'Error al restaurar al cliente',
-                                    type: 'danger',
-                                    duration: 2000,
-                                    icon: 'danger'
-                                })
-                                refetchClientes();
-                            }
-                        }
-                    }
-                ]
-            )
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     function setFiltarClientePorEstado(itemValue) {
         setClienteEstado(itemValue);
     }
@@ -153,7 +67,6 @@ export default function ClientesScreen() {
                                     <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: 'bold' }]}>Apellidos</Text></View>
                                     <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: 'bold' }]}>Correo</Text></View>
                                     <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: 'bold' }]}>Estado</Text></View>
-                                    <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: 'bold' }]}>Eliminar</Text></View>
                                 </View>
                             </View>
                             {clientesFiltrados.length === 0 ? (
@@ -169,11 +82,6 @@ export default function ClientesScreen() {
                                     <View style={styles.cell}><Text style={styles.cellText}>{cliente.user_apels}</Text></View>
                                     <View style={styles.cell}><Text style={styles.cellText}>{cliente.user_email}</Text></View>
                                     <View style={styles.cell}><Text style={[styles.cellText, { color: cliente.user_estado === 1 ? 'green' : 'red' }]}>{cliente.user_estado === 1 ? 'Activo' : 'Inactivo'}</Text></View>
-                                    <TouchableOpacity style={styles.cell}
-                                        onPress={() => cliente.user_estado === 1 ? handleDelete(cliente.id_user) : handleRestore(cliente.id_user)}
-                                    >
-                                        <Ionicons name={cliente.user_estado === 1 ? 'trash' : 'reload'} style={[styles.cellText, { fontSize: 30, color: cliente.user_estado === 1 ? 'red' : 'green' }]}></Ionicons>
-                                    </TouchableOpacity>
                                 </View>
                             )))}
 
