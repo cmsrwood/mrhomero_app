@@ -11,8 +11,6 @@ import { showMessage } from 'react-native-flash-message';
 import * as ImagePicker from 'expo-image-picker';
 import { ActivityIndicator } from 'react-native-paper';
 import ImagenesService from '../../services/ImagenesService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AuthService from '../../services/AuthService';
 
 export default function PerfilCliente() {
 
@@ -22,8 +20,9 @@ export default function PerfilCliente() {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalFotoVisible, setModalFotoVisible] = useState(false);
     const [isEditing, setIsEditing] = useState('');
-
+    const [refreshCliente, setRefreshCliente] = useState(false);
     const [editarUser, setEditarUser] = useState({
+
     });
 
     const iniciales = () => {
@@ -79,9 +78,17 @@ export default function PerfilCliente() {
                     duration: 2000,
                     icon: "success",
                 });
+                setRefreshCliente(!refreshCliente);
             }
         } catch (error) {
-            console.error('Error:', error);
+            setIsUploading(false);
+            console.error('Error al actualizar el perfil:', `${JSON.stringify(error.response.data)}`);
+            showMessage({
+                message: 'Error al actualizar el perfil',
+                type: 'danger',
+                duration: 2000,
+                icon: 'danger',
+            })
         } finally {
             setIsUploading(false);
             refetchCliente();
@@ -116,19 +123,22 @@ export default function PerfilCliente() {
 
             formData.append('upload_preset', 'usuarios');
             formData.append('public_id', cliente.id_user);
-            console.log(cliente.id_user);
             try {
                 setIsUploading(true);
                 const cloudinaryResponse = await ImagenesService.subirImagen(formData);
+                setIsUploading(false);
                 if (cloudinaryResponse.status === 200) {
-                    ClientesService.actualizarCliente({
-                        user_foto: cloudinaryResponse.data.url
-                    });
+                    handleEditarPerfil({ foto: cloudinaryResponse.data.url });
                 }
             } catch (error) {
-
+                showMessage({
+                    message: 'Error al subir la imagen',
+                    type: 'danger',
+                    duration: 2000,
+                    icon: 'danger',
+                })
+                console.error('Error al subir la imagen:', `${JSON.stringify(error?.response?.data?.message)}`);
             } finally {
-                setIsUploading(false);
                 refetchCliente();
             }
         }
@@ -164,7 +174,7 @@ export default function PerfilCliente() {
     }, [isUploading]);
 
     return (
-        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh}>
+        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh} refreshCliente={refreshCliente}>
             <View>
                 <View style={[globalStyles.container, styles.container]}>
                     <Text style={globalStyles.title}>Perfil</Text>
@@ -195,9 +205,9 @@ export default function PerfilCliente() {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.formGroup}>
-                        <Text style={styles.TextTitle}>Email</Text>
-                        <TouchableOpacity onPress={() => openModal('email')}>
-                            <Text style={styles.TextInfo}>{cliente?.user_email}</Text>
+                        <Text style={[styles.TextTitleEmail]}>Email</Text>
+                        <TouchableOpacity disabled onPress={() => openModal('email')}>
+                            <Text style={styles.TextInfoEmail}>{cliente?.user_email}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.formGroup} >
@@ -207,8 +217,8 @@ export default function PerfilCliente() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <TouchableOpacity style={globalStyles.button} onPress={() => logout()}>
-                    <Text>Cerrar sesion</Text>
+                <TouchableOpacity style={styles.cerrarSesion} onPress={() => logout()}>
+                    <Text style={styles.cerrarSesionText}>Cerrar sesion</Text>
                 </TouchableOpacity>
             </View>
             {/* MODAL */}
@@ -242,6 +252,7 @@ export default function PerfilCliente() {
             <Modal
                 visible={modalFotoVisible}
                 animationType="fade"
+                onRequestClose={() => setModalFotoVisible(false)}
                 transparent={true}
                 style={styles.modal}
             >
@@ -312,6 +323,17 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },
+    TextTitleEmail: {
+        color: "#aaaaaa",
+        fontSize: 14,
+    },
+    TextInfoEmail: {
+        color: "#aaaaaa",
+        fontSize: 16,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
     input: {
         borderWidth: 1,
         borderColor: "#ccc",
@@ -364,4 +386,16 @@ const styles = StyleSheet.create({
         left: '50%',
         transform: [{ translateX: -100 }, { translateY: -100 }]
     },
+    cerrarSesion: {
+        marginTop: 50,
+        borderRadius: 8,
+        width: '50%',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    cerrarSesionText: {
+        color: '#dc3545',
+        fontSize: 16,
+    }
 })

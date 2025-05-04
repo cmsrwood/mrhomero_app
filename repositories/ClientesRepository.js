@@ -30,12 +30,12 @@ class ClientesRepository {
         return response
     }
 
-    static async eliminarCliente(id) { 
+    static async eliminarCliente(id) {
         const response = await API.put(`personas/clientes/eliminar/${id}`)
         return response
     }
 
-    static async restaurarCliente(id) { 
+    static async restaurarCliente(id) {
         const response = await API.put(`personas/clientes/restaurar/${id}`)
         return response
     }

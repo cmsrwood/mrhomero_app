@@ -24,7 +24,23 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <FlashMessage position="top" style={{ paddingTop: Constants.statusBarHeight, }} />
+        <FlashMessage
+          position="top"
+          style={{
+            paddingTop: Constants.statusBarHeight,
+            zIndex: 999,
+            elevation: 3,
+          }}
+          titleStyle={{
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: 'white',
+          }}
+          textStyle={{
+            fontSize: 14,
+            color: 'white',
+          }}
+        />
         <MainNavigator />
       </NavigationContainer>
     </AuthProvider>

@@ -10,11 +10,16 @@ export default function HeaderCliente({ cliente }) {
 
     const navigation = useNavigation();
 
+    const primerNombre = cliente?.user_nom?.split(' ')[0] || 'Usuario';
+    const primerApellido = cliente?.user_apels?.split(' ')[0] || '';
+
+    const nombreCompleto = `${primerNombre} ${primerApellido}`;
+
     return (
         <View style={styles.headerContainer}>
             <View style={styles.leftSection}>
                 <Text style={styles.saludo}>Hola,</Text>
-                <Text style={styles.nombre}>{cliente?.user_nom || 'Usuario'}</Text>
+                <Text style={styles.nombre}>{nombreCompleto || 'Usuario'}</Text>
             </View>
             <View style={styles.rightSection}>
                 <TouchableOpacity onPress={() => { navigation.navigate('Recompensas') }} style={styles.puntosContainer}>
