@@ -1,14 +1,20 @@
 import React from "react";
-import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import globalStyles from "../styles/globalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
-export default function EmpleadoLayout({ children }) {
+export default function AdminLayout({ children }) {
     const navigation = useNavigation();
 
     return (
-        <View style={globalStyles.containerfluid}>
+        <LinearGradient
+            colors={['#2D3036', '#1C1D20']}
+            style={globalStyles.containerfluid}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+        >
             <TouchableOpacity
                 onPress={() => navigation.openDrawer()}
                 style={styles.menuButton}
@@ -19,7 +25,7 @@ export default function EmpleadoLayout({ children }) {
             <ScrollView contentContainerStyle={styles.content}>
                 {children}
             </ScrollView>
-        </View>
+        </LinearGradient>
     );
 }
 

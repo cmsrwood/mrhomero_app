@@ -1,52 +1,51 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+
 import React from 'react';
-
-import { Ionicons } from '@expo/vector-icons';
-
-import IndexAdmin from "../screens/admin/IndexAdminScreen";
-import LoginScreen from "../screens/default/LoginScreen";
-import RegistrarScreen from "../screens/default/RegistrarScreen";
-import MenuDefault from '../screens/default/MenuDefaultScreen';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import EmpleadoDrawer from '../components/EmpleadoDrawer';
 import IndexEmpleado from '../screens/empleado/IndexEmpleado';
+import VentasEmpleado from '../screens/admin/VentasScreen';
+import AnalisisVentasEmpleado from '../screens/admin/DashboardScreen';
+import GestionVentasEmpleado from '../screens/admin/VentasScreen';
+import InventarioEmpleado from '../screens/admin/InventarioScreen';
+import MenuEmpleado from '../screens/empleado/MenuEmpleadoScreen';
+import RecompensasEmpleado from '../screens/admin/RecompensasAdminScreen';
+import ClientesEmpleado from '../screens/empleado/ClientesEmpleadoScreen';
+import ProveedoresEmpleado from '../screens/admin/ProveedoresScreen';
+import HorasEmpleado from '../screens/empleado/HorasEmpleadoScreen';
+import PedidosEmpleado from '../screens/admin/PedidosScreen'
+import CategoriaEmpleado from '../screens/empleado/CategoriaEmpleadoScreen';
+import ProductoEmpleado from '../screens/admin/ProductoAdminScreen';
 
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
-const LoginStack = () => {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="RegistrarScreen" component={RegistrarScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
-    );
-};
 
 export default function EmpleadoNavigator() {
     return (
-        <Tab.Navigator screenOptions={({ route }) => ({
-            headerShown: false,
-            tabBarStyle: {
-                backgroundColor: "#2B3035",
-                height: 60,
-                paddingBottom: 5,
-            },
-            tabBarIcon: ({ color, size, focused }) => {
-                let iconName;
-                if (route.name === "IndexEmpleado") {
-                    iconName = focused ? "home-sharp" : "home-outline";
-                } else if (route.name === "Menu") {
-                    iconName = focused ? "list" : "list-outline";
-                } else if (route.name === "Iniciar Sesion") {
-                    iconName = focused ? "person-circle" : "person-circle-outline";
-                }
-                return <Ionicons name={iconName} size={size} color={color} />;
-            },
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "#B0B0B0",
-        })}>
-
-            <Tab.Screen name="IndexEmpleado" component={IndexEmpleado} />
-        </Tab.Navigator>
-    );
+        <Drawer.Navigator
+            drawerContent={(props) => <EmpleadoDrawer {...props} />}
+            screenOptions={{
+                headerShown: false,
+                drawerStyle: {
+                    backgroundColor: "#1E1E1E",
+                    width: 250,
+                },
+                drawerActiveTintColor: "#FFD700",
+                drawerInactiveTintColor: "#FFFFFF",
+            }}
+        >
+            <Drawer.Screen name="IndexEmpleado" component={IndexEmpleado} />
+            <Drawer.Screen name="VentasEmpleado" component={VentasEmpleado} />
+            <Drawer.Screen name="AnalisisVentas" component={AnalisisVentasEmpleado} />
+            <Drawer.Screen name="GestionVentas" component={GestionVentasEmpleado} />
+            <Drawer.Screen name="Inventario" component={InventarioEmpleado} />
+            <Drawer.Screen name="Menu" component={MenuEmpleado} />
+            <Drawer.Screen name="Recompensas" component={RecompensasEmpleado} />
+            <Drawer.Screen name="Clientes" component={ClientesEmpleado} />
+            <Drawer.Screen name="Proveedores" component={ProveedoresEmpleado} />
+            <Drawer.Screen name="Horas" component={HorasEmpleado} />
+            <Drawer.Screen name="PedidosEmpleado" component={PedidosEmpleado} />
+            <Drawer.Screen name="Categoria" component={CategoriaEmpleado} />
+            <Drawer.Screen name="Producto" component={ProductoEmpleado} />
+        </Drawer.Navigator>
+    )
 };
