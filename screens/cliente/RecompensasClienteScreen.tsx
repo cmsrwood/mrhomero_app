@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import ClienteLayout from '../../components/ClienteLayout'
@@ -8,8 +8,10 @@ import moment from 'moment'
 import ProgressBar from '../../components/ProgressBar'
 import { useFocusEffect } from '@react-navigation/native'
 import Loader from '../../components/Loader'
+import RecompensasService from '../../services/RecompensasService'
+import { showMessage } from 'react-native-flash-message'
 
-export default function RecompensasCliente() {
+export default function RecompensasCliente({ }) {
     const [filtro, setFiltro] = useState("disponibles")
     const [refreshing, setRefreshing] = useState(false)
     const [cantidad, setCantidad] = useState(1)
@@ -20,42 +22,88 @@ export default function RecompensasCliente() {
     const { data: recompensasObtenidas, refetch: refetchRecompensasObtenidas, isLoading: isRecompensasObtenidasLoading } = useRecompensas("recompensasObtenidas")
     const { data: puntos, refetch: refetchPuntos, isLoading: isPuntosLoading } = useRecompensas("puntosUsuario")
 
+    const recompensasMap = useMemo(() => {
+        return recompensas.reduce((map, recomp) => {
+            map[recomp.id_recomp] = recomp;
+            return map;
+        }, {});
+    }, [recompensas]);
+
     function mesANombre(mes) {
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
         return meses[mes - 1]
     }
 
-    const openModalRecompensa = (recompensa) => {
+    const openModalRecompensa = async (recompensa) => {
         setRecompensaSeleccionada(recompensa)
         setModalRecompensa(true)
     }
 
-    const cerrarModalRecompensa = () => {
+    const cerrarModalRecompensa = async () => {
         setModalRecompensa(false)
         setCantidad(1)
     }
 
+    const [refetchCliente, setRefetchCliente] = useState(false)
+
+    const handleReclamarRecompensa = async () => {
+        try {
+            const reclamos = [];
+            for (let i = 0; i < cantidad; i++) {
+                reclamos.push(RecompensasService.reclamar(recompensaSeleccionada.id_recomp));
+            }
+            await Promise.all(reclamos);
+
+            await refetchAll();
+            setRefetchCliente(!refetchCliente);
+
+            showMessage({
+                message: `Recompensa reclamada con éxito (${cantidad} veces)`,
+                type: 'success',
+                icon: 'success',
+                duration: 3000
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            cerrarModalRecompensa();
+            setRefetchCliente(!refetchCliente);
+        }
+    };
+
+    const refetchAll = async () => {
+        try {
+            await Promise.all([
+                refetchRecompensas(),
+                refetchRecompensasObtenidas(),
+                refetchPuntos()
+            ]);
+        } catch (error) {
+            console.error("Error al actualizar datos:", error);
+        }
+    };
+
     const onRefresh = useCallback(() => {
-        setRefreshing(true)
+        setRefreshing(true);
         Promise.all([
-            refetchRecompensas(),
-            refetchRecompensasObtenidas(),
-            refetchPuntos()
+            refetchAll(),
         ]).then(() => {
-            setRefreshing(false)
-        })
-    }, [])
+            setRefreshing(false);
+        });
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
-            refetchRecompensas()
-            refetchRecompensasObtenidas()
-            refetchPuntos()
+            refetchAll()
         }, [])
     )
 
+    const getRecompensaData = (recompensaObt) => {
+        return recompensasMap[recompensaObt.id_recomp] || {};
+    }
+
     return (
-        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh}>
+        <ClienteLayout refreshing={refreshing} onRefresh={onRefresh} refreshCliente={refetchCliente}>
             <View style={{ paddingHorizontal: 20 }}>
                 <View>
                     {isRecompensasLoading || isRecompensasObtenidasLoading && (
@@ -63,6 +111,7 @@ export default function RecompensasCliente() {
                     )}
                     <Text style={globalStyles.title}>Recompensas</Text>
                     {filtro == "disponibles" ? (
+                        // Recompensas disponibles
                         <View>
                             <TouchableOpacity onPress={() => setFiltro("obtenidas")}>
                                 <Text style={styles.filtro}>Ver Recompensas Obtenidas</Text>
@@ -86,7 +135,7 @@ export default function RecompensasCliente() {
                                             </View>
                                         </View>
                                     </TouchableOpacity>
-                                    {puntos > recompensa.recomp_num_puntos &&
+                                    {puntos >= recompensa.recomp_num_puntos &&
                                         <TouchableOpacity style={styles.botonReclamarCard} onPress={() => setModalRecompensa(false)}>
                                             <View>
                                                 <Ionicons name="checkmark-circle" size={20} color="black" />
@@ -97,51 +146,60 @@ export default function RecompensasCliente() {
                             ))}
                         </View>
                     ) : (
+                        // Recompensas obtenidas
                         <View>
                             <TouchableOpacity onPress={() => setFiltro("disponibles")}>
                                 <Text style={styles.filtro}>Ver Recompensas Disponibles</Text>
                             </TouchableOpacity>
-                            {recompensasObtenidas.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No has reclamado ninguna recompensa aún</Text>}
-                            {recompensasObtenidas.map((recompensa) => (
-                                <View key={recompensa.id_recomp_obt} style={[styles.card]}>
-                                    <View>
-                                        <Image style={styles.img} source={{ uri: recompensas.find(recomp => recomp.id_recomp == recompensa.id_recomp).recomp_foto }} />
+                            {recompensasObtenidas.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay recompensas disponibles</Text>}
+                            {recompensasObtenidas.map((recompensa) => {
+                                const recompensaData = getRecompensaData(recompensa);
+                                return (
+                                    <View key={recompensa.id_recomp_obt}>
+                                        <TouchableOpacity onPress={() => { openModalRecompensa(recompensa) }}>
+                                            <View style={[styles.card]}>
+                                                <View style={styles.cardContent}>
+                                                    <View style={{ padding: 10, flex: 1 }}>
+                                                        <Text numberOfLines={2} style={{ color: "#fff", marginBottom: 10, fontSize: 18, fontWeight: "bold" }}>{recompensaData.recompensa_nombre}</Text>
+                                                        <View style={{ paddingEnd: 5 }}>
+                                                            <Text style={{ marginBottom: 10, color: "#fff" }}>
+                                                                Codigo: <Text style={{ color: "#FFC107", marginBottom: 10 }}>{recompensa.codigo}</Text>
+                                                            </Text>
+                                                        </View>
+                                                    </View>
+                                                    <View>
+                                                        <Image style={styles.img} source={{ uri: recompensaData.recomp_foto }} />
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
-                                    <View style={{ padding: 10, flex: 1 }}>
-                                        <Text style={{ color: "#fff", marginBottom: 10 }}>{recompensas.find(recomp => recomp.id_recomp == recompensa.id_recomp).recompensa_nombre}</Text>
-                                        <Text style={{ marginBottom: 10, color: "#fff" }}>
-                                            Codigo: <Text style={{ color: "#FFC107", marginBottom: 10 }}>{recompensa.codigo}</Text>
-                                        </Text>
-                                        <Text style={{ color: "#fff", marginBottom: 10 }}>Lo reclamaste el dia {moment(recompensa.fecha_reclamo).format('DD')} de {mesANombre(moment(recompensa.fecha_reclamo).format('MM'))}</Text>
-                                    </View>
-                                </View>
-                            ))}
+                                )
+                            })}
                         </View>
                     )}
                 </View>
 
+                {/* Modal de recompensa */}
                 <Modal
                     visible={modalRecompensa}
                     animationType="slide"
                     transparent={true}
-                    onRequestClose={() => setModalRecompensa(false)}
+                    onRequestClose={() => cerrarModalRecompensa()}
                 >
                     <View style={styles.modalOverlay}>
-                        {recompensaSeleccionada ? (
+                        {recompensaSeleccionada?.recompensa_nombre ? (
                             <View style={styles.modalContainer}>
+                                <Image source={{ uri: recompensaSeleccionada.recomp_foto }} style={styles.imgModal} />
                                 <TouchableOpacity style={styles.botonCerrar} onPress={cerrarModalRecompensa}>
                                     <Ionicons name="close" size={24} color="black" />
                                 </TouchableOpacity>
-
-                                <Image source={{ uri: recompensaSeleccionada.recomp_foto }} style={styles.imgModal} />
-
                                 <View style={styles.modalContent}>
                                     <Text style={styles.modalTitulo}>{recompensaSeleccionada.recompensa_nombre}</Text>
                                     <Text style={styles.modalLabel}>{recompensaSeleccionada.recompensa_descripcion}</Text>
                                     <Text style={styles.puntosModal}>{recompensaSeleccionada.recomp_num_puntos} puntos</Text>
                                 </View>
-
-                                {puntos > recompensaSeleccionada.recomp_num_puntos ? (
+                                {puntos >= recompensaSeleccionada.recomp_num_puntos ? (
                                     <View>
                                         <View style={styles.modalFooter}>
                                             <View style={[styles.buttonCancelar]}>
@@ -149,11 +207,11 @@ export default function RecompensasCliente() {
                                                     <Ionicons color={cantidad == 1 ? "#aaa" : "black"} size={20} name="remove-outline" />
                                                 </TouchableOpacity>
                                                 <Text style={styles.buttonText}>{cantidad}</Text>
-                                                <TouchableOpacity onPress={() => { cantidad * recompensaSeleccionada.recomp_num_puntos < puntos && setCantidad(cantidad + 1) }}>
+                                                <TouchableOpacity onPress={() => { ((cantidad + 1) * recompensaSeleccionada.recomp_num_puntos) <= puntos && setCantidad(cantidad + 1) }}>
                                                     <Ionicons color="black" size={20} name="add-outline" />
                                                 </TouchableOpacity>
                                             </View>
-                                            <TouchableOpacity style={styles.buttonReclamar} onPress={() => { }}>
+                                            <TouchableOpacity disabled={puntos - (cantidad * recompensaSeleccionada.recomp_num_puntos) < 0} style={styles.buttonReclamar} onPress={() => handleReclamarRecompensa()}>
                                                 <Text style={styles.buttonText}>Reclamar</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -163,7 +221,22 @@ export default function RecompensasCliente() {
                                     <View style={styles.modalFooter}></View>
                                 )}
                             </View>
-                        ) : <Loader />}
+                        ) : recompensaSeleccionada?.codigo ? (
+                            <View style={styles.modalContainer}>
+                                <Image source={{ uri: recompensasMap[recompensaSeleccionada.id_recomp]?.recomp_foto }} style={styles.imgModal} />
+                                <TouchableOpacity style={styles.botonCerrar} onPress={cerrarModalRecompensa}>
+                                    <Ionicons name="close" size={24} color="black" />
+                                </TouchableOpacity>
+                                <View style={styles.modalContent}>
+                                    <Text style={styles.modalTitulo}>{recompensasMap[recompensaSeleccionada.id_recomp]?.recompensa_nombre}</Text>
+                                    <Text style={styles.modalLabel}>{recompensasMap[recompensaSeleccionada.id_recomp]?.recompensa_descripcion}</Text>
+                                    <Text style={styles.modalLabel}>Lo reclamaste el dia {moment(recompensaSeleccionada.fecha_reclamo).format('DD')} de {mesANombre(moment(recompensaSeleccionada.fecha_reclamo).format('MM'))}</Text>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Text style={[{ color: "#FFC107", fontSize: 80, }, globalStyles.fontHomero]}>{recompensaSeleccionada.codigo}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        ) : null}
                     </View>
                 </Modal>
             </View>
@@ -216,8 +289,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: '2%',
         left: '4%',
-        flexDirection: "row",
-        gap: 5
     },
     modalTitulo: {
         fontSize: 32,

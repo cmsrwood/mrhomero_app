@@ -6,22 +6,12 @@ import useClientes from '../hooks/useClientes'
 import { ActivityIndicator } from 'react-native-paper'
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-export default function HeaderCliente() {
-
-    const { data: puntos, isLoading: isPuntosLoading } = useRecompensas("puntosUsuario")
-    const { data: cliente, isLoading: isLoadingCliente, refetch: refetchCliente } = useClientes("clienteConToken")
+export default function HeaderCliente({ cliente }) {
 
     const navigation = useNavigation();
 
-    useFocusEffect(
-        useCallback(() => {
-            refetchCliente();
-        }, [])
-    );
-
     return (
         <View style={styles.headerContainer}>
-            {isLoadingCliente && <ActivityIndicator color="#F8C60F" />}
             <View style={styles.leftSection}>
                 <Text style={styles.saludo}>Hola,</Text>
                 <Text style={styles.nombre}>{cliente?.user_nom || 'Usuario'}</Text>
@@ -29,7 +19,7 @@ export default function HeaderCliente() {
             <View style={styles.rightSection}>
                 <TouchableOpacity onPress={() => { navigation.navigate('Recompensas') }} style={styles.puntosContainer}>
                     <Ionicons name="star" style={styles.puntosIcon} />
-                    <Text style={styles.puntosText}>{isPuntosLoading ? '...' : `${puntos} pts`}</Text>
+                    <Text style={styles.puntosText}>{`${cliente?.user_puntos} pts`}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => { navigation.navigate('Perfil') }} style={styles.perfilBtn}>

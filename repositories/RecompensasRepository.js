@@ -26,8 +26,8 @@ class RecompensasRepository {
         const response = await API.get(`/tienda/recompensas/${id}`);
         return response
     }
-    static async reclamar(id) {
-        const response = await API.post(`/tienda/recompensas/reclamar/${id}`);
+    static async reclamar(id_usuario, id_recompensa) {
+        const response = await API.post(`/tienda/recompensas/reclamar/${id_usuario}`, {id_recompensa});
         return response
     }
     static async crearRecompensa(data) {

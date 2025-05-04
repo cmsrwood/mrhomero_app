@@ -1,4 +1,5 @@
 import RecompensasRepository from "../repositories/RecompensasRepository";
+import AuthService from "./AuthService";
 
 class RecompensasService {
     static async getRecompensas() {
@@ -37,9 +38,12 @@ class RecompensasService {
             return [];
         }
     }
-    static async reclamar (id) {
+    static async reclamar (id_recompensa) {
         try {
-            const response = await RecompensasRepository.reclamar(id);
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id_usuario = tokenData.id;
+            const response = await RecompensasRepository.reclamar(id_usuario, id_recompensa);
             return response || null;
         } catch (error) {
             console.log(error);
