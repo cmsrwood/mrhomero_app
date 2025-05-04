@@ -186,7 +186,7 @@ export default function PerfilCliente() {
                         </View>
                         :
                         <View style={styles.imgPlaceholder}>
-                            <Text style={[styles.iniciales, globalStyles.naranja]}>{iniciales()}</Text>
+                            <Text style={styles.iniciales}>{iniciales()}</Text>
                         </View>
                     }
                     <TouchableOpacity onPress={() => handleSeleccionarImagen()}><Text style={styles.cambiar}>Cambiar foto de perfil</Text></TouchableOpacity>
@@ -279,12 +279,13 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     imgPlaceholder: {
-        position: "relative",
         width: 110,
         height: 110,
         borderColor: "#ccc",
         borderWidth: 1,
-        borderRadius: 100,
+        borderRadius: 55,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     cambiar: {
         fontSize: 14,
@@ -292,10 +293,8 @@ const styles = StyleSheet.create({
         color: "#0095f6",
     },
     iniciales: {
-        position: "absolute",
-        top: '24%',
-        left: '29%',
         fontSize: 40,
+        color: '#FFC107',
     },
     form: {
         alignItems: "center",
