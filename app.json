@@ -1,16 +1,15 @@
 {
   "expo": {
-    "name": "mr-homero",
+    "name": "Mr. Homero",
     "slug": "mr-homero",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/favicon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/favicon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFEB3B"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +17,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/favicon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFEB3B"
       }
     },
     "web": {
