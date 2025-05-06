@@ -175,6 +175,30 @@ class VentasService {
         }
     }
 
+    static async crearVenta(venta) {
+        try {
+            const data = await VentasRepository.crearVenta(venta);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            const errorMessage = error?.response?.data?.message || "Error al crear la venta.";
+            throw new Error(errorMessage);
+        }
+    }
+
+    static async crearDetalleVenta(detalleVenta) {
+        try {
+            const data = await VentasRepository.crearDetalleVenta(detalleVenta);
+            if (!data) return [];
+            return data;
+        } catch (error) {
+            console.log(error);
+            const errorMessage = error?.response?.data?.message || "Error al crear el detalle de la venta.";
+            throw new Error(errorMessage);
+        }
+    }
+
     static async eliminarVenta(id) {
         try {
             const data = await VentasRepository.eliminarVenta(id);

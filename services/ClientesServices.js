@@ -50,6 +50,16 @@ class ClientesService {
             return [];
         }
     }
+
+    static async agregarPuntos(data) {
+        try {
+            const response = await ClientesRepository.agregarPuntos(data);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
     static async actualizarCliente(data) {
         try {
             const token = await AuthService.getToken();

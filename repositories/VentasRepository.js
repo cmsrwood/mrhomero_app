@@ -67,12 +67,22 @@ class VentasRepository {
         return response.data;
     }
 
+    static async crearVenta(venta) {
+        const response = await API.post("/tienda/ventas/crear", venta);
+        return response
+    }
+
+    static async crearDetalleVenta(detalle) {
+        const response = await API.post("/tienda/ventas/crearDetalleVenta", detalle);
+        return response
+    }
+
     static async eliminarVenta(id) {
         const response = await API.put(`/tienda/ventas/eliminar/${id}`);
         return response
     }
 
-    static async restaurarVenta(id) { 
+    static async restaurarVenta(id) {
         const response = await API.put(`tienda/ventas/restaurar/${id}`);
         return response
     }

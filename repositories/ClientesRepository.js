@@ -25,6 +25,12 @@ class ClientesRepository {
         const response = await API.get('personas/clientes')
         return response.data
     }
+    
+    static async agregarPuntos(data) {
+        const response = await API.post('personas/clientes/agregarPuntos', data)
+        return response.data
+    }
+
     static async actualizarCliente(id, data) {
         const response = await API.put(`personas/clientes/actualizar/${id}`, data)
         return response
