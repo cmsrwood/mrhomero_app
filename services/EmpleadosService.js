@@ -1,5 +1,5 @@
 import EmpleadosRepository from "../repositories/EmpleadosRepository";
-
+import AuthService from "./AuthService";
 class EmpleadosService {
     static async getEmpleados() {
         try {
@@ -74,6 +74,32 @@ class EmpleadosService {
     static async mostrarHorasPorDia(id, fecha) {
         try {
             const response = await EmpleadosRepository.mostrarHorasPorDia(id, fecha);
+            return response || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async iniciarHoraTrabajo(fecha, hora) {
+        try {
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id = tokenData.id;
+            const response = await EmpleadosRepository.iniciarHoraTrabajo(id, fecha, hora);
+            return response || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async terminarHoraTrabajo(fecha, hora) {
+        try {
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id = tokenData.id;
+            const response = await EmpleadosRepository.terminarHoraTrabajo(id, fecha, hora);
             return response || [];
         } catch (error) {
             console.log(error);
