@@ -27,6 +27,10 @@ export default function useRecompensas(type, params = {}) {
                 }
 
                 else if (type === "recompensasObtenidas") {
+                    results = await RecompensasService.getRecompensasObtenidas();
+                }
+
+                else if (type === "recompensasObtenidasUsuario") {
                     results = await RecompensasService.getRecompensasObtenidasUsuario();
                 }
 

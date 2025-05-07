@@ -20,6 +20,16 @@ class RecompensasService {
             return [];
         }
     }
+
+    static async getRecompensasObtenidas() {
+        try {
+            const response = await RecompensasRepository.getRecompensasObtenidas();
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
     static async getRecompensasObtenidasUsuario() {
         try {
             const response = await RecompensasRepository.getRecompensasObtenidasUsuario();
@@ -62,6 +72,15 @@ class RecompensasService {
     static async actualizarRecompensa(id, data) {
         try {
             const response = await RecompensasRepository.actualizarRecompensa(id, data);
+            return response || null;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+    static async validarRecompensa(id, codigo) {
+        try {
+            const response = await RecompensasRepository.validarRecompensa(id, codigo);
             return response || null;
         } catch (error) {
             console.log(error);

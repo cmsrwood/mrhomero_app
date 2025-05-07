@@ -6,6 +6,11 @@ class RecompensasRepository {
         const response = await API.get("/tienda/recompensas");
         return response.data
     }
+
+    static async getRecompensasObtenidas() {
+        const response = await API.get(`/tienda/recompensas/recompensasObtenidas/recompensas`);
+        return response.data
+    }
     static async getRecompensasObtenidasUsuario() {
         const token = await AuthService.getToken();
         const tokenData = JSON.parse(atob(token.split(".")[1]));
@@ -27,7 +32,7 @@ class RecompensasRepository {
         return response
     }
     static async reclamar(id_usuario, id_recompensa) {
-        const response = await API.post(`/tienda/recompensas/reclamar/${id_usuario}`, {id_recompensa});
+        const response = await API.post(`/tienda/recompensas/reclamar/${id_usuario}`, { id_recompensa });
         return response
     }
     static async crearRecompensa(data) {
@@ -36,6 +41,10 @@ class RecompensasRepository {
     }
     static async actualizarRecompensa(id, data) {
         const response = await API.put(`/tienda/recompensas/actualizar/${id}`, data);
+        return response
+    }
+    static async validarRecompensa(id, codigo) {
+        const response = await API.put(`/tienda/recompensas/validar/${id}`, { codigo: codigo });
         return response
     }
     static async restaurarRecompensa(id) {
