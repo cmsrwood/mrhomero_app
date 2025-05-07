@@ -43,6 +43,10 @@ export default function useEmpleados(type, params = {}) {
                     results = await EmpleadosService.mostrarHorasPorDia(id_empleado, fecha);
                 }
 
+                if (type === 'HoraDia') {
+                    results = await EmpleadosService.mostrarHoraDia();
+                }
+
                 if (isMounted) {
                     setData(results);
                     setError(null);

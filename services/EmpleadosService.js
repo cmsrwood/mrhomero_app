@@ -1,5 +1,6 @@
 import EmpleadosRepository from "../repositories/EmpleadosRepository";
 import AuthService from "./AuthService";
+import moment from "moment";
 class EmpleadosService {
     static async getEmpleados() {
         try {
@@ -100,6 +101,20 @@ class EmpleadosService {
             const tokenData = JSON.parse(atob(token.split(".")[1]));
             const id = tokenData.id;
             const response = await EmpleadosRepository.terminarHoraTrabajo(id, fecha, hora);
+            return response || [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }
+
+    static async mostrarHoraDia() {
+        try {
+            const token = await AuthService.getToken();
+            const tokenData = JSON.parse(atob(token.split(".")[1]));
+            const id = tokenData.id;
+            const date = moment().format("YYYY-MM-DD");
+            const response = await EmpleadosRepository.mostrarHoraDia(id, date)
             return response || [];
         } catch (error) {
             console.log(error);

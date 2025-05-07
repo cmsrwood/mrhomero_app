@@ -62,6 +62,11 @@ class EmpleadosRepository {
         )
         return response
     }
+
+    static async mostrarHoraDia(id, fecha) { 
+        const response = await API.get(`personas/empleados/horasDia/${id}/${fecha}`)
+        return response.data
+    }
 }
 
 export default EmpleadosRepository
