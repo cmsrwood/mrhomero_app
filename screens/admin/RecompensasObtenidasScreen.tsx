@@ -51,7 +51,7 @@ export default function RecompensasObtenidasScreen() {
                     refetchAll()
                     setRecompensaSeleccionada(null)
                     showMessage({
-                        message: `Recompensa reclamada con éxito`,
+                        message: `Recompensa validada con éxito`,
                         type: 'success',
                         icon: 'success',
                         duration: 3000
@@ -59,7 +59,7 @@ export default function RecompensasObtenidasScreen() {
                 } else {
                     setReclamando(false)
                     showMessage({
-                        message: `Error al reclamar la recompensa`,
+                        message: `Error al validar la recompensa`,
                         type: 'danger',
                         icon: 'danger',
                         duration: 3000
@@ -70,6 +70,8 @@ export default function RecompensasObtenidasScreen() {
             }
         }
     }
+
+    console.log(recompensasObtenidas.length)
 
     return (
         <AdminLayout>
@@ -82,6 +84,7 @@ export default function RecompensasObtenidasScreen() {
                         <Text style={styles.text}>Error: {recompensasObtenidasError.message}</Text>
                     ) : (
                         <View>
+                            {recompensasObtenidas.length == 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay recompensas obtenidas</Text>}
                             {recompensasObtenidas.map((recompensa) => (
                                 <View key={recompensa.id_recomp_obt}>
                                     <View key={recompensa.id_recomp_obt}>
@@ -131,12 +134,12 @@ export default function RecompensasObtenidasScreen() {
                                     keyboardType='numeric'
                                     onChangeText={(text) => setRecompensaSeleccionada({ ...recompensaSeleccionada, codigo: text })}
                                     style={styles.input}
-                                    placeholder="Codigo de reclamación"
+                                    placeholder="Codigo de validación"
                                 />
                             </View>
                             <View style={styles.modalFooter}>
                                 <TouchableOpacity style={styles.boton} onPress={handleSubmit}>
-                                    <Text style={styles.botonText}>Reclamar</Text>
+                                    <Text style={styles.botonText}>Validar</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -151,7 +154,7 @@ export default function RecompensasObtenidasScreen() {
                             </View>
                             <View style={styles.modalFooter}></View>
                             <TouchableOpacity style={styles.boton} onPress={() => { setReclamando(true) }}>
-                                <Text style={styles.botonText}>Reclamar</Text>
+                                <Text style={styles.botonText}>Validar</Text>
                             </TouchableOpacity>
                         </View>
                     }

@@ -18,8 +18,14 @@ export default function PedidosScreen() {
     const { data: clientes, refetch: refetchClientes } = useClientes("clientes");
 
     const [venta, setVenta] = useState([]);
-
+    const [ventaPrevia, setVentaPrevia] = useState([]);
     const [metodoPago, setMetodoPago] = useState('Efectivo');
+    const [cantidadRecibida, setCantidadRecibida] = useState('');
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+    const [modalCliente, setModalCliente] = useState(false);
+    const [busqueda, setBusqueda] = useState('');
+    const [modalPedido, setModalPedido] = useState(false);
+    const [steps, setSteps] = useState(0);
 
     const anadirProducto = async (producto) => {
         const productoExistente = venta.find(item => item.id_producto === producto.id_producto);
@@ -38,6 +44,7 @@ export default function PedidosScreen() {
         if (productoExistente) {
             setVenta(venta.map(item => item.id_producto === producto.id_producto ? { ...item, cantidad: item.cantidad + 1 } : item));
         }
+
         else {
             setVenta([...venta, { ...producto, cantidad: 1 }]);
         }
@@ -54,9 +61,6 @@ export default function PedidosScreen() {
         }
     }
 
-
-    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-
     //Toma el id de la categoria y refresca los productos
     function verProductos(id) {
         setProductoID(id);
@@ -69,9 +73,6 @@ export default function PedidosScreen() {
         refetchClientes();
     }
 
-    const [modalCliente, setModalCliente] = useState(false);
-
-    const [busqueda, setBusqueda] = useState('');
     const clientesFiltrados = (clientes || [])
         .filter(usuario => {
             const nombres = `${usuario.user_nom} ${usuario.user_apels}`;
@@ -94,8 +95,6 @@ export default function PedidosScreen() {
             user_apels: `${cliente.user_apels}`
         })
     }
-
-    const [modalPedido, setModalPedido] = useState(false);
 
     const openModalPedido = async () => {
         if (venta.length === 0) {
@@ -127,8 +126,23 @@ export default function PedidosScreen() {
                 return;
             }
 
+            if (parseInt(cantidadRecibida) <= 0) {
+                Alert.alert('Error', 'La cantidad recibida debe ser mayor a 0');
+                return;
+            }
+
+            if (parseInt(cantidadRecibida) < venta.reduce((total, producto) => total + (producto.pro_precio * producto.cantidad), 0)) {
+                Alert.alert('Error', 'La cantidad recibida es menor al total a pagar');
+                return;
+            }
+
+            if (clienteSeleccionado === null) {
+                Alert.alert('Error', 'No hay cliente seleccionado');
+                return;
+            }
+
             const data = {
-                id_user: clienteSeleccionado.id_user,
+                id_user: clienteSeleccionado ? clienteSeleccionado.id_user : null,
                 venta_total: venta.reduce((total, producto) => total + (producto.pro_precio * producto.cantidad), 0),
                 venta_metodo_pago: metodoPago,
                 venta_fecha: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -137,6 +151,7 @@ export default function PedidosScreen() {
             const ventaRes = await VentasService.crearVenta(data);
 
             if (ventaRes.status === 200) {
+                setVentaPrevia(venta);
                 const id_venta = ventaRes.data.id
                 const detalles = venta.map(async (producto) => {
                     const detalleVenta = {
@@ -161,20 +176,20 @@ export default function PedidosScreen() {
 
                 await Promise.all(detalles);
                 setVenta([]);
-                setModalCliente(false);
                 refetchAll();
-
-                showMessage({
-                    message: 'Venta realizada con exito',
-                    type: 'success',
-                    icon: 'success',
-                    duration: 3000
-                })
+                setClienteSeleccionado(null);
+                setSteps(1);
             }
         } catch (error) {
             console.log(error);
         }
     }
+
+    const formatNumber = (value) => {
+        const formattedValue = value.toString().replace(/\D/g, '');
+        return formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
+
     return (
         <AdminLayout>
             <View style={styles.container}>
@@ -211,6 +226,7 @@ export default function PedidosScreen() {
                             visible={modalCliente}
                             transparent={true}
                             animationType='slide'
+                            onRequestClose={() => setModalCliente(false)}
                         >
                             <View style={styles.modal}>
                                 <View style={styles.modalContent}>
@@ -232,7 +248,7 @@ export default function PedidosScreen() {
                                                     <View style={styles.cell}><Text style={[styles.cellText, { fontSize: 14, color: cliente.id_user === clienteSeleccionado?.id_user ? '#198754' : '#ccc' }]}>{cliente.user_nom}</Text></View>
                                                     <View style={styles.cell}><Text style={[styles.cellText, { fontSize: 14, color: cliente.id_user === clienteSeleccionado?.id_user ? '#198754' : '#ccc' }]}>{cliente.user_apels}</Text></View>
                                                     <View style={styles.cell}><Text style={[styles.cellText, { fontSize: 14, color: cliente.id_user === clienteSeleccionado?.id_user ? '#198754' : '#ccc' }]}>{cliente.user_email}</Text></View>
-                                                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }} onPress={() =>  seleccionarCliente(cliente)}>
+                                                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }} onPress={() => seleccionarCliente(cliente)}>
                                                         <Ionicons name="add-circle-outline" size={30} color="#198754" style={{ alignSelf: 'center', justifyContent: 'center' }}></Ionicons>
                                                     </TouchableOpacity>
                                                 </View>
@@ -250,32 +266,46 @@ export default function PedidosScreen() {
                         </Modal>
                     </View>
                     <View style={{ width: '80%', marginVertical: 10 }}>
-                        <ScrollView style={{ height: '100%' }}>
-                            <View style={styles.headerTable}>
-                                <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Cantidad</Text></View>
-                                <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Producto</Text></View>
-                            </View>
-                            {venta.length === 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en el pedido</Text>}
-                            {venta.map((producto) => (
-                                <View style={styles.row} key={producto.id_producto}>
-                                    <View style={[styles.cell, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                                        <TouchableOpacity disabled={producto.cantidad === 1} style={{ justifyContent: 'center', alignItems: 'center', flex: 1, marginRight: 10 }} onPress={() => { restarCantidad(producto) }}>
-                                            <Ionicons name="remove-circle-outline" size={30} color="#198754" style={{ alignSelf: 'center', justifyContent: 'center' }}></Ionicons>
-                                        </TouchableOpacity>
-                                        <Text style={[styles.cellText, { fontSize: 14, color: '#fff' }]}>{producto.cantidad}</Text>
-                                        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', flex: 1, marginLeft: 10 }} onPress={() => { sumarCantidad(producto) }}>
-                                            <Ionicons name="add-circle-outline" size={30} color="#198754" style={{ alignSelf: 'center', justifyContent: 'center' }}></Ionicons>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={[styles.cell]}>
-                                        <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{producto.pro_nom}</Text>
-                                    </View>
+                        <ScrollView horizontal={true} style={{ maxHeight: 230 }} contentContainerStyle={{ flexGrow: 1 }}>
+                            <ScrollView style={{ height: '100%' }}>
+                                <View style={styles.headerTable}>
+                                    <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Cantidad</Text></View>
+                                    <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Producto</Text></View>
+                                    <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Puntos</Text></View>
+                                    <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Subtotal</Text></View>
                                 </View>
-                            ))}
+                                {venta.length === 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en el pedido</Text>}
+                                {venta.map((producto) => (
+                                    <View style={styles.row} key={producto.id_producto}>
+                                        <View style={[styles.cell, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+                                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', flex: 1, marginRight: 10 }} onPress={() => { restarCantidad(producto) }}>
+                                                <Ionicons name="remove-circle-outline" size={30} color="#198754" style={{ alignSelf: 'center', justifyContent: 'center' }}></Ionicons>
+                                            </TouchableOpacity>
+                                            <Text style={[styles.cellText, { fontSize: 14, color: '#fff' }]}>{producto.cantidad}</Text>
+                                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', flex: 1, marginLeft: 10 }} onPress={() => { sumarCantidad(producto) }}>
+                                                <Ionicons name="add-circle-outline" size={30} color="#198754" style={{ alignSelf: 'center', justifyContent: 'center' }}></Ionicons>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View style={[styles.cell]}>
+                                            <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{producto.pro_nom}</Text>
+                                        </View>
+                                        <View style={[styles.cell]}>
+                                            <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{producto.pro_puntos * producto.cantidad}</Text>
+                                        </View>
+                                        <View style={[styles.cell]}>
+                                            <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{formatNumber(producto.pro_precio * producto.cantidad)}</Text>
+                                        </View>
+                                    </View>
+                                ))}
+                            </ScrollView>
                         </ScrollView>
                     </View>
                 </View>
             </View >
+            <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 20 }}>
+                <Text style={[styles.label, { fontSize: 20 }]}>Total a pagar</Text>
+                <Text style={[globalStyles.title, { fontSize: 40 }]}>{formatNumber(venta.reduce((total, producto) => total + (producto.pro_precio * producto.cantidad), 0))}</Text>
+            </View>
             <TouchableOpacity onPress={() => { openModalPedido() }} style={{ backgroundColor: '#198754', width: '80%', height: 50, justifyContent: 'center', alignItems: 'center', alignSelf: 'center', borderRadius: 8, marginBottom: 20 }}>
                 <Text style={{ color: '#ccc', fontWeight: 'bold' }}>Realizar pedido</Text>
             </TouchableOpacity>
@@ -288,22 +318,100 @@ export default function PedidosScreen() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContenido}>
-                        <View>
-                            <Text style={globalStyles.title}>Realizar pedido</Text>
+                        {steps === 0 ? (
                             <View>
-                                <Text>Metodo de pago:</Text>
-                                <Picker
-                                    style={Platform.OS === 'ios' ? styles.pickerIOS : styles.pickerAndroid}
-                                    selectedValue={metodoPago}
-                                    onValueChange={(itemValue, itemIndex) => setMetodoPago(itemValue)}
-                                >
-                                    <Picker.Item label="Efectivo" value="Efectivo" />
-                                    <Picker.Item label="Tarjeta" value="Tarjeta" />
-                                    <Picker.Item label="Nequi" value="Nequi" />
-                                    <Picker.Item label="Daviplata" value="Daviplata" />
-                                </Picker>
+                                <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setModalPedido(false)}>
+                                    <View >
+                                        <Ionicons name="close" size={24} color="black" />
+                                    </View>
+                                </TouchableOpacity>
+                                <View>
+                                    <Text style={globalStyles.title}>Pedido</Text>
+                                    {clienteSeleccionado && (
+                                        <View>
+                                            <Text style={styles.label}>Cliente</Text>
+                                            <Text style={[styles.label, { fontSize: 16 }, globalStyles.naranja]}>{`${clienteSeleccionado.user_nom} ${clienteSeleccionado.user_apels}`}</Text>
+                                        </View>
+                                    )}
+                                    <View>
+                                        <Text style={styles.label}>Metodo de pago</Text>
+                                        <Picker
+                                            style={Platform.OS === 'ios' ? styles.pickerIOS : styles.pickerAndroid}
+                                            selectedValue={metodoPago}
+                                            onValueChange={(itemValue, itemIndex) => setMetodoPago(itemValue)}
+                                        >
+                                            <Picker.Item label="Efectivo" value="Efectivo" />
+                                            <Picker.Item label="Tarjeta" value="Tarjeta" />
+                                            <Picker.Item label="Nequi" value="Nequi" />
+                                            <Picker.Item label="Daviplata" value="Daviplata" />
+                                        </Picker>
+                                    </View>
+                                    <View style={{ marginTop: 10 }}>
+                                        <Text style={styles.label}>Total a pagar</Text>
+                                        <Text style={[styles.label, { fontSize: 20 }, globalStyles.naranja]}>{formatNumber(venta.reduce((total, producto) => total + (producto.pro_precio * producto.cantidad), 0))}</Text>
+                                    </View>
+                                    <View style={{ marginTop: 10 }}>
+                                        <Text style={styles.label}>Cantidad a recibir</Text>
+                                        <TextInput
+                                            value={cantidadRecibida}
+                                            onChangeText={(text) => setCantidadRecibida(text)}
+                                            style={styles.input}
+                                            placeholder="Cantidad a recibir"
+                                            placeholderTextColor="#ccc"
+                                            keyboardType="numeric"
+                                        />
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                                    <TouchableOpacity style={styles.buttonAdd} onPress={() => handleSubmit()}>
+                                        <Text style={{ color: '#ccc', fontWeight: 'bold' }}>Realizar pedido</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.buttonAdd} onPress={() => setModalPedido(false)}>
+                                        <Text style={{ color: '#ccc', fontWeight: 'bold' }}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
+                        ) : (
+                            <View>
+                                <TouchableOpacity style={globalStyles.botonCerrar} onPress={() => setModalPedido(false)}>
+                                    <View >
+                                        <Ionicons name="close" size={24} color="black" />
+                                    </View>
+                                </TouchableOpacity>
+                                <Text style={[styles.modalTitulo, { textAlign: 'center', color: '#198754' }]}>Pedido realizado <Ionicons name="checkmark-circle" size={24} color="#198754" /></Text>
+                                <Text style={[styles.label, { fontSize: 20, textAlign: 'center' }]}>Detalles del pedido</Text>
+                                <ScrollView horizontal={true} style={{ maxHeight: 230, marginVertical: 40 }} contentContainerStyle={{ flexGrow: 1 }}>
+                                    <ScrollView style={{ height: '100%' }}>
+                                        <View style={styles.headerTable}>
+                                            <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Producto</Text></View>
+                                            <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Puntos</Text></View>
+                                            <View style={styles.cell}><Text style={[styles.cellText, { fontWeight: "bold", fontSize: 14, color: '#ffc107' }]}>Subtotal</Text></View>
+                                        </View>
+                                        {ventaPrevia.length === 0 && <Text style={{ color: "#ccc", fontSize: 18, textAlign: "center", paddingVertical: 50 }}>No hay productos en el pedido</Text>}
+                                        {ventaPrevia.map((producto) => (
+                                            <View style={styles.row} key={producto.id_producto}>
+                                                <View style={[styles.cell]}>
+                                                    <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{producto.pro_nom}</Text>
+                                                </View>
+                                                <View style={[styles.cell]}>
+                                                    <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{producto.pro_puntos * producto.cantidad}</Text>
+                                                </View>
+                                                <View style={[styles.cell]}>
+                                                    <Text style={[styles.cellText, { fontSize: 14, color: '#fff', alignSelf: 'center' }]}>{formatNumber(producto.pro_precio * producto.cantidad)}</Text>
+                                                </View>
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                </ScrollView>
+                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                                    <TouchableOpacity style={styles.buttonAdd} onPress={() => setModalPedido(false)}>
+                                        <Text style={{ color: '#ccc', fontWeight: 'bold' }}>Cerrar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )
+                        }
+
                     </View>
                 </View>
             </Modal>
@@ -381,10 +489,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.5)',
         height: '100%',
+        width: '100%'
     },
     modalContent: {
         width: '100%',
-        height: 500,
+        height: '100%',
         backgroundColor: '#3A4149',
         padding: 20,
         borderRadius: 15
@@ -404,6 +513,8 @@ const styles = StyleSheet.create({
     row: {
         flex: 1,
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
         borderWidth: 1,
         borderColor: '#4A5159',
         paddingVertical: 8,
@@ -421,31 +532,30 @@ const styles = StyleSheet.create({
     },
     input: {
         alignSelf: 'flex-end',
-        borderWidth: 1,
-        borderRadius: 15,
-        borderColor: '#ffc107',
-        width: '60%',
+        width: '100%',
         height: 40,
         padding: 10,
         color: '#fff',
-        marginBottom: 10
+        marginBottom: 10,
+        fontSize: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#aaaaaa',
     },
     pickerIOS: {
         overflow: 'hidden',
         justifyContent: 'center',
         height: 50,
-        width: 150,
+        width: '100%',
     },
     colorLetterIOS: {
         color: '#fff'
-
     },
     pickerAndroid: {
         color: '#fff',
         backgroundColor: '#2B3035',
         height: 50,
         justifyContent: 'center',
-        width: 120,
+        width: '100%',
     },
     modalContainer: {
         flex: 1,
@@ -476,5 +586,10 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#2B3035',
         borderRadius: 15,
+    },
+    label: {
+        color: "#aaaaaa",
+        fontSize: 14,
+        marginVertical: 5,
     },
 })
