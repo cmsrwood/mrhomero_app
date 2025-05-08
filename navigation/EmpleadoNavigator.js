@@ -2,7 +2,6 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import EmpleadoDrawer from '../components/EmpleadoDrawer';
-import IndexEmpleado from '../screens/empleado/IndexEmpleado';
 import VentasEmpleado from '../screens/admin/VentasScreen';
 import AnalisisVentasEmpleado from '../screens/admin/DashboardScreen';
 import GestionVentasEmpleado from '../screens/admin/VentasScreen';
@@ -33,7 +32,7 @@ export default function EmpleadoNavigator() {
                 drawerInactiveTintColor: "#FFFFFF",
             }}
         >
-            <Drawer.Screen name="IndexEmpleado" component={IndexEmpleado} />
+            <Drawer.Screen name="PedidosEmpleado" component={PedidosEmpleado} />
             <Drawer.Screen name="VentasEmpleado" component={VentasEmpleado} />
             <Drawer.Screen name="AnalisisVentas" component={AnalisisVentasEmpleado} />
             <Drawer.Screen name="GestionVentas" component={GestionVentasEmpleado} />
@@ -43,7 +42,6 @@ export default function EmpleadoNavigator() {
             <Drawer.Screen name="Clientes" component={ClientesEmpleado} />
             <Drawer.Screen name="Proveedores" component={ProveedoresEmpleado} />
             <Drawer.Screen name="Horas" component={HorasEmpleado} />
-            <Drawer.Screen name="PedidosEmpleado" component={PedidosEmpleado} />
             <Drawer.Screen name="Categoria" component={CategoriaEmpleado} />
             <Drawer.Screen name="Producto" component={ProductoEmpleado} />
         </Drawer.Navigator>

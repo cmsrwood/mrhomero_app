@@ -35,37 +35,21 @@ export default function CustomDrawerContent({ navigation }) {
                 <Text style={styles.divider}></Text>
                 <Text style={styles.dividerText}>PRINCIPAL</Text>
 
-                <TouchableOpacity onPress={() => handlePress('inicio', 'IndexEmpleado')} style={[styles.buttons, { backgroundColor: activeButton === 'inicio' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
-                    <Ionicons name={activeButton === 'inicio' ? "home" : "home-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inicio' && styles.active]}>
-                        <Text style={[styles.text, activeButton === 'inicio' && styles.active]}>  Inicio</Text>
+                <TouchableOpacity onPress={() => handlePress('analisisVentas', 'AnalisisVentas')} style={[styles.buttons, { backgroundColor: activeButton === 'analisisVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name="analytics" style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'analisisVentas' && styles.active]}>
+                        <Text style={[styles.text, activeButton === 'analisisVentas' && styles.active]}>  Analisis de ventas</Text>
                     </Ionicons>
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => { toggleVentas(); setActiveButton('ventas'); }} style={styles.buttons}>
-                    <Ionicons name={ventasExpanded ? "chevron-down" : "chevron-forward"} style={[styles.icon, activeButton === 'ventas' && styles.active]}>
-                        <Text style={[styles.text, activeButton === 'ventas' && styles.active]}>  Ventas</Text>
+                <TouchableOpacity onPress={() => handlePress('gestionVentas', 'GestionVentas')} style={[styles.buttons, { backgroundColor: activeButton === 'gestionVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={activeButton === 'gestionVentas' ? "bar-chart" : "bar-chart-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'gestionVentas' && styles.active]}>
+                        <Text style={[styles.text, activeButton === 'gestionVentas' && styles.active]}>  Gestion de ventas</Text>
                     </Ionicons>
                 </TouchableOpacity>
-
-                {ventasExpanded && (
-                    <View>
-                        <TouchableOpacity onPress={() => handlePress('analisisVentas', 'AnalisisVentas')} style={[styles.buttons, { backgroundColor: activeButton === 'analisisVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
-                            <Ionicons name="analytics" style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'analisisVentas' && styles.active]}>
-                                <Text style={[styles.text, activeButton === 'analisisVentas' && styles.active]}>  Analisis de ventas</Text>
-                            </Ionicons>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('gestionVentas', 'GestionVentas')} style={[styles.buttons, { backgroundColor: activeButton === 'gestionVentas' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10 }]}>
-                            <Ionicons name={activeButton === 'gestionVentas' ? "bar-chart" : "bar-chart-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'gestionVentas' && styles.active]}>
-                                <Text style={[styles.text, activeButton === 'gestionVentas' && styles.active]}>  Gestion de ventas</Text>
-                            </Ionicons>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handlePress('pedidos', 'PedidosEmpleado')} style={[styles.buttons, { backgroundColor: activeButton === 'pedidos' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035', paddingLeft: 10, marginBottom: 8 }]}>
-                            <Ionicons name={activeButton === 'pedidos' ? "wallet" : "wallet-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'pedidos' && styles.active]}>
-                                <Text style={[styles.text, activeButton === 'pedidos' && styles.active]}>  Pedidos</Text>
-                            </Ionicons>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                <TouchableOpacity onPress={() => handlePress('pedidos', 'PedidosEmpleado')} style={[styles.buttons, { backgroundColor: activeButton === 'pedidos' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
+                    <Ionicons name={activeButton === 'pedidos' ? "wallet" : "wallet-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'pedidos' && styles.active]}>
+                        <Text style={[styles.text, activeButton === 'pedidos' && styles.active]}>  Pedidos</Text>
+                    </Ionicons>
+                </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => handlePress('inventario', 'Inventario')} style={[styles.buttons, { backgroundColor: activeButton === 'inventario' ? 'rgba(255, 107, 74, 0.2)' : '#2B3035' }]}>
                     <Ionicons name={activeButton === 'inventario' ? "file-tray-full" : "file-tray-full-outline"} style={[styles.icon, { color: "#FF6B4A" }, activeButton === 'inventario' && styles.active]}>
