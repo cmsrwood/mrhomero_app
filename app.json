@@ -4,10 +4,10 @@
     "slug": "mr-homero",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/favicon.png",
+    "icon": "./src/assets/favicon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/favicon.png",
+      "image": "./src/assets/favicon.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFEB3B"
     },
@@ -16,12 +16,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/favicon.png",
+        "foregroundImage": "./src/assets/favicon.png",
         "backgroundColor": "#FFEB3B"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/favicon.png"
     },
     "extra": {
       "eas": {
